@@ -1,0 +1,3045 @@
+=== 第1页 ===
+ 
+Contents lists available at ScienceDirect
+Engineering Applications of Artificial Intelligence
+journal homepage: www.elsevier.com/locate/engappai
+ 
+Research paper
+A linear-complexity deep learning framework for efficient battery State of 
+Health estimation in resource-constrained systems$
+Huajiang Wang a
+, Hao Li a, Zhengxing He a, Xuan Chen a, Hanglin Liu a, Chao Chen a,b
+,∗
+a School of Computer Science and Engineering, Sichuan University of Science and Engineering, Yibin 644005, China
+b Intelligent Perception and Control Key Laboratory of Sichuan Province, Sichuan University of Science and Engineering, Yibin 644005, China
+A R T I C L E  I N F O
+Keywords:
+Lithium-ion batteries
+Battery State of Health estimation
+Linear attention mechanism
+Battery Management System
+Embedded deep learning
+Artificial intelligence applications
+ 
+A B S T R A C T
+To address the computational bottleneck of deep learning, a key artificial intelligence (AI) technology, in 
+resource-constrained Battery Management Systems (BMS), this paper presents a lightweight, linear-complexity 
+State of Health (SOH) estimation framework. First, a systematic feature selection process identifies robust 
+health indicators from partial voltage–time integrals, effectively reducing online extraction burdens. Subse-
+quently, we propose SL-AgentNet (integrating Small-kernel and Large-kernel convolutions), an AI architecture 
+designed to resolve the quadratic overhead of traditional Transformers. By integrating the Fast Local–
+Global Fusion Attention (FLFA) mechanism with diversity-enhancing modules, specifically the Fast Diversity 
+Feature Fusion Attention (FDFA) and Parallel Informed Activation Function (PIAF), this AI model achieves 
+linear complexity while capturing long-range degradation dependencies. Experiments on the Oxford, National 
+Aeronautics and Space Administration (NASA), and Center for Advanced Life Cycle Engineering (CALCE) 
+datasets demonstrate superior robustness, reducing the Mean Absolute Error (MAE) by 74.78% on the Oxford 
+dataset against Convolutional Neural Network (CNN)-Transformer baselines. With a model size of only 
+40.92 Kilobytes (KB), the AI framework proves its feasibility through hardware-in-the-loop validation on a 
+Texas Instruments (TI) Cortex-M4 microcontroller, where a Look-Up Table (LUT) implementation maintains 
+accuracy loss within 0.3%, demonstrating its readiness for embedded deployment.
+1. Introduction
+Global energy sustainability relies heavily on critical advancements 
+across the broad energy storage and management spectrum. Recent 
+years have witnessed diversified progress in this domain. In the realm 
+of novel materials, significant strides have been made in stabiliz-
+ing alternative chemistries, such as the interface synergistic stabiliza-
+tion for zinc anodes (Hu et al., 2024) and movable SiO2 reinforced 
+coatings (Wu et al., 2025). Simultaneously, at the grid system level, 
+new source-load coordinated optimization frameworks have been pro-
+posed to enhance distributed energy efficiency (Wang et al., 2025). 
+Concurrently with these emerging technologies, Lithium-ion batteries 
+(LIBs) currently remain the primary power source for Electric Vehicles 
+(EVs). However, as LIB technology evolves towards higher energy 
+densities (e.g., high-nickel cathodes, cell-to-pack (CTP) architectures), 
+$ This research was supported by the Sichuan Science and Technology Innovation Talent Project (No. 2024JDRC0013), the Scientific Research and Innovation 
+Team Program of Sichuan University of Technology (No. SUSE652A006), and The Innovation Fund of Postgraduate, Sichuan University of Science & Engineering 
+(No. Y2025098). Additionally, this study was supported by the computational resources provided by the High-Performance Computing Center, School of Computer 
+Science and Engineering, Sichuan University of Science and Engineering. We would like to express our gratitude to the Sichuan New Energy Vehicle Innovation 
+Center and the Ouyang Minggao Academy of Sciences Youth Talent Development Fund for their support of this project.
+∗Corresponding author at: School of Computer Science and Engineering, Sichuan University of Science and Engineering, Yibin 644005, China.
+E-mail address: chenchao@suse.edu.cn (C. Chen).
+they exhibit highly non-linear and heterogeneous degradation behav-
+iors. These complexities challenge the fidelity of traditional physical 
+models, making accurate State of Health (SOH) monitoring within 
+resource-constrained Battery Management Systems (BMS) increasingly 
+challenging (Rouholamini et al., 2022; Krause et al., 2021).
+Accurate estimation of SOH is crucial for mitigating range anxiety 
+and reducing the risk of potential failures. While direct measurement 
+of capacity is typically considered accurate, it requires time-consuming 
+full charge–discharge cycles, a requirement often impractical for on-
+line applications (Wei et al., 2018). Consequently, data-driven estima-
+tion methods that infer SOH from indirect sensor data have gained 
+prominence. Researchers have extensively investigated various Health 
+Indicators (HIs), such as incremental capacity (IC) curves, differential 
+voltage analysis, and voltage integral areas, to characterize degra-
+dation (Wu et al., 2023; Feng and Zhang, 2024). However, these 
+https://doi.org/10.1016/j.engappai.2026.115420
+Received 4 July 2025; Received in revised form 9 December 2025; Accepted 9 June 2026
+Engineering Applications of Artiϧcial Intelligence 181 (2026) 115420 
+Available online 21 June 2026 
+0952-1976/© 2026 Elsevier Ltd. All rights are reserved, including those for text and data mining, AI training, and similar technologies. 
+
+
+=== 第2页 ===
+H. Wang et al.
+features may exhibit sensitivity to measurement noise or necessitate 
+complex preprocessing. Early research predominantly focused on em-
+pirical models or standard machine learning. For instance, decision 
+tree approaches were explored for fault detection during power swings 
+(Mohanty et al., 2023), and enhanced protective relaying schemes were 
+designed for compensated transmission lines (Mohanty et al., 2024). 
+As highlighted in these studies across the broader energy sector, tradi-
+tional methods often face a common constraint: the need to balance 
+algorithmic sensitivity with computational efficiency under dynamic 
+operating conditions.
+The proliferation of deep learning has facilitated the widespread 
+adoption of Convolutional Neural Networks (CNNs) and Recurrent Neu-
+ral Networks (RNNs) to capture complex aging dynamics. Nevertheless, 
+CNNs are limited by their local receptive fields, while RNNs suf-
+fer from sequential processing constraints that hinder parallelization. 
+While the Transformer architecture (Vaswani et al., 2017) excels at cap-
+turing long-term dependencies, it can introduce a bottleneck: standard 
+self-attention entails quadratic computational complexity 𝑂(𝑁2) with 
+respect to sequence length.
+This substantial computational overhead is often challenging for 
+automotive-grade microcontrollers (MCUs) (Xiong et al., 2019). Fur-
+thermore, deep Transformer models may be prone to the rank collapse 
+issue (Chen, 2023), a phenomenon where output representations be-
+come identical across tokens. This convergence may lead to the loss of 
+fine-grained local degradation details critical for early fault detection.
+To address these challenges, this paper proposes SL-AgentNet, a 
+lightweight and efficient SOH estimation framework. In contrast to 
+many existing methods that pursue structural complexity, the proposed 
+approach aims to balance engineering feasibility with accuracy. The 
+main contributions are:
+1. Structured Feature Selection Framework: We propose a data-driven 
+screening methodology based on the Constant Current Charg-
+ing/Discharging Area (CCCA/CCDA). In contrast to static fea-
+ture selection, this framework treats the observation window 
+as a learnable hyperparameter, adaptively identifying a dataset-
+specific optimized interval. This facilitates the extraction of a 
+robust Health Indicator (HI) that reduces the online computation 
+burden while enhancing correlation with capacity fade.
+2. Integrated Lightweight Architecture: We introduce the SL-AgentNet, 
+featuring a tri-branch design. The core Fast Local–Global Fusion 
+Attention (FLFA) reduces complexity from quadratic 𝑂(𝑁2) to 
+linear 𝑂(𝑁) by employing a single-agent mechanism (𝑛= 1) 
+with convolutional compensation. To mitigate potential feature 
+collapse, we integrate the Fast Diversity Feature Fusion Atten-
+tion (FDFA) for orthogonal significance filtering and the Parallel 
+Informed Activation Function (PIAF) for heterogeneous non-
+linear mapping. This architecture aims to achieve enhanced 
+representational capability with a compact parameter set.
+3. Validation of Feasibility and Reliability: Comprehensive experi-
+ments on the Oxford, NASA, and CALCE datasets demonstrate 
+that SL-AgentNet achieves competitive accuracy, exemplified by 
+an RMSE of 0.0052 on NASA, even when trained on 30% of 
+early-life data. Furthermore, we provide a rigorous analysis of 
+computational efficiency and uncertainty quantification. Vali-
+dated on a TI Cortex-M4 MCU, the proposed LUT-based imple-
+mentation achieves negligible precision loss (< 0.3%), proving 
+its feasibility for resource-constrained embedded instrumenta-
+tion.
+2. Related work
+Methodologies for battery SOH estimation can be classified into 
+model-based and data-driven approaches Xie et al. (2024). This sec-
+tion reviews representative techniques in each category and analyzes 
+their specific limitations within the context of vehicular embedded 
+applications.
+2.1. Model-based approaches
+Model-based methods are based on mathematical representations of 
+the battery’s internal electrochemical or electrical dynamics.
+• Electrochemical Models (EMs): Models such as the Single Particle 
+Model (SPM) and Pseudo-Two-Dimensional (P2D) model describe 
+internal degradation mechanisms, including solid electrolyte in-
+terphase (SEI) growth and lithium plating, utilizing systems of 
+Partial Differential Equations (PDEs) (Birkl et al., 2017). While 
+offering high fidelity and physical interpretability, their high com-
+putational complexity and the difficulty of identifying numerous 
+microscopic parameters online may render them less suitable 
+for low-cost, resource-constrained BMS MCUs (Chaturvedi et al., 
+2010; Rechkemmer et al., 2019).
+• Equivalent Circuit Models (ECMs): ECMs simulate battery dynamics 
+using electrical components, such as resistors and capacitors, and 
+are frequently combined with adaptive filters like Kalman Filters 
+(KF) or Particle Filters (PF) (Zhang et al., 2018; Peng et al., 
+2025). Although computationally lighter than EMs, their accuracy 
+depends on the fidelity of the circuit structure. Furthermore, ECM 
+parameters exhibit high sensitivity to environmental conditions, 
+including temperature and C-rate (charge/discharge rate), and 
+maintaining robustness across the full aging lifespan remains a 
+significant challenge (Luo et al., 2022).
+2.2. Data-driven approaches
+Data-driven methods treat the battery as a black box, mapping 
+extracted features directly to SOH. These methods have gained promi-
+nence due to their flexibility Richardson et al. (2017) and decoupling 
+from complex physical parameters. Recent work has also emphasized 
+security considerations in battery state estimation Tian et al. (2023).
+2.2.1. Feature engineering: Health indicators (HIs)
+The efficacy of data-driven models is closely linked to the quality 
+of input features.
+• Differential Analysis: Incremental Capacity Analysis (ICA) and Dif-
+ferential Voltage Analysis (DVA) are widely employed to identify 
+degradation modes (z. Kong et al., 2021). Alternative approaches 
+exploit differential temperature Tian et al. (2020) or entropy-
+based metrics Widodo et al. (2011) to characterize degrada-
+tion. However, mathematically, calculating derivatives (𝑑𝑄∕𝑑𝑉
+or 𝑑𝑉∕𝑑𝑄) from discrete sampling points can act as a high-pass 
+filter, which may amplify sensor noise. Consequently, these meth-
+ods require heavy smoothing preprocessing, introducing latency 
+and computational overhead.
+• Raw Data and Geometric Features: While utilizing raw charging 
+curves directly avoids feature engineering, it may often lead to 
+input redundancy. Geometric features, such as the time inter-
+vals of equal discharge voltage difference (TIEDVD) (Liu et al., 
+2013), voltage integral areas (Zhang et al., 2024a), and novel 
+health indicators Zhou et al. (2016) offer enhanced stability. 
+Multi-feature fusion strategies have also been widely explored Lin 
+et al. (2022), Son et al. (2022), with recent works investigating 
+automated feature selection Li and Chen (2025). However, prior 
+works typically employ empirically fixed voltage windows, often 
+lacking a systematic mechanism to adapt to the specific aging 
+fingerprints of different battery chemistries, such as Nickel Cobalt 
+Manganese (NCM) versus Lithium Iron Phosphate (LFP).
+2.2.2. Deep learning architectures
+Deep learning has transformed SOH estimation by enabling end-to-
+end feature learning.
+Engineering Applications of Artiϧcial Intelligence 181 (2026) 115420 
+2 
+
+
+=== 第3页 ===
+H. Wang et al.
+• RNNs and CNNs: Recurrent Neural Networks (RNNs), particu-
+larly Long Short-Term Memory (LSTM) and Gated Recurrent Unit 
+(GRU) networks, represent the standard for time-series forecast-
+ing (Ma et al., 2019; Zheng et al., 2023). Despite their success, the 
+sequential nature of RNNs limits parallelization during training 
+and inference, limiting throughput. Convolutional Neural Net-
+works (CNNs) (Lee et al., 2023) facilitate parallel processing but 
+are constrained by local receptive fields, making it difficult to 
+capture global degradation trends over long operational cycles. 
+Hybrid CNN-based frameworks have been combined with random 
+forests Yang et al. (2022), while ensemble learning paradigms 
+further enhance estimation robustness Zhang et al. (2024b). Ad-
+ditionally, LSTM-based models leveraging incremental capacity 
+features Zhang et al. (2023) remain a strong baseline for battery 
+health prognostics.
+• Transformers and Attention Mechanisms: The introduction of the 
+Transformer architecture (Hannan et al., 2021) addressed the 
+limitations of RNNs and CNNs by utilizing self-attention to model 
+long-range dependencies. Hybrid models, such as the
+CNN-Transformer (Bai and Wang, 2023; Gu et al., 2023) and 
+BiGRU-Transformer Jia et al. (2023), have further improved accu-
+racy. Vision Transformer Chen et al. (2023) and temporal fusion 
+Transformer Gomez et al. (2024) architectures have also been 
+explored for battery health estimation. More recently, efficient 
+Transformer variants such as BMSformer Li et al. (2024) have 
+been specifically designed for online SOH estimation. However, 
+the standard Dot-Product Attention mechanism involves a time 
+and memory complexity of 𝑂(𝑁2) with respect to sequence length 
+𝑁. This quadratic cost presents a bottleneck for deployment 
+on edge devices (Xiong et al., 2019). Moreover, as noted in 
+recent theoretical studies (Chen, 2023), deep attention layers 
+may be prone to rank collapse, a phenomenon where the output 
+feature matrix loses expressiveness, limiting the model’s ability to 
+distinguish fine-grained aging patterns.
+To address these limitations, this study introduces SL-AgentNet. 
+By replacing quadratic attention with a linear-complexity 𝑂(𝑁) Agent 
+Attention mechanism and integrating systematic feature selection, our 
+framework aims to address the trilemma of noise sensitivity, computa-
+tional burden, and feature expressiveness.
+3. Methodology framework and data foundation
+3.1. Overall estimation framework
+SOH is a key indicator of battery degradation, quantifying the 
+ability of a battery to store and deliver energy relative to its fresh state. 
+While universal standardization remains absent, capacity retention per-
+sists as the most widely adopted operational proxy (Lu et al., 2023). In 
+this study, SOH is defined as the ratio of the current maximum available 
+capacity (𝐶current) to the rated nominal capacity (𝐶rated): 
+SOH = 𝐶current
+𝐶rated
+× 100%
+(1)
+Although SOH can also be characterized by the increase in internal 
+resistance, this study primarily focuses on the capacity fade dimension 
+as the primary metric for energy storage capability.
+Given that direct capacity measurement is often impractical for 
+online BMS due to the necessity of full charge–discharge cycles, a 
+data-driven framework, depicted in Fig. 1, is proposed. This systematic 
+methodology comprises four strategic phases:
+1. Data Acquisition: This phase entails extracting raw voltage, cur-
+rent, and time series data from charging/discharging cycles 
+across diverse battery chemistries.
+2. Systematic Feature Engineering: A multi-scale sliding window
+strategy is applied to identify robust Health Indicators (HIs) from 
+partial voltage segments, as detailed in Section 3.3.
+3. Model Development: The proposed SL-AgentNet is trained using 
+a historical reference hyperparameter calibration strategy to 
+promote efficiency and accuracy.
+4. Performance Evaluation: The final phase validates the model’s 
+estimation precision, computational efficiency, and robustness 
+against baselines on unseen test cells.
+3.2. Experimental datasets
+To evaluate the generalization capability of the proposed method 
+across varying chemistries and operational profiles, three authoritative 
+public datasets were utilized. The specifications are summarized as 
+follows:
+• Oxford Dataset (Pouch, Lithium Cobalt Oxide (LCO)-based): Pro-
+vided by the Oxford Battery Intelligence Lab (Birkl et al., 2017), 
+this dataset includes 8 pouch cells (0.74 Ah) tested at 40 ◦C. It is 
+worth noting that it employs the Urban Artemis drive cycle for the 
+discharging phase. Although our Health Indicators are primarily 
+derived from the stable constant-current charging phase, this 
+dynamic discharging profile induces realistic degradation patterns 
+distinct from standard constant-current cycling, thereby making 
+it a rigorous benchmark for evaluating model robustness under 
+dynamic load history.
+• NASA Dataset (18650, Nickel Cobalt Aluminum (NCA)): Sourced 
+from the NASA Prognostics Center of Excellence (Xu et al.), this 
+dataset includes 4 cylindrical cells (B0005–B0018) with a rated 
+capacity of 2.0 Ah, cycled at 24 ◦C. A distinct characteristic of 
+this dataset is the significant capacity regeneration phenomena, 
+manifested as local fluctuations, and varying discharge currents. 
+These features provide a rigorous test for the model’s stability and 
+temporal feature extraction capabilities.
+• CALCE Dataset (Prismatic, LCO): Provided by the Center for Ad-
+vanced Life Cycle Engineering (CALCE) at the University of Mary-
+land Cadini et al. (2019), this dataset features 4 prismatic cells 
+(CS2_35 to CS2_38) with a rated capacity of 1.1 Ah. These bat-
+teries exhibit a rapid non-linear degradation tail, or ‘‘diving’’ 
+behavior, in late life stages, testing the model’s ability to track 
+accelerated aging trends.
+The diversity in cell formats (Pouch/Cylindrical/Prismatic), rated ca-
+pacities (0.74–2.0 Ah), and cathode chemistries (LCO-based/NCA) fa-
+cilitates a comprehensive validation of the proposed framework.
+3.3. Systematic extraction and screening of health indicators
+3.3.1. Theoretical advantage of CCCA/CCDA over energy metrics
+Conventional energy-based methods (Bai et al., 2023) characterize 
+battery aging by calculating the total energy throughput during a cycle:
+𝐸= ∫
+𝑡𝑒𝑛𝑑
+𝑡𝑠𝑡𝑎𝑟𝑡
+𝑉(𝑡) ⋅𝐼(𝑡) 𝑑𝑡
+(2)
+However, current sensors in practical BMS deployments—typically 
+Hall effect sensors or shunt resistors—can be susceptible to measure-
+ment noise, thermal drift, and instantaneous load fluctuations. Since 
+energy calculation involves the multiplicative coupling of voltage and 
+current, any jitter in the current signal 𝐼(𝑡) is potentially amplified and 
+integrated over time, resulting in cumulative errors in the final SOH 
+estimate.
+To circumvent reliance on noisy current data, the utilization of 
+the Constant Current Charging Area (CCCA) and Constant Current 
+Discharging Area (CCDA) is proposed. In the Constant Current (CC) 
+phase, the current is theoretically invariant (𝐼(𝑡) ≈𝐼𝑠𝑒𝑡). Consequently, 
+Engineering Applications of Artiϧcial Intelligence 181 (2026) 115420 
+3 
+
+
+=== 第4页 ===
+H. Wang et al.
+Fig. 1. Schematic diagram of the proposed SOH estimation methodology, illustrating the workflow from raw data acquisition to final performance evaluation. 
+capacity degradation—manifested as the shortening of the CC phase du-
+ration and the shifting of voltage plateaus—can be effectively captured 
+by the geometric integral of the voltage curve (as visualized in Fig. 2):
+CCCA𝑖= ∫
+𝑡𝑒𝑛𝑑
+𝑡𝑠𝑡𝑎𝑟𝑡
+𝑉𝑖(𝑡) 𝑑𝑡
+(3)
+Operationally, CCCA serves as a pseudo-energy metric with enhanced 
+noise resilience. By decoupling the health indicator from real-time 
+current measurements, this metric retains the high sensitivity of energy 
+integration to degradation while offering robustness against sensor 
+noise, thereby offering enhanced stability for online instrumentation.
+Furthermore, unlike energy metrics which conflate charging and 
+discharging behaviors, our method allows for Kinetic Decoupling. By 
+treating CCCA and CCDA as independent candidates, we can isolate the 
+specific kinetic regime that maximizes the signal-to-noise ratio (SNR) 
+for a given chemistry, thereby enhancing the ‘‘Information Density’’ of 
+the input feature.
+3.3.2. Multi-scale sliding window screening strategy
+Although voltage integration is established in the literature, prior 
+studies typically rely on static, empirically defined windows. Battery 
+degradation mechanisms, however, are heterogeneous; consequently, 
+the voltage region containing the most salient aging information varies 
+significantly across chemistries.
+To address this limitation, the Systematic Screening Framework is 
+introduced (Fig. 3). To adhere to prognostic standards and minimize 
+the risk of data leakage, this process is designed as an offline calibra-
+tion step, performed exclusively on available historical reference data 
+(i.e., the training partition) prior to model deployment. The procedure 
+involves three rigorous steps:
+Engineering Applications of Artiϧcial Intelligence 181 (2026) 115420 
+4 
+
+
+=== 第5页 ===
+H. Wang et al.
+Fig. 2. Visualization of the experimental datasets. (a)–(c) Capacity degradation curves (SOH ground truth) for Oxford, CALCE, and NASA datasets. (d)–(f) 
+Constant current charging voltage profiles. (g)–(i) Constant current discharging voltage profiles. These curves illustrate the diverse aging patterns and measurement 
+characteristics across different battery chemistries.
+1. Data Segmentation (Multi-Scale Windows): To capture fine-
+grained ‘‘local fingerprints’’ of degradation that might be av-
+eraged out in a global integral, we systematically segment the 
+voltage profile using sliding windows with varying granularities 
+(e.g., 0.4 V, 0.2 V, and 0.1 V widths).
+• Coarse-grained Windows (e.g., 0.4 V): Designed to cap-
+ture broad phase transition trends and offer robustness 
+against noise.
+• Fine-grained Windows (e.g., 0.1 V): Designed to isolate 
+subtle variations in specific local voltage plateaus highly 
+sensitive to active material loss.
+2. Correlation Analysis (Offline Calibration): For each candidate 
+window defined by [𝑉𝑙𝑜𝑤, 𝑉ℎ𝑖𝑔ℎ], we calculate the integral area se-
+quence. The Pearson Correlation Coefficient (PCC) (Roman et al., 
+2021; Lin et al., 2024) is computed between the feature sequence 
+and the ground-truth SOH using only the calibration/training 
+data: 
+PCC =
+∑(𝑥𝑘−̄𝑥) (𝑦𝑘−̄𝑦)
+√∑(𝑥𝑘−̄𝑥)2 ∑(𝑦𝑘−̄𝑦)2
+(4)
+The window yielding the highest absolute PCC on this calibra-
+tion set is identified as the "Optimal Interval". The detailed PCC 
+comparisons for feature selection across different datasets are 
+presented in Tables 1, 2, and 3. Furthermore, Tables Table 4 
+and 5 benchmark the selected HI against alternative indicators 
+from the literature, demonstrating its superior correlation with 
+capacity degradation.
+3. Feature Selection & Fixation & Deployment: Once the optimal 
+interval is identified, it is frozen as a fixed hyperparameter for 
+the subsequent testing and inference phases. The calibration 
+analysis revealed distinct optimal intervals for different datasets:
+• For the Oxford dataset, the full-range CCCA was identi-
+fied as the optimal fixed input. This suggests a uniform 
+capacity fade mechanism where the global integral yields 
+a favorable signal-to-noise ratio.
+• For the CALCE dataset, the calibration pointed to the par-
+tial segment (3.4–3.8 V CCDA), indicating that aging is 
+locally concentrated in specific phase transitions for this 
+chemistry.
+• For the NASA dataset, the left section of the CCDA curve 
+was selected. This segmentation was based on the first volt-
+age minimum point (as depicted in Fig. 2(i)), identifying 
+the early discharge phase as the effective indicator.
+This process allows the feature extraction rules to be defined
+a priori, simulating a realistic BMS deployment where the op-
+timal observation window is pre-configured based on battery 
+characteristics.
+3.3.3. Novelty and applicability
+The core innovation of this section is the transition from static 
+feature selection to a data-driven hyperparameter search. By treating 
+the feature interval as a learnable hyperparameter derived during the 
+offline calibration phase, our framework facilitates the delivery of 
+highly informative input to the subsequent SL-AgentNet.
+Engineering Applications of Artiϧcial Intelligence 181 (2026) 115420 
+5 
+
+
+=== 第6页 ===
+H. Wang et al.
+Fig. 3. Schematic of the systematic extraction procedures for selecting the optimal Health Indicator (HI) from charge/discharge segments.
+Table 1
+Comparison of PCC values for four candidate features on the Oxford dataset. This granular breakdown confirms 
+the consistency of the screening method across individual cells.
+ Battery series
+Overall CCCA
+CCCA (3.8–4.2 V)
+Overall CCDA
+CCDA (3.8–3.4 V) 
+ Cell1
+0.999903
+0.999536
+0.999924
+0.999499
+ 
+ Cell2
+0.999963
+0.996223
+0.998923
+0.991520
+ 
+ Cell3
+0.999924
+0.999500
+0.999881
+0.999564
+ 
+ Cell4
+0.999973
+0.998354
+0.999872
+0.999496
+ 
+ Cell5
+0.999826
+0.998669
+0.999847
+0.999463
+ 
+ Cell6
+0.999988
+0.996699
+0.999062
+0.998661
+ 
+ Cell7
+0.999986
+0.999126
+0.999908
+0.999575
+ 
+ Cell8
+0.999969
+0.998938
+0.999911
+0.999253
+ 
+ Average
+0.999942
+0.998381
+0.999666
+0.998379
+ 
+Table 2
+Comparison of PCC values for four candidate features on the NASA dataset.
+ NASA series
+Overall CCCA
+CCCA (3.8–4.0 V)
+Overall CCDA
+Left CCDA
+Right CCDA 
+ B0005
+0.995656
+0.995051
+0.983785
+0.999946
+−0.981650  
+ B0006
+0.988015
+0.988795
+0.994266
+0.999802
+−0.990374  
+ B0007
+0.991336
+0.986943
+0.990917
+0.999873
+−0.785222  
+ B0018
+0.971424
+0.979197
+0.993277
+0.999766
+−0.904780  
+ Average
+0.986608
+0.987497
+0.990561
+0.999847
+−0.915507  
+Importantly, this approach enhances online feasibility: once the 
+optimal interval (e.g., a 0.4 V segment) is identified offline, the BMS 
+needs only to sample and integrate voltage within this narrow window 
+during runtime. This effectively reduces data storage and processing 
+requirements compared to full-curve monitoring, thereby balancing 
+high estimation accuracy with edge-deployment constraints.
+4. The proposed SL-AgentNet architecture
+4.1. SL-AgentNet architecture summary
+To address both the challenges of estimation accuracy and com-
+putational efficiency, a lightweight deep learning architecture named 
+SL-AgentNet is proposed. The designation ‘‘SL’’ stems from its core 
+Engineering Applications of Artiϧcial Intelligence 181 (2026) 115420 
+6 
+
+
+=== 第7页 ===
+H. Wang et al.
+Table 3
+Comparison of PCC values for four candidate features on the CALCE dataset.
+ CALCE series
+Overall CCCA
+CCCA (3.8–4.0 V)
+Overall CCDA
+CCDA (3.8–3.4 V) 
+ CS2_35
+0.985386
+0.989713
+0.990410
+0.992155
+ 
+ CS2_36
+0.975222
+0.987095
+0.990941
+0.994345
+ 
+ CS2_37
+0.979150
+0.990299
+0.991166
+0.995010
+ 
+ CS2_38
+0.984004
+0.991994
+0.991102
+0.987430
+ 
+ Average
+0.980941
+0.989775
+0.990905
+0.992235
+ 
+Table 4
+Comparison of the selected HI with other HIs from literature based on PCC values (Oxford dataset).
+ Battery
+Selected HI
+CCCT
+(Bai et al., 2023)
+CCCQ
+(Wu et al., 2023)
+CCDQ
+(Bai et al., 2023)
+IC Peak
+(Feng and Zhang, 2024)
+Sample entropy
+(Bai et al., 2023)
+Discharge slope
+(Feng and Zhang, 2024)
+ 
+ Cell1
+0.99990
+0.9999
+0.99947
+0.9998
+0.9444
+−0.9853
+0.9999
+ 
+ Cell2
+0.99996
+0.9999
+0.98677
+0.9999
+–
+−0.9839
+–
+ 
+ Cell3
+0.99992
+0.9999
+0.99948
+0.9989
+0.9375
+−0.9876
+0.9998
+ 
+ Cell4
+0.99997
+0.9104
+0.99981
+0.9999
+–
+−0.9885
+–
+ 
+ Cell5
+0.99983
+0.9999
+0.99960
+0.9999
+–
+−0.9133
+–
+ 
+ Cell6
+0.99999
+0.9999
+0.99961
+0.9991
+–
+−0.9848
+–
+ 
+ Cell7
+0.99999
+0.9999
+0.99973
+0.9999
+0.9296
+−0.9896
+0.9998
+ 
+ Cell8
+0.99997
+0.9999
+0.99970
+0.9999
+0.9378
+−0.9908
+0.9998
+ 
+CCCT = Constant Current Charge Time.
+CCCQ = Constant Current Charge Quantity.
+CCDQ = Constant Current Discharge Quantity.
+Table 5
+Comparison of the selected HI with other HIs from literature based on PCC values (NASA and CALCE datasets).
+ Battery
+Selected HI
+CCCT
+(Tan and Zhao, 2020)
+CCCQ
+(Wu et al., 2023)
+Max projection distance
+(Jin et al., 2023)
+IC Peak
+(Feng and Zhang, 2024)
+Relax time
+(Huang et al., 2023)
+ 
+ B0005
+0.99995
+0.9703
+0.94268
+0.95
+0.9910
+−0.8941
+ 
+ B0006
+0.99980
+0.9366
+0.94518
+0.97
+0.9800
+−0.9373
+ 
+ B0007
+0.99987
+0.9745
+0.92037
+0.99
+0.9251
+−0.9049
+ 
+ B0018
+0.99977
+–
+0.81248
+–
+–
+–
+ 
+ CS2_35
+0.99216
+0.9799
+0.90290
+0.95
+–
+−0.9843
+ 
+ CS2_36
+0.99435
+0.9827
+0.93370
+0.99
+–
+−0.9829
+ 
+ CS2_37
+0.99501
+0.9789
+0.93920
+0.98
+–
+–
+ 
+ CS2_38
+0.98743
+0.9748
+–
+0.96
+–
+–
+ 
+CCCT = Constant Current Charge Time.
+CCCQ = Constant Current Charge Quantity.
+CCDQ = Constant Current Discharge Quantity.
+design philosophy of integrating Small-kernel and Large-kernel depth-
+wise separable convolutions to capture multi-scale features efficiently. 
+As illustrated in Fig. 4, the model departs from traditional parallel 
+multi-branch designs, instead adopting a cascaded feature refinement 
+strategy. This streamlined data flow progressively processes the input 
+through global aggregation, local refinement, and non-linear mapping 
+stages.
+From a mathematical perspective, let the input tensor be denoted by 
+𝐗∈R𝐵×𝑁×𝑑, where 𝑁 is the sequence length and 𝑑 is the feature em-
+bedding dimension. The output of the SL-AgentNet block is computed 
+through the following sequential operations:
+Step 1: Global temporal aggregation. The input 𝐗 is first processed by the 
+AFF module to capture long-range dependencies. A residual connection 
+and a learnable scaling factor 𝐖𝑎 are employed to facilitate the gradient 
+flow: 
+𝐗′ = 𝐖𝑎⋅AFF(LN(𝐗)) + 𝐗
+(5)
+Step 2: Local feature refinement. To capture local textural patterns, the 
+intermediate feature 𝐗′ is passed through the L-DSConv module. As 
+convolutions operate on the feature dimension, we define a permu-
+tation operator (⋅) to swap the sequence and feature dimensions, 
+mapping R𝑁×𝑑 to R𝑑×𝑁. The refined feature 𝐗′′ is computed as: 
+𝐗′′ = −1(L-DSConv((LN(𝐗′)))) + 𝐗′
+(6)
+Step 3: Non-linear mapping. Finally, the features are processed by the 
+PIAF-MLP layer. To maintain the gradient signal from the attention 
+stage, the residual connection aggregates the output of the first stage 
+(𝐗′) rather than the immediate previous stage: 
+𝐘= PIAF-MLP(LN(𝐗′′)) + 𝐗′
+(7)
+where LN denotes Layer Normalization and −1 represents the inverse 
+permutation. This cascaded design effectively decouples global and 
+local feature extraction while maintaining computational efficiency.
+4.2. Multi-scale depthwise separable convolutions
+Standard convolutions often suffer from parameter redundancy and 
+may be prone to overfitting on small-sample battery datasets. To mit-
+igate this, two specialized Depthwise Separable Convolution (DSConv) 
+modules are designed. The kernel scales (𝑘= 5, 𝑘= 31) were de-
+termined empirically to capture multi-scale degradation features, as 
+visualized in Fig. 5.
+4.2.1. S-DSConv: Dual-role local enhancement
+The small-kernel S-DSConv employs a compact kernel size of 1 × 5. 
+It is strategically embedded within the FLFA module to fulfill a dual 
+purpose:
+• Input Enrichment: It captures high-frequency local variations, such 
+as instantaneous voltage drops, to enrich the Key (𝐊) and Value 
+Engineering Applications of Artiϧcial Intelligence 181 (2026) 115420 
+7 
+
+
+=== 第8页 ===
+H. Wang et al.
+Fig. 4. Framework of SL-AgentNet. The architecture has been decomposed into modular views for clarity. (a) AFF module, (b) SL-AgentNet core structure with 
+explicit dimension labels (𝑁× 𝑑) to illustrate the data flow.
+(𝐕) matrices. This locality bias helps mitigate feature homog-
+enization by enabling the agent to aggregate semantically rich 
+local patterns rather than over-smoothed noise.
+• Rank Restoration via Bypass Mechanism: Importantly, the S-DSConv 
+output also acts as a full-rank local branch that mitigates the 
+attention bottleneck, as mathematically formulated in Eq. (11). 
+While the single-agent attention (𝑛= 1) inherently compresses 
+global context into a rank-1 tensor, this parallel convolutional 
+branch preserves the fine-grained, high-rank structural details. 
+The fusion of these two branches addresses the low-rank bot-
+tleneck, enabling the model to simultaneously capture dominant 
+global trends and subtle local fluctuations.
+4.2.2. L-DSConv: Post-fusion global refinement
+The large-kernel L-DSConv utilizes a wide kernel size of 1 × 31. 
+It functions as a standalone post-processing module following the AFF 
+feature fusion stage.
+• Function: With its large receptive field, this module is designed to 
+capture long-term textural patterns and smooth out the degrada-
+tion trend over extended cycles.
+• Benefit: This module models the ‘‘aging inertia’’ of the battery. As 
+demonstrated in the ablation study presented in Section 5.5, the 
+L-DSConv plays an important role in filtering out transient sensor 
+noise and promoting the alignment of the final SOH prediction 
+with the dominant physical degradation trajectory rather than 
+overfitting to local outliers.
+4.3. The proposed AFF module
+To circumvent the limitations of single-view feature extraction and 
+capture diverse degradation patterns, the Attention Feature Fusion 
+(AFF) module is proposed. Functioning as the core feature extractor, 
+the AFF employs a tri-branch parallel architecture (Fig. 4a) to integrate 
+orthogonal representations.
+Defining the input tensor as 𝐗∈R𝑁×𝑑, the final output 𝐘AFF is 
+derived via the element-wise summation of three distinct mechanisms: 
+𝐘AFF = AAT-1d(𝐗) + FLFA(𝐗) + FDFA(𝐗)
+(8)
+where FLFA(⋅) enhances features with local convolutional biases and 
+FDFA(⋅) filters features based on amplitude significance. Of particu-
+lar importance is the retention of the Agent Attention–1d (AAT-1d) 
+branch as a linear fidelity shortcut. While the FLFA provides enhanced 
+local context via the S-DSConv, convolutional operations impose an 
+inductive bias that could distort pure long-range linear dependencies. 
+Consequently, the AAT-1d branch preserves global context, promot-
+ing the retention of a stable linear reference amidst the non-linear 
+transformations of other branches.
+4.3.1. Preliminaries and the agent attention–1d (AAT-1d) branch
+Standard softmax attention entails quadratic complexity 𝑂(𝑁2), 
+rendering it computationally challenging for long sequences. Linear 
+attention (Han et al., 2023) addresses this limitation by utilizing a 
+kernel feature map 𝜙(⋅), such as Rectified Linear Unit (ReLU). However, 
+the direct computation of 𝜙(𝐊)⊤𝐕 results in a 𝑑× 𝑑 matrix, incurring 
+𝑂(𝑁𝑑2) complexity.
+To achieve linear complexity 𝑂(𝑁𝑑) while maintaining global re-
+ceptivity, the AAT-1d branch is proposed, a specialized variant of Agent 
+Attention (Han et al., 2024) with the agent count fixed to 𝑛= 1. The 
+computation is decomposed into two numerically stable steps:
+• Step 1: Global Aggregation (Complexity 𝑂(𝑁𝑑)): The single agent 
+𝐀
+∈
+R1×𝑑 aggregates global information from 𝐊 and 𝐕. To 
+improve numerical stability against the sparsity of ReLU, given 
+that 𝜙(⋅) may output zeros, a stabilization term 𝜖 is introduced in 
+the normalization: 
+𝐕𝑎𝑔𝑒𝑛𝑡=
+(𝜙(𝐀)𝜙(𝐊)⊤) 𝐕
+𝜙(𝐀) ∑
+𝑘𝜙(𝐊)⊤
+𝑘+ 𝜖
+(9)
+where the computation order (𝜙(𝐀)𝜙(𝐊)⊤) is structured to pro-
+duce a 1 × 𝑁 vector, maintaining linear cost with respect to 
+𝑑.
+Engineering Applications of Artiϧcial Intelligence 181 (2026) 115420 
+8 
+
+
+=== 第9页 ===
+H. Wang et al.
+Fig. 5. Structural comparison of convolutional modules. (a) Standard DSConv. (b) The proposed S-DSConv (Kernel = 5) for local feature enhancement. (c) The 
+proposed L-DSConv (Kernel = 31) for global trend refinement.
+• Step 2: Gated Broadcasting (Complexity 𝑂(𝑁𝑑)): The aggregated 
+context 𝐕𝑎𝑔𝑒𝑛𝑡 is broadcast back to the queries 𝐐. For the single-
+agent case (𝑛= 1), standard normalization could result in nor-
+malization collapse, a state where the query-specific term 𝜙(𝐐𝑖)
+is divided out, reducing the output to a static global vector for all 
+time steps. To mitigate this loss of query selectivity, normalization 
+is replaced with a scaling factor: 
+AAT-1d(𝐗)𝑖=
+1
+√
+𝑑
+(𝜙(𝐐𝑖)𝜙(𝐀)⊤) ⋅𝐕𝑎𝑔𝑒𝑛𝑡
+(10)
+This preserves the attention score 𝜙(𝐐𝑖)𝜙(𝐀)⊤ as a dynamic gating 
+factor, allowing each query to selectively determine the intensity 
+of the global context it absorbs.
+4.3.2. The proposed FLFA module
+While the standard AAT branch captures the global baseline, it 
+treats features as permutation-invariant tokens, potentially neglecting 
+local sequential continuity, such as transient voltage drops. To address 
+this deficiency and mitigate the low-rank bottleneck inherent in single-
+agent attention, the Fast Local–Global Fusion Attention (FLFA) module 
+is proposed.
+As depicted in Fig. 6(c), the FLFA utilizes a parallel dual-branch 
+architecture to decouple global trend aggregation from local feature 
+preservation.
+Dual-role local enhancement (S-DSConv). The S-DSConv module (Sec-
+tion 4.2) is embedded into the attention mechanism to fulfill a dual 
+purpose:
+1. Input Enrichment: It processes the input 𝐗∈R𝑁×𝑑 to generate 
+locally enhanced keys ̃𝐊 and values ̃𝐕. This action injects in-
+ductive bias into the attention mechanism, mitigating feature 
+homogenization.
+2. Rank Restoration (Residual Bypass): Importantly, the S-DSConv 
+output 𝐗𝑙𝑜𝑐𝑎𝑙 also serves as a full-rank residual branch. This 
+preserves fine-grained local details that would otherwise be 
+compressed by the low-rank global attention.
+Mathematically, the projections follow an asymmetric design. The 
+query matrix 𝐐 is obtained via a standard linear projection to pre-
+serve the semantic intent of the input, while the keys and values are 
+structurally enhanced by convolution: 
+𝐐= 𝐗𝐖𝑄,
+𝐗𝑙𝑜𝑐𝑎𝑙= S-DSConv(𝐗)
+(11)
+̃𝐊= 𝐗𝑙𝑜𝑐𝑎𝑙,
+̃𝐕= 𝐗𝑙𝑜𝑐𝑎𝑙
+(12)
+where 𝐖𝑄∈R𝑑×𝑑 is the query projection matrix.
+Global branch (Single-agent linear attention). To capture dominant
+degradation trends with minimal cost, a single learnable agent 𝐀∈
+R1×𝑑 (𝑛= 1) is employed. The computation follows the aggregation-
+broadcasting paradigm:
+• Global Aggregation: The agent 𝐀 aggregates context from the 
+enhanced ̃𝐊 and ̃𝐕. A normalized linear formulation is utilized:
+𝐕𝑎𝑔𝑒𝑛𝑡=
+(𝜙(𝐀)𝜙( ̃𝐊)⊤) ̃𝐕
+𝜙(𝐀) ∑
+𝑘𝜙( ̃𝐊)⊤
+𝑘+ 𝜖
+(13)
+where 𝜙(⋅) denotes the ReLU kernel. The term 𝜙(𝐀)𝜙( ̃𝐊)⊤ com-
+putes a 1 × 𝑁 global attention map.
+• Gated Broadcasting: The global context 𝐕𝑎𝑔𝑒𝑛𝑡 is then broadcast 
+back to the queries. Similar to the AAT-1d branch, a scaling factor 
+is used to prevent normalization collapse: 
+𝐎𝑔𝑙𝑜𝑏𝑎𝑙=
+1
+√
+𝑑
+(𝜙(𝐐)𝜙(𝐀)⊤) ⋅𝐕𝑎𝑔𝑒𝑛𝑡
+(14)
+This results in a rank-1 global context matrix 𝐎𝑔𝑙𝑜𝑏𝑎𝑙∈R𝑁×𝑑.
+Feature fusion. Finally, to restore representational richness, the rank-1 
+global context is fused with the full-rank local features: 
+𝐘FLFA = 𝐗𝑙𝑜𝑐𝑎𝑙+ 𝐎𝑔𝑙𝑜𝑏𝑎𝑙
+(15)
+This additive fusion integrates the aging inertia (Global Trend) with 
+instantaneous fluctuations (Local Detail), promoting robust estimation 
+across varying time scales while maintaining 𝑂(𝑁𝑑) complexity.
+4.3.3. The proposed FDFA and PIAF architectures
+The Fast Diversity Feature Fusion Attention (FDFA) and Parallel 
+Informed Activation Function (PIAF) architectures were devised to mit-
+igate potential feature collapse and enhance nonlinear representation 
+capabilities.
+FDFA: Significance filtering via orthogonal perspective. The FDFA module, 
+illustrated in Fig. 7(b), operates as the third, specialized auxiliary 
+branch within the AFF framework (𝐘AFF = AAT-1d(𝐗) + FLFA(𝐗) +
+FDFA(𝐗)). Unlike the AAT-1d and FLFA, which primarily focus on 
+temporal structure, the FDFA branch targets the amplitude domain, 
+acting as a dedicated ‘‘significance filter’’. Specifically, it imposes a 
+non-linear pre-activation step: 
+𝐗𝑑𝑖𝑣= ReLU(𝐗)
+(16)
+This ReLU operation deliberately sparsifies the input, suppressing neg-
+ative noise to isolate high-activation regions. These rectified features 
+Engineering Applications of Artiϧcial Intelligence 181 (2026) 115420 
+9 
+
+
+=== 第10页 ===
+H. Wang et al.
+Fig. 6. Structural representation of different models: (a) Softmax Attention (𝑂(𝑁2)), (b) Agent Attention (𝑂(𝑁)), and (c) the proposed Fast Local–Global Fusion 
+Attention (FLFA), which integrates S-DSConv for local enhancement and rank restoration.
+Fig. 7. Schematic comparison between (a) a traditional Multi-Head Self-Attention (MSA) module equipped with Aug-Shortcuts and (b) the proposed Fast Diversity 
+Fusion Attention (FDFA).
+subsequently traverse a standard Agent Attention block, preserving 
+linear complexity 𝑂(𝑁𝑑): 
+𝐘FDFA = AAT-1d(𝐗𝑑𝑖𝑣)
+(17)
+By fusing this output, the model assimilates both the raw global con-
+text and salient high-energy patterns from an orthogonal perspective. 
+This strategy facilitates effective fusion by providing a complementary, 
+sparsity-controlled feature subspace to the final AFF output.
+PIAF: Parallel heterogeneous activation fusion. The PIAF module, de-
+picted in Fig. 8(b), serves as the final non-linear mapping stage, de-
+signed to address complex degradation patterns that homogeneous 
+activation functions struggle with. In contrast to architectures relying 
+on single activation types, PIAF leverages a ‘‘Mixture of Activations’’ 
+paradigm to engineer a heterogeneous feature space by combining 
+three mathematically distinct and physically motivated branches in 
+parallel:
+• Branch 1 (Sparsity via ReLU): This branch isolates sparse, high-
+energy features, effectively capturing dominant degradation
+events and introducing important non-linearity.
+• Branch 2 (Bipolarity via Tanh): This branch offers a bounded non-
+linearity within the range (−1, 1). It is essential for modeling 
+saturation dynamics, such as the voltage plateaus and capacity 
+regeneration limits frequently observed in electrochemical data, 
+exemplified by the NASA dataset.
+• Branch 3 (Linearity via Identity): This branch maintains the in-
+trinsic linear geometry of input features. It facilitates linear 
+fidelity and promotes robust gradient flow, operating as a shortcut 
+connection consistent with the lightweight philosophy (He et al., 
+2015a).
+Formalizing this structure, the branch operations are defined as: 
+𝐇𝑠𝑝𝑎𝑟𝑠𝑒= ReLU(𝐗𝐖1),
+𝐇𝑏𝑖𝑝𝑜𝑙𝑎𝑟= Tanh(𝐗𝐖2),
+𝐇𝑙𝑖𝑛𝑒𝑎𝑟= 𝐗𝐖3
+(18)
+The final output aggregates these diverse representations: 
+𝐘PIAF = 𝐇𝑠𝑝𝑎𝑟𝑠𝑒+ 𝐇𝑏𝑖𝑝𝑜𝑙𝑎𝑟+ 𝐇𝑙𝑖𝑛𝑒𝑎𝑟
+(19)
+Engineering Applications of Artiϧcial Intelligence 181 (2026) 115420 
+10 
+
+
+=== 第11页 ===
+H. Wang et al.
+Fig. 8. Comparison of (a) a traditional Series Informed Activation Function and (b) the proposed Parallel Informed Activation Function (PIAF).
+where 𝐖1, 𝐖2, 𝐖3 ∈R𝑑×𝑑 denote learnable weight matrices. By syn-
+ergizing these complementary mathematical properties, PIAF yields a 
+feature richness enhanced compared to that of homogeneous activation 
+layers.
+5. Results and discussion
+This section presents a systematic evaluation of the proposed SL-
+AgentNet framework, benchmarked against four baseline models, in-
+cluding the Transformer, LSTM, CNN-Transformer, and CNN-LSTM, 
+across three authoritative battery datasets. To ensure experimental 
+rigor and simulate a realistic ‘‘early prediction’’ scenario, we adhered to 
+a strict protocol where models were trained using only the initial 30% 
+of cycle data. Consequently, the remaining 70% served as the unseen 
+test horizon for prognostic evaluation.
+In addition to reporting estimation accuracy, this section elucidates 
+the mechanistic origins of performance gains, verifies model robustness 
+through rigorous ablation and sensitivity analyses, quantifies prediction 
+uncertainty, and addresses the limitations of the current approach. This 
+holistic assessment validates the practical viability of the framework for 
+resource-constrained vehicular instrumentation.
+5.1. Evaluation metrics
+To comprehensively assess the performance of the proposed frame-
+work, we employed a multi-dimensional evaluation protocol compris-
+ing both deterministic error metrics and probabilistic uncertainty met-
+rics.
+5.1.1. Deterministic accuracy metrics
+Four standard metrics were utilized to gauge estimation precision 
+(Chicco et al., 2021): Coefficient of Determination (𝑅2), Mean Abso-
+lute Error (MAE), Mean Absolute Percentage Error (MAPE), and Root 
+Mean Square Error (RMSE). While MAE and MAPE reflect general 
+accuracy, RMSE is particularly critical for BMS safety, as it penalizes 
+larger prediction errors that could lead to hazardous overcharging or 
+over-discharging. These metrics are defined as:
+MAE = 1
+𝑛
+𝑛
+∑
+𝑖=1
+|𝑦𝑖−̂𝑦𝑖|,
+RMSE =
+√
+√
+√
+√1
+𝑛
+𝑛
+∑
+𝑖=1
+(𝑦𝑖−̂𝑦𝑖)2
+(20)
+MAPE = 1
+𝑛
+𝑛
+∑
+𝑖=1
+||||
+𝑦𝑖−̂𝑦𝑖
+𝑦𝑖
+||||
+,
+𝑅2 = 1 −
+∑𝑛
+𝑖=1(𝑦𝑖−̂𝑦𝑖)2
+∑𝑛
+𝑖=1(𝑦𝑖−̄𝑦)2
+(21)
+where 𝑦𝑖 and ̂𝑦𝑖 represent the ground-truth and predicted SOH values, 
+respectively; ̄𝑦 denotes the mean of observed values, and 𝑛 is the sample 
+size.
+5.1.2. Uncertainty quantification metrics
+To evaluate the reliability of the prediction intervals (PIs), we 
+adopted three probabilistic metrics based on established calibration 
+frameworks (Kuleshov et al., 2018):
+• Prediction Interval Coverage Probability (PICP): This metric mea-
+sures the proportion of ground-truth values falling within the 
+predicted intervals [𝐿𝑖, 𝑈𝑖] at a nominal confidence level: 
+PICP = 1
+𝑛
+𝑛
+∑
+𝑖=1
+I{𝑦𝑖∈[𝐿𝑖, 𝑈𝑖]}
+(22)
+where I{⋅} is the indicator function.
+• Mean Prediction Interval Width (MPIW): This metric quantifies the 
+sharpness, or efficiency, of the uncertainty bounds: 
+MPIW = 1
+𝑛
+𝑛
+∑
+𝑖=1
+(𝑈𝑖−𝐿𝑖)
+(23)
+• Average Calibration Error (ACE): To summarize global calibration 
+quality, we report the ACE computed as the average absolute 
+deviation across a discretized grid  of nominal confidence levels 
+(e.g., = {0.5, 0.8, 0.9, 0.95}) (Kuleshov et al., 2018): 
+ACE =
+1
+||
+∑
+𝑐∈
+|PICP(𝑐) −𝑐|
+(24)
+This metric quantifies the average misalignment between the 
+expected coverage 𝑐 and the observed coverage PICP(𝑐), where 
+a value closer to 0 indicates superior calibration.
+5.2. Model robustness and hyperparameter analysis
+To address theoretical concerns regarding training stability and val-
+idate the robustness of our lightweight design choices, the initialization 
+strategy, convergence dynamics, and hyperparameter sensitivity were 
+analyzed.
+5.2.1. Initialization strategy and convergence analysis
+Unbounded kernel functions, such as ReLU, often pose challenges 
+to the training stability of linear attention mechanisms. To promote 
+robust convergence for SL-AgentNet, its initialization strategy and con-
+vergence behavior were analyzed using quantitative metrics derived 
+from the training logs of representative battery cells (NASA B0005 and 
+CALCE CS2_35).
+Initialization strategy. By fixing the number of agent tokens to 𝑛= 1, 
+the theoretical lower bound linear complexity 𝑂(𝑁𝑑) was achieved. 
+In contrast to standard Agent Attention implementations that derive 
+agents via dynamic pooling, the single agent token 𝐀∈R1×𝑑 was 
+defined as a static learnable anchor. While this design provides a 
+Engineering Applications of Artiϧcial Intelligence 181 (2026) 115420 
+11 
+
+
+=== 第12页 ===
+H. Wang et al.
+ 
+(a) NASA B0005
+  
+(b) CALCE CS2_35
+ 
+Fig. 9. Comparison of training loss convergence dynamics. (a) On NASA B0005, SL-AgentNet achieves rapid convergence, crossing the 10% relative loss threshold 
+at epoch 4, compared to epoch 58 for the Transformer. (b) On CALCE CS2_35, SL-AgentNet maintains a significantly lower and smoother loss profile in the late 
+training phase, validating the stabilizing effect of the proposed initialization and filtering mechanisms.
+consistent global reference, it introduces a potential stability risk: if 
+initialized with large negative magnitudes, 𝐀 may cause specific feature 
+dimensions to become permanently deactivated by the ReLU kernel, a 
+phenomenon known as the dead neuron problem (He et al., 2015b). 
+To mitigate this risk, a Truncated Normal Distribution strategy was 
+adopted for 𝐀: 
+𝐀∼𝑡𝑟𝑢𝑛𝑐(𝜇= 0, 𝜎= 0.02, 𝑎= −2𝜎, 𝑏= 2𝜎)
+(25)
+𝜇= 0 was selected rather than a positive bias to maintain variance 
+consistency with standard initialization schemes such as Xavier (Glorot 
+and Bengio, 2010), thereby avoiding distributional shifts that could 
+destabilize downstream layers. The truncation aims to mitigate extreme 
+negative outliers; by confining initial values near zero, the aim was to 
+maintain even negative entries within a recoverable range, allowing 
+gradients to reactivate them during early training phases.
+Convergence properties. The training dynamics of SL-AgentNet were 
+benchmarked against the standard Transformer baseline. To quantify 
+the convergence speed, a relative convergence threshold was defined, 
+marking the epoch where the training loss first drops below 10% of the 
+initial mean loss. As illustrated in Fig. 9, quantitative analysis reveals 
+two distinct advantages:
+• Rapid Optimization (NASA B0005): SL-AgentNet demonstrates im-
+proved optimization efficiency on the NASA B0005 cell. Under 
+the defined 10% threshold criterion, the model enters the low-
+error regime within just 4 epochs (threshold ≈0.010), whereas the 
+Transformer requires 58 epochs (threshold ≈0.018). Furthermore, 
+the Cumulative Training Loss (CTL), calculated as the integral of 
+the loss curve over time, is approximately 2.8 times lower for SL-
+AgentNet than for the Transformer (1.83 vs. 5.14), indicating a 
+much more direct optimization trajectory.
+• Stability and Smoothness (CALCE CS2_35): In the asymptotic con-
+vergence phase (the final 20 epochs) on the CALCE CS2_35 cell, 
+SL-AgentNet exhibits enhanced stability. The standard deviation 
+of the loss is reduced by an order of magnitude compared to 
+the baseline (9.4 × 10−4 vs. 8.1 × 10−3). This stability may be 
+attributed to the S-DSConv module embedded in the FLFA, which 
+acts as a local smoothing mechanism. This structural prior im-
+plicitly suppresses high-frequency noise in the gradients, reducing 
+the oscillation often observed in unnormalized linear attention 
+architectures.
+5.2.2. Hyperparameter sensitivity and selection methodology
+To optimize the model architecture while adhering to the ‘‘Early 
+Prediction’’ constraint, a historical reference strategy was adopted. This 
+Table 6
+Hyperparameter grid search space.
+ Hyperparameter
+Search space/Values 
+ Learning rate
+[0.001, 0.01]
+ 
+ Network depth (𝐿)
+[1, 2, 4, 8]
+ 
+ Dense dimension
+[16, 32, 64, 128]  
+ Embedding dimension (𝑑)
+[16, 32, 64, 128]  
+approach simulates a realistic deployment scenario where hyperparam-
+eters are calibrated offline using historical run-to-failure data prior to 
+deployment on active vehicles.
+Calibration protocol. For each dataset, the first battery (e.g., NASA 
+B0005) was designated as the historical reference cell. The hyperparam-
+eter selection process followed a protocol to minimize methodological 
+data leakage:
+1. Training Split: The model was trained using only the first 30% of 
+the reference cell’s data.
+2. Validation Split: The performance of distinct hyperparameter con-
+figurations was evaluated on the remaining 70% of the reference 
+cell. This tests the model’s ability to extrapolate from early-life 
+patterns to end-of-life degradation.
+3. Fixed Deployment: The optimal configuration identified from this 
+historical reference was subsequently frozen and applied to all 
+other test batteries (e.g., B0006, B0007, B0018) without further 
+tuning.
+The grid search covered key structural parameters as detailed in 
+Table 6. Fig. 10 visualizes the sensitivity of 𝑅2 on the NASA B0005 
+reference cell during the validation phase.
+Sensitivity to the embedding dimension (𝑑) and network depth (𝐿) 
+was specifically analyzed. The analysis reveals consistent trends:
+• Optimal Configuration (Fig. 10): The configuration (𝑑= 16, 𝐿= 1) 
+achieved the highest validation accuracy (𝑅2 = 0.9866). This 
+indicates that a compact feature space is sufficient to capture the 
+degradation dynamics.
+• Validity of Shallow Attention (𝐿= 1): Increasing the attention 
+depth to 𝐿= 4 resulted in a performance drop (𝑅2 ≈0.94), a result 
+consistent with the principle of parsimony. Although 𝐿= 1 may 
+appear shallow, the SL-AgentNet is not representationally limited. 
+The integrated S-DSConv module provides local feature extrac-
+tion, and the multi-branch PIAF module contributes significant 
+non-linear depth. Consequently, a single global attention block is 
+Engineering Applications of Artiϧcial Intelligence 181 (2026) 115420 
+12 
+
+
+=== 第13页 ===
+H. Wang et al.
+Fig. 10. Hyperparameter sensitivity analysis (𝑅2) performed on the NASA B0005 historical reference cell. The heatmap shows validation performance on the 
+unseen latter 70% of the cycle life (model trained on first 30%). Darker blue indicates higher accuracy. The selected optimal configuration is (𝑑= 16, 𝐿= 1).
+sufficient to aggregate these rich features without the overfitting 
+risks associated with deeper stacks on sparse battery data.
+Based on these validation results on the historical reference, the 
+robust configuration of 𝑑= 16, 𝐿= 1 was selected for all subsequent 
+testing.
+5.3. Comparison on Oxford dataset: Handling abrupt degradation
+Fig. 11 and Table 7 present the estimation results on the Oxford 
+dataset. While all models capture the general linear decay trend, a gran-
+ular analysis of the degradation trajectories reveals critical differences 
+in dynamic response characteristics.
+5.3.1. Responsiveness to instantaneous drops (Cells 2 & 6)
+A challenge inherent to the Oxford dataset is the presence of abrupt 
+SOH drops or local knee-points, which are particularly visible in Cell 2 
+and Cell 6.
+• Baseline Limitations (Hysteresis Effect): As evidenced by the mag-
+nified regions of Fig. 11, sequential models such as the LSTM 
+and CNN-LSTM often suffer from a pronounced hysteresis effect, 
+or phase lag. Constrained by recurrent memory inertia, these 
+architectures may struggle to synchronize with rapid downward 
+transitions. This results in a negative time lag and a consistent 
+underestimation of the instantaneous degradation magnitude.
+• SL-AgentNet Advantage: In contrast, SL-AgentNet exhibits
+improved temporal alignment, closely tracking these abrupt drops 
+with minimal lag. Mechanistically, this responsiveness is driven 
+by the S-DSConv module embedded within the FLFA block. By ex-
+ecuting convolution operations prior to attention aggregation, the 
+S-DSConv acts as a high-frequency feature extractor. This com-
+ponent remains highly sensitive to immediate gradient changes, 
+allowing the model to adapt rapidly to local structural shifts 
+without the memory inertia typical of RNNs.
+5.3.2. Precision in linear decay (Cells 1, 3, 7, & 8)
+For cells exhibiting relatively smooth linear decay, such as Cells 1, 3, 
+7, and 8, the primary challenge involves minimizing steady-state error 
+and jitter caused by measurement noise. SL-AgentNet achieves strong 
+alignment with the ground truth, yielding 𝑅2 values exceeding 0.998; 
+for instance, Cell 3 achieves 0.9990. Here, the post-fusion L-DSConv 
+module plays an important role. Its large receptive field smooths out 
+sensor noise while preserving the dominant aging trend. Consequently, 
+SL-AgentNet achieves a lower average MAE of 0.0029 and an RMSE 
+of 0.0041, representing a 60.8% reduction in MAE compared to the 
+Transformer baseline (0.0074). This demonstrates its capability to bal-
+ance dynamic sensitivity via the S-DSConv with static stability via the 
+L-DSConv.
+5.4. Generalization analysis: Capacity regeneration and non-linearity
+The NASA and CALCE datasets present more complex aging dy-
+namics, including significant capacity regeneration and accelerated 
+non-linear tails. The robustness of SL-AgentNet is analyzed as follows 
+(refer to Table 8 and Fig. 12):
+Capturing capacity regeneration (NASA case). The NASA batteries, ex-
+emplified by B0005, are characterized by frequent capacity regen-
+eration phenomena that appear as local upward spikes in the SOH 
+curve.
+• Observation: Standard Transformers often overreact to these local 
+variations or treat them as noise due to a lack of structural regu-
+larization. In contrast, SL-AgentNet captures both the amplitude 
+and timing of these regeneration peaks, achieving a low RMSE of 
+0.0072 on B0005.
+• Mechanism: This fine-grained capture capability is attributed to 
+the FDFA module. By introducing a non-linear pre-activation 
+(ReLU) branch, the FDFA acts as a significance filter that high-
+lights high-energy local changes, such as regeneration spikes, 
+Engineering Applications of Artiϧcial Intelligence 181 (2026) 115420 
+13 
+
+
+=== 第14页 ===
+H. Wang et al.
+Fig. 11. The experimental results of different models on the Oxford dataset.
+against the background of gradual decay. This enables the model 
+to distinguish meaningful physical recovery from random mea-
+surement noise.
+Tracking accelerated aging trends (CALCE case). The CALCE batteries, 
+such as CS2_38, exhibit a rapid ‘‘diving’’ behavior or accelerated aging 
+in the late life cycle.
+• Observation: While the response of SL-AgentNet to minute instan-
+taneous drops in this dataset is moderate compared to the NASA 
+case, its overall fitting precision regarding the accelerated decay 
+trajectory is significantly better than the baselines. For instance, 
+on CS2_38, SL-AgentNet achieves an RMSE of 0.0249, outperform-
+ing both the Transformer (0.0344) and LSTM (0.0331).
+• Mechanism: This robustness is attributed to the Global Agent 
+Anchor. Unlike standard attention mechanisms which compute 
+pairwise 𝑁× 𝑁 dependencies and often dilute the trend with 
+local noise, our FLFA module aggregates information into a single 
+static agent. This agent learns the global degradation prototype, 
+prioritizing the dominant accelerated aging trend over transient 
+fluctuations. This contributes to the model maintaining a tight 
+global fit even during highly non-linear late-life stages.
+In summary, SL-AgentNet achieves an average RMSE of 0.0169 
+across the combined datasets, outperforming the Transformer (0.0402) 
+and LSTM (0.0260). This demonstrates that our ‘‘Local–Global’’ archi-
+tectural design generalizes effectively across different battery
+chemistries and degradation modes.
+5.5. Ablation study and contribution decoupling
+To evaluate the contributions of the proposed framework and dis-
+entangle the sources of performance gains, a systematic ablation study 
+Engineering Applications of Artiϧcial Intelligence 181 (2026) 115420 
+14 
+
+
+=== 第15页 ===
+H. Wang et al.
+Fig. 12. (a) The validation results of five models on CS2_35 and B0005. (b) The test results using five models trained on CS2_35. (c) The test results using five 
+models trained on B0005.
+was conducted. This analysis is structured into three tiers: a macro-
+level decoupling of Health Indicators (HIs) versus model architec-
+ture, a micro-level analysis of specific component effectiveness, and an 
+interaction analysis of the attention mechanisms.
+5.5.1. Macro-ablation: Decoupling HIs and model architecture
+A pivotal research inquiry concerns the attribution of performance 
+gains: do they arise from the proposed Systematic HIs (CCCA/CCDA) 
+or the specialized SL-AgentNet architecture? To decouple these con-
+tributions and position our work within the landscape of state-of-the-
+art methods, our approach was benchmarked against recent results 
+reported in the literature on identical datasets.
+Experimental Constraint (The ‘‘Early Prediction’’ Challenge): Impor-
+tantly, to demonstrate data efficiency, an ‘‘Early Prediction’’ protocol 
+was adopted where our model was trained using only the first 30% 
+of cycle data. This stands in contrast to benchmark methods, which 
+typically utilize 50%–70% of lifecycle data, thereby possessing an 
+informational advantage.
+As presented in Table 9, the comparison reveals two key insights:
+1. Contribution of Systematic HIs (High Information Density): Stan-
+dard LSTM models employing traditional manual/IC features 
+and trained on 50% data achieve an RMSE of 0.0183, as re-
+ported by Yan et al. (2025). Importantly, when employing our 
+Engineering Applications of Artiϧcial Intelligence 181 (2026) 115420 
+15 
+
+
+=== 第16页 ===
+H. Wang et al.
+Table 7
+SOH estimation errors of different models on the Oxford dataset.
+ Cells
+Methods
+𝑅2
+MAE
+MAPE
+RMSE  
+ Cell1*
+SL-AgentNet
+0.9985
+0.0011
+0.0015
+0.0014 
+ 
+Transformer
+0.9649
+0.0051
+0.0045
+0.0077 
+ 
+LSTM
+0.9895
+0.0028
+0.0023
+0.0041 
+ 
+CNN-Transformer
+0.9616
+0.0053
+0.0044
+0.0079 
+ 
+CNN-LSTM
+0.8687
+0.0098
+0.0077
+0.0139 
+ Cell2
+SL-AgentNet
+0.9809
+0.0063
+0.0084
+0.0109 
+ 
+Transformer
+0.9444
+0.0136
+0.0096
+0.0159 
+ 
+LSTM
+0.9779
+0.0085
+0.0058
+0.0103 
+ 
+CNN-Transformer
+0.8576
+0.0217
+0.0204
+0.0348 
+ 
+CNN-LSTM
+0.9686
+0.0102
+0.0081
+0.0142 
+ Cell3
+SL-AgentNet
+0.9990
+0.0016
+0.0019
+0.0021 
+ 
+Transformer
+0.9752
+0.0076
+0.0051
+0.0079 
+ 
+LSTM
+0.9977
+0.0023
+0.0019
+0.0032 
+ 
+CNN-Transformer
+0.9270
+0.0131
+0.0110
+0.0177 
+ 
+CNN-LSTM
+0.9738
+0.0078
+0.0056
+0.0098 
+ Cell4
+SL-AgentNet
+0.9932
+0.0040
+0.0048
+0.0047 
+ 
+Transformer
+0.9801
+0.0058
+0.0050
+0.0081 
+ 
+LSTM
+0.9954
+0.0028
+0.0021
+0.0035 
+ 
+CNN-Transformer
+0.9373
+0.0103
+0.0075
+0.0118 
+ 
+CNN-LSTM
+0.9648
+0.0077
+0.0057
+0.0096 
+ Cell5
+SL-AgentNet
+0.9903
+0.0042
+0.0049
+0.0046 
+ 
+Transformer
+0.9760
+0.0052
+0.0049
+0.0078 
+ 
+LSTM
+0.9944
+0.0025
+0.0019
+0.0030 
+ 
+CNN-Transformer
+0.9530
+0.0073
+0.0051
+0.0079 
+ 
+CNN-LSTM
+0.9659
+0.0062
+0.0044
+0.0072 
+ Cell6
+SL-AgentNet
+0.9910
+0.0030
+0.0036
+0.0049 
+ 
+Transformer
+0.9665
+0.0068
+0.0053
+0.0086 
+ 
+LSTM
+0.9914
+0.0034
+0.0019
+0.0032 
+ 
+CNN-Transformer
+0.9280
+0.0099
+0.0082
+0.0131 
+ 
+CNN-LSTM
+0.9734
+0.0060
+0.0036
+0.0061 
+ Cell7
+SL-AgentNet
+0.9990
+0.0015
+0.0018
+0.0018 
+ 
+Transformer
+0.9723
+0.0069
+0.0049
+0.0075 
+ 
+LSTM
+0.9961
+0.0026
+0.0022
+0.0036 
+ 
+CNN-Transformer
+0.9258
+0.0112
+0.0096
+0.0154 
+ 
+CNN-LSTM
+0.9709
+0.0070
+0.0054
+0.0091 
+ Cell8
+SL-AgentNet
+0.9989
+0.0017
+0.0021
+0.0022 
+ 
+Transformer
+0.9707
+0.0084
+0.0059
+0.0093 
+ 
+LSTM
+0.9967
+0.0028
+0.0025
+0.0041 
+ 
+CNN-Transformer
+0.9274
+0.0132
+0.0114
+0.0187 
+ 
+CNN-LSTM
+0.9751
+0.0077
+0.0060
+0.0104 
+ Average
+SL-AgentNet
+0.9938
+0.0029
+0.0036
+0.0041 
+ 
+Transformer
+0.9688
+0.0074
+0.0057
+0.0091 
+ 
+LSTM
+0.9923
+0.0035
+0.0026
+0.0044 
+ 
+CNN-Transformer
+0.9272
+0.0115
+0.0097
+0.0159 
+ 
+CNN-LSTM
+0.9577
+0.0078
+0.0058
+0.0100 
+Cell1* indicates that the model was trained on this cell using 30% of the early data, 
+and its values are averaged among ten experiments. The best results are marked in 
+bold and underlined.
+proposed Systematic HIs (CCCA/CCDA) with a standard LSTM, 
+even under the strict limitation of 30% training data, the model 
+maintains a comparable RMSE of 0.0211. Moreover, equipping 
+a standard Transformer with our HIs yields an RMSE of 0.0150, 
+matching or marginally outperforming the baseline reported by 
+Xu et al. (2024) (RMSE 0.0151), despite the data scarcity. These 
+results suggest that our screened HIs possess high ‘‘information 
+density’’, enabling standard models to extract robust degradation 
+patterns from sparse early-life data where traditional features 
+often fail.
+2. Contribution of SL-AgentNet Architecture (Architectural Efficacy):
+A notable performance enhancement is attributed to the model 
+architecture. Under the identical 30% data constraint, upgrading 
+from a standard Transformer (RMSE 0.0150) to the proposed 
+SL-AgentNet (RMSE 0.0052) yields a 65.3% error reduction. 
+This suggests that while Systematic HIs provide a robust, noise-
+immune foundation, the architectural innovations, specifically 
+the linear-complexity FLFA, the multi-branch PIAF, and the S-
+DSConv, play a key role in modeling the complex, non-linear 
+dependencies required for high-precision early prediction.
+Table 8
+Estimation results on the CALCE and NASA datasets.
+ Cell
+Methods
+𝑅2
+MAE
+MAPE
+RMSE  
+ B0005*
+SL-AgentNet
+0.9866
+0.0050
+0.0068
+0.0072 
+ 
+Transformer
+0.9553
+0.0130
+0.0109
+0.0150 
+ 
+LSTM
+0.9280
+0.0165
+0.0149
+0.0211 
+ 
+CNN-Transformer
+0.9402
+0.0151
+0.0135
+0.0187 
+ 
+CNN-LSTM
+0.7802
+0.0289
+0.0263
+0.0374 
+ B0006
+SL-AgentNet
+0.9885
+0.0086
+0.0111
+0.0130 
+ 
+Transformer
+0.9564
+0.0252
+0.0199
+0.0274 
+ 
+LSTM
+0.9713
+0.0204
+0.0172
+0.0238 
+ 
+CNN-Transformer
+0.9568
+0.0251
+0.0207
+0.0285 
+ 
+CNN-LSTM
+0.9191
+0.0343
+0.0294
+0.0418 
+ B0007
+SL-AgentNet
+0.9924
+0.0045
+0.0054
+0.0069 
+ 
+Transformer
+0.9699
+0.0136
+0.0108
+0.0139 
+ 
+LSTM
+0.9766
+0.0120
+0.0100
+0.0128 
+ 
+CNN-Transformer
+0.9762
+0.0121
+0.0094
+0.0116 
+ 
+CNN-LSTM
+0.9337
+0.0203
+0.0166
+0.0217 
+ B0018
+SL-AgentNet
+0.9845
+0.0084
+0.0108
+0.0121 
+ 
+Transformer
+0.9459
+0.0170
+0.0133
+0.0169 
+ 
+LSTM
+0.9422
+0.0176
+0.0160
+0.0212 
+ 
+CNN-Transformer
+0.9523
+0.0160
+0.0111
+0.0144 
+ 
+CNN-LSTM
+0.8668
+0.0267
+0.0238
+0.0321 
+ CS2_35*
+SL-AgentNet
+0.9867
+0.0148
+0.0251
+0.0218 
+ 
+Transformer
+0.9380
+0.0472
+0.0363
+0.0702 
+ 
+LSTM
+0.9895
+0.0194
+0.0132
+0.0232 
+ 
+CNN-Transformer
+0.9797
+0.0270
+0.0207
+0.0333 
+ 
+CNN-LSTM
+0.9800
+0.0268
+0.0214
+0.0372 
+ CS2_36
+SL-AgentNet
+0.9834
+0.0193
+0.0367
+0.0303 
+ 
+Transformer
+0.9491
+0.0531
+0.0355
+0.0901 
+ 
+LSTM
+0.9814
+0.0321
+0.0247
+0.0475 
+ 
+CNN-Transformer
+0.9533
+0.0509
+0.0424
+0.0607 
+ 
+CNN-LSTM
+0.9798
+0.0334
+0.0228
+0.0551 
+ CS2_37
+SL-AgentNet
+0.9902
+0.0131
+0.0232
+0.0187 
+ 
+Transformer
+0.9541
+0.0404
+0.0278
+0.0535 
+ 
+LSTM
+0.9895
+0.0194
+0.0138
+0.0249 
+ 
+CNN-Transformer
+0.9621
+0.0367
+0.0313
+0.0438 
+ 
+CNN-LSTM
+0.9833
+0.0244
+0.0178
+0.0329 
+ CS2_38
+SL-AgentNet
+0.9819
+0.0205
+0.0303
+0.0249 
+ 
+Transformer
+0.9773
+0.0279
+0.0207
+0.0344 
+ 
+LSTM
+0.9780
+0.0275
+0.0229
+0.0331 
+ 
+CNN-Transformer
+0.9535
+0.0399
+0.0340
+0.0457 
+ 
+CNN-LSTM
+0.9813
+0.0253
+0.0187
+0.0306 
+ Average
+SL-AgentNet
+0.9868
+0.0118
+0.0187
+0.0169 
+ 
+Transformer
+0.9558
+0.0297
+0.0219
+0.0402 
+ 
+LSTM
+0.9696
+0.0206
+0.0166
+0.0260 
+ 
+CNN-Transformer
+0.9592
+0.0278
+0.0229
+0.0321 
+ 
+CNN-LSTM
+0.9281
+0.0275
+0.0221
+0.0361 
+B0005* and CS2_35* denote that they are the training sets with 30% of the early data. 
+The best results are marked in bold and underlined.
+5.5.2. Micro-ablation I: Component effectiveness analysis
+To validate the efficacy of key architectural components, abla-
+tion studies were conducted focusing on convolutional modules and 
+activation functions across the Oxford, NASA, and CALCE datasets.
+Impact of depthwise separable convolutions (S/L-DSConv). The proposed 
+framework integrates two distinct convolutional modules: the small-
+kernel S-DSConv embedded within the FLFA module for pre-attention 
+local enhancement, and the large-kernel L-DSConv positioned after the 
+AFF module for post-fusion refinement. Their specific contributions 
+were assessed by substituting them with standard convolutions. Al-
+though standard convolutions possess higher parameter counts and the-
+oretically larger capacities, the results in Table 10 indicate performance 
+degradation, thereby supporting the efficiency of our design:
+• Pre-Attention Local Enhancement (S-DSConv): Substituting the 
+S-DSConv with a standard convolution corresponds to an accuracy 
+drop, notably increasing the RMSE from 0.0041 to 0.0102 on the 
+Oxford dataset. This suggests that the parameter-heavy standard 
+convolution may be prone to overfitting on sparse battery data. 
+Engineering Applications of Artiϧcial Intelligence 181 (2026) 115420 
+16 
+
+
+=== 第17页 ===
+H. Wang et al.
+Table 9
+Macro-Ablation: Decoupling contributions against literature benchmarks (NASA B0005).
+ Source
+Methodology (Model + Feature)
+Train data
+RMSE
+MAE  
+ Literature Benchmarks (Traditional HIs)
+ Yan et al. Yan et al. (2025)
+Standard LSTM + 12 Manual Feat.
+50%
+0.0183
+0.0160 
+ Xu et al. Xu et al. (2024)
+Transformer + IC Peak Area
+Start Cyc 70a
+0.0151
+0.0105 
+ Huang et al. Huang et al. (2025)
+Swin Transformer + Multi-features
+50%
+0.0097
+0.0072 
+ Our Framework (Systematic HIs: CCCA/CCDA)
+ Our baseline
+Standard Transformer
+30%
+0.0150
+0.0130 
+ Our baseline
+Standard LSTM
+30%
+0.0211
+0.0165 
+ Proposed
+SL-AgentNet
+30%
+0.0052
+0.0062 
+a Xu et al. utilize a fixed starting point (cycle 70) for prediction.
+Table 10
+Ablation study of convolutional modules (average results).
+ Dataset
+Convolution configuration
+𝑅2
+RMSE
+MAE  
+ 
+NASA
+Std. Conv (Replaces S-DSConv)
+0.9764
+0.0121
+0.0099 
+ 
+Std. Conv (Replaces L-DSConv)
+0.8933
+0.0259
+0.0237 
+ 
+Full SL-AgentNet (S+L DSConv)
+0.9880
+0.0098
+0.0066 
+ 
+Oxford
+Std. Conv (Replaces S-DSConv)
+0.9627
+0.0102
+0.0075 
+ 
+Std. Conv (Replaces L-DSConv)
+0.9720
+0.0087
+0.0071 
+ 
+Full SL-AgentNet (S+L DSConv)
+0.9938
+0.0041
+0.0029 
+ 
+CALCE
+Std. Conv (Replaces S-DSConv)
+0.8422
+0.0686
+0.0512 
+ 
+Std. Conv (Replaces L-DSConv)
+0.8240
+0.0719
+0.0547 
+ 
+Full SL-AgentNet (S+L DSConv)
+0.9856
+0.0239
+0.0169 
+In contrast, the S-DSConv functions as a structural regularizer; by 
+decoupling spatial and channel correlations, it imposes a benefi-
+cial inductive bias that encourages the model to focus on essential 
+high-frequency local patterns rather than noise.
+• Post-Fusion Global Refinement (L-DSConv): Replacing the L-
+DSConv leads to a performance decline, particularly on the CALCE 
+dataset where the RMSE increases to 0.0719. This suggests that a 
+lightweight, large-kernel convolution is beneficial for smoothing 
+fused attention features and extracting long-term degradation 
+trends prior to the final regression stage.
+Impact of heterogeneous activation (PIAF vs. Standard MLP). The PIAF 
+module functions as the final regression head. This heterogeneous 
+design, which combines ReLU, Tanh, and Identity functions, was com-
+pared against a standard MLP baseline configured with homogeneous 
+Gaussian Error Linear Unit (GeLU) activation. As summarized in
+Table 11, the results demonstrate the effectiveness of the heterogeneous 
+strategy.
+• On the NASA dataset, replacing the standard MLP with PIAF 
+reduces the MAE from 0.0139 to 0.0066, representing a 52.5% re-
+duction. This gain suggests that the Tanh branch in PIAF, with its 
+saturation boundaries, captures the distinct voltage plateaus and 
+abrupt degradation shifts typical of the NASA dataset, phenomena 
+that the unbounded GeLU struggles to model accurately.
+• On the Oxford dataset, PIAF achieves an RMSE of 0.0041 com-
+pared to 0.0068 for the baseline, corresponding to a 39.7% re-
+duction.
+• Even on the CALCE dataset, PIAF maintains its advantage, lower-
+ing the RMSE from 0.0264 to 0.0239.
+This widespread improvement suggests that the ‘‘mixture of activa-
+tions’’ strategy captures complex non-linearities that a single homoge-
+neous activation function fails to model, thereby validating the feature 
+richness of our design.
+5.5.3. Micro-ablation II: Interaction analysis of attention modules
+To elucidate the interaction dynamics between the diversity
+-enhancing FDFA and the efficiency-focused FLFA modules, specifically 
+regarding whether their contributions are additive or synergistic, a 
+Table 11
+Performance comparison of activation strategies (average results).
+ Dataset
+Module variant
+𝑅2
+RMSE
+MAE  
+ NASA
+Standard MLP (GeLU)
+0.9612
+0.0155
+0.0139 
+ 
+PIAF-MLP (Ours)
+0.9880
+0.0098
+0.0066 
+ Oxford
+Standard MLP (GeLU)
+0.9845
+0.0068
+0.0055 
+ 
+PIAF-MLP (Ours)
+0.9938
+0.0041
+0.0029 
+ CALCE
+Standard MLP (GeLU)
+0.9826
+0.0264
+0.0197 
+ 
+PIAF-MLP (Ours)
+0.9856
+0.0239
+0.0169 
+stepwise ablation was conducted on the CALCE and NASA datasets. 
+The AAT-1d was utilized as the baseline and progressively integrated 
+the modules. The results are detailed in Table 12.
+Quantitative evidence of synergy. Experimental results, particularly on 
+the CALCE dataset, suggest a super-additive synergistic effect:
+• Individual Gains: On the CALCE dataset, adding the FDFA alone 
+improves the MAE by 0.0019, reducing it from 0.0200 to 0.0181. 
+Similarly, the independent addition of the FLFA yields a marginal 
+improvement of 0.0005, lowering the MAE from 0.0200 to
+0.0195. Consequently, the arithmetic sum of these isolated gains 
+is 0.0024.
+• Combined Gain: When both modules are integrated into the full 
+AFF framework, the MAE drops significantly to 0.0169. This 
+represents a total gain of 0.0031.
+• Conclusion: Since the combined gain of 0.0031 exceeds the arith-
+metic sum of 0.0024, this indicates a positive synergistic interac-
+tion. The modules do not merely operate in parallel; rather, they 
+mutually reinforce the predictive capability of the model.
+Mechanistic explanation: Orthogonality and complementarity. This syn-
+ergy arises because the two modules operate on nearly orthogonal 
+feature dimensions, thereby generating complementary feature sub-
+spaces. The FDFA branch, utilizing non-linear ReLU pre-activation, 
+targets the amplitude domain. It acts as a significance filter that isolates 
+high-energy degradation signals from background noise. Conversely, 
+the parallel FLFA branch, equipped with S-DSConv and linear attention, 
+focuses on the spatio-temporal structural domain to capture local–
+global dependencies regardless of signal magnitude. By fusing these 
+distinct perspectives, specifically amplitude significance and temporal 
+structure, the model achieves a comprehensive representation where 
+the strengths of one branch compensate for the limitations of the other. 
+This results in robustness that transcends simple summation.
+5.6. Computational efficiency and feasibility analysis for BMS
+To rigorously assess the suitability of SL-AgentNet for resource-
+constrained embedded BMS, we conducted a comprehensive bench-
+mark focusing on four critical engineering metrics:
+• Floating Point Operations (FLOPs): Represents the theoretical 
+computational complexity. In this study, we report the cumulative
+Engineering Applications of Artiϧcial Intelligence 181 (2026) 115420 
+17 
+
+
+=== 第18页 ===
+H. Wang et al.
+Table 12
+Interaction ablation of FDFA and FLFA modules (Avg. results).
+ Dataset
+Attention variant
+𝑅2
+RMSE
+MAE
+MAPE  
+ 
+CALCE
+Baseline (AAT-1d)
+0.9828
+0.0256
+0.0200
+0.0349 
+ 
++ FDFA (Diversity)
+0.9850
+0.0242
+0.0181
+0.0333 
+ 
++ FLFA (Global–Local)
+0.9841
+0.0249
+0.0195
+0.0326 
+ 
+Full AFF (Combined)
+0.9856
+0.0239
+0.0169
+0.0288 
+ 
+NASA
+Baseline (AAT-1d)
+0.8933
+0.0259
+0.0237
+0.0325 
+ 
++ FDFA (Diversity)
+0.9791
+0.0117
+0.0086
+0.0113 
+ 
++ FLFA (Global–Local)
+0.9837
+0.0103
+0.0074
+0.0094 
+ 
+Full AFF (Combined)
+0.9880
+0.0098
+0.0066
+0.0085 
+FLOPs required to process a complete charging cycle (macro-scale 
+cost), serving as a proxy for total energy consumption.
+• Number of Parameters (Params): Indicates the model’s archi-
+tectural complexity. Fewer parameters reduce memory access 
+frequency and the risk of overfitting on small datasets.
+• Model Size (Storage): The actual Flash memory footprint re-
+quired to store model weights, which is a stringent constraint for 
+automotive microcontrollers (typically < 1 MB).
+• Inference Latency: The real-world execution time required to 
+process a single input sequence (micro-scale response). This de-
+termines whether the model can operate within the real-time 
+scheduling slot (e.g., 10 ms task cycle) of the BMS.
+5.6.1. Experimental setup for latency measurement
+Unlike theoretical FLOPs, inference latency is typically considered a 
+primary determinant of real-time feasibility on embedded controllers. 
+A standardized benchmark environment was established using a CPU 
+to simulate the sequential processing characteristic of BMS MCUs, 
+adhering to the following protocols:
+• Device & Process: Measurements were executed on a CPU with 
+a batch size of 1 to mimic the stream-processing nature of BMS 
+operations. The protocol comprised 10 warm-up runs followed by 
+1000 active measurement cycles to promote statistical robustness; 
+only forward inference time was recorded, excluding data I/O 
+overhead.
+• Input Constraints: The input dimensions were fixed at (1, 𝑁, 𝐶). 
+While Transformer and LSTM baselines utilized a context window 
+of 𝑁= 5, SL-AgentNet employed a restricted window of 𝑁=
+4 due to the architectural configuration of the Agent mecha-
+nism. Achieving improved accuracy with this reduced receptive 
+field—𝑁= 4 versus 𝑁= 5—highlights the enhanced efficiency of 
+SL-AgentNet’s feature extraction capabilities.
+5.6.2. Inference latency and real-time capability
+Table 13 indicates that SL-AgentNet achieves a sub-millisecond in-
+ference latency of 0.7656 ms alongside a throughput of 1306 samples/s. 
+Furthermore, the model demonstrates the lowest latency standard de-
+viation of 0.0907 ms among all tested architectures. This minimal vari-
+ance suggests enhanced temporal stability—an important factor for sup-
+porting deterministic behavior in safety-critical Real-Time Operating 
+Systems (RTOS).
+Although the LSTM baseline exhibits marginally lower latency (≈
+0.69 ms) due to minimal recurrent overhead in short sequences, SL-
+AgentNet performs comparably to the efficient CNN-LSTM (≈0.74 ms) 
+and outperforms Transformer-based models (≈1.0–1.1 ms). These re-
+sults indicate that the linear-complexity FLFA module mitigates the 
+computational burden typically inherent in attention mechanisms.
+5.6.3. Distinguishing cumulative FLOPs from low latency
+A potential ambiguity arises when contrasting the high FLOPs count 
+(589 M) with the minimal latency (0.77 ms). It is important to clar-
+ify the physical definition of these metrics within our experimental 
+framework:
+• FLOPs (Macro-scale Cost): The FLOPs values reported in Table 
+13 quantify the cumulative computational cost for processing a 
+complete battery charge/discharge cycle. Derived from a rep-
+resentative Oxford dataset cycle comprising thousands of time 
+steps, this metric evaluates the total energy consumption for a 
+full diagnostic event.
+• Latency (Micro-scale Response): Latency measures the infer-
+ence time for a single sliding window input (e.g., 𝑁
+=
+4), 
+representing the instantaneous response time required by the BMS 
+controller per execution step.
+Consequently, high cumulative FLOPs do not contradict low instanta-
+neous latency. Given that SOH estimation is a low-frequency prognostic 
+task—typically executed once per cycle or at minute-level intervals—
+the cumulative load is distributed over extended durations. This renders 
+the 0.77 ms per-step latency likely compatible with automotive MCU 
+background task scheduling.
+5.6.4. The efficiency-accuracy trade-off
+SL-AgentNet distinguishes itself through a strategic balance between 
+resource consumption and estimation reliability. While the CNN-LSTM 
+baseline offers the lowest computational cost (115 M FLOPs) and 
+marginally faster inference (0.74 ms), this lightweight nature compro-
+mises representation capacity, resulting in a relatively high RMSE of 
+0.0100. In safety-critical BMS applications, an estimation error of 1% 
+is frequently deemed the threshold of unreliability, potentially neces-
+sitating conservative battery utilization or obscuring rapid degradation 
+signals.
+Conversely, SL-AgentNet exchanges a manageable increase in com-
+putational load—remaining well within the sub-millisecond safety mar-
+gin of 0.77 ms—for enhanced performance. By reducing the RMSE to 
+0.0042, our model achieves a 58% error reduction relative to CNN-
+LSTM. This trade-off is justifiable for modern electric vehicles: the 
+incremental increase in storage (40 KB vs. 15 KB) and FLOPs is neg-
+ligible for automotive-grade MCUs, whereas the improved accuracy 
+contributes to extended battery lifespan and safer operational limits. 
+Thus, SL-AgentNet provides an effective solution where precision is 
+paramount, yet hardware constraints remain respected.
+5.6.5. Implementation challenges and hardware validation
+Deploying deep learning models on embedded systems requires 
+addressing specific hardware limitations, particularly regarding non-
+linear operations.
+Floating-point unit (FPU) limitations. The proposed PIAF module uti-
+lizes heterogeneous activation functions (e.g., Tanh, GeLU) involving 
+exponential calculations (𝑒𝑥). On low-power automotive MCUs, these 
+operations can be computationally expensive and may induce latency 
+jitter.
+Hardware-in-the-loop validation. To validate the feasibility of the pro-
+posed framework, we conducted deployment experiments on a TI 
+Cortex-M4 microcontroller at Sichuan SEVCLAB Testing Technol-
+ogy Co., Ltd. (a subsidiary of the Tsinghua University Prof. Ouyang 
+Minggao Academician Workstation).
+• Look-Up Table (LUT) Optimization: We implemented the
+exponential-heavy activations using LUTs with piecewise linear 
+interpolation. This is a standard industry practice to balance 
+precision and speed.
+• Experimental Results: Comparative testing between the PC-
+based floating-point inference and the MCU-based LUT imple-
+mentation confirms that the optimization significantly reduces 
+cycle counts. Crucially, the SOH estimation discrepancy (accuracy 
+loss) introduced by this approximation is controlled strictly within
+0.3%, which is negligible for BMS applications.
+Engineering Applications of Artiϧcial Intelligence 181 (2026) 115420 
+18 
+
+
+=== 第19页 ===
+H. Wang et al.
+Table 13
+Comparison of computational efficiency, model complexity, and inference latency.
+ Model
+Model complexity & Cost
+Runtime performance (CPU, Batch = 1)
+ 
+Params
+Size (KB)
+FLOPs (M)∗
+Latency (ms)
+Std (ms)
+Throughput (samples/s) 
+ SL-AgentNet
+6,114
+40.92
+589.45
+0.7656
+0.0907
+1306.09
+ 
+ Transformer
+17,569
+90.53
+126.14
+1.0086
+0.1370
+991.45
+ 
+ LSTM
+99,585
+392.15
+1807.94
+0.6929
+0.0967
+1443.28
+ 
+ CNN-Transformer
+43,169
+212.06
+1805.76
+1.1395
+0.1391
+877.58
+ 
+ CNN-LSTM
+3,041
+15.58
+115.20
+0.7423
+0.1001
+1347.18
+ 
+Note: Bold indicates the proposed SL-AgentNet; Underline indicates the best result in each column.
+Latency is measured on a standard CPU. Input 𝑁= 4 for SL-AgentNet, 𝑁= 5 for others.
+∗FLOPs represent the cumulative computational cost over a complete battery charging cycle (approx. thousands of steps).
+Table 14
+Dataset summary metrics (Mean and 95% Confidence Interval). 90% prediction intervals were generated using conformal 
+prediction (𝑞ℎ𝑎𝑡).
+ Dataset
+MAE (95% CI)
+RMSE (95% CI)
+Mean PICP (95% CI)
+MPIW
+𝑞ℎ𝑎𝑡
+ 
+ NASA
+0.0049 [0.0035, 0.0062]
+0.0085 [0.0062, 0.0108]
+0.9560 [0.9344, 0.9776]
+0.0295
+0.0148 
+ CALCE
+0.0190 [0.0172, 0.0210]
+0.0261 [0.0220, 0.0311]
+0.8995 [0.8492, 0.9415]
+0.0779
+0.0390 
+Table 15
+Statistical calibration verification using Exact Binomial Test on aggregate samples (𝐻0 ∶PICP = 0.90).
+ Dataset
+𝑁𝑡𝑜𝑡𝑎𝑙
+Covered (𝑘)
+Observed PICP
+𝑝-value
+Conclusion
+ 
+ NASA
+408
+391
+95.83%
+2.16 × 10−5
+Conservative (Safe)  
+ CALCE
+2702
+2432
+90.01%
+1.00
+Precisely Calibrated 
+Table 16
+Paired t-test results comparing SL-AgentNet against baselines. Positive Mean Diff indicates SL-AgentNet outperforms baseline.
+Significance threshold 𝛼′ ≈0.003 (Bonferroni corrected).
+ Dataset
+Baseline
+Metric
+Mean Diff.
+𝑡-statistic
+𝑝-value
+Cohen’s 𝑑 [95% CI]  
+ 
+NASA
+LSTM
+MAE
++0.0107
+20.97
+< 0.001***
+1.04 [0.90, 1.21]
+ 
+ 
+Transformer
+MAE
++0.0089
+16.48
+< 0.001***
+0.82 [0.75, 0.89]
+ 
+ 
+LSTM
+RMSEa
++0.0090
+15.27
+< 0.001***
+7.64 [2.85, 12.4]
+ 
+ 
+Transformer
+RMSEa
++0.0089
+4.15
+0.026 (ns)
+2.07 [0.15, 4.00]
+ 
+ 
+CALCE
+Transformer
+MAE
++0.0136
+30.66
+< 0.001***
+0.59 [0.56, 0.62]
+ 
+ 
+LSTM
+MAE
+−0.0014
+−5.86
+< 0.001***
+−0.11 [−0.15, −0.07] 
+ 
+Transformer
+RMSEa
++0.0194
+4.66
+0.019 (ns)
+2.33 [0.28, 4.38]
+ 
+ 
+LSTM
+RMSEa
+−0.0025
+−1.15
+0.332 (ns)
+−0.58 [−1.84, 0.68]  
+(ns) Not significant at adjusted threshold.
+a RMSE analysis based on aggregated cell-level metrics (𝑁= 4).
+*** Significant at 𝑝< 0.003 (Bonferroni adjusted).
+Stream processing. Additionally, unlike offline batch training, the BMS 
+operates on a continuous stream. Our latency benchmarks
+(Section 5.6.2) were specifically conducted with a batch size of 1. The 
+verified throughput (1306 samples/s) far exceeds the typical 1–10 Hz 
+sampling rate of voltage sensors, ensuring no data backlog risks in 
+real-time operation.
+6. Statistical significance and uncertainty quantification
+Statistical significance testing and conformal prediction analysis 
+were incorporated to assess the reliability of SL-AgentNet beyond stan-
+dard error metrics.
+6.1. Statistical significance and effect size
+Paired t-tests were performed to verify performance differences, 
+with the Bonferroni correction applied to maintain robustness against 
+multiple comparisons (𝛼′ ≈0.003). The results are detailed in Table 16.
+NASA dataset (Strong generalization). SL-AgentNet shows strong perfor-
+mance on the NASA dataset. Compared to both LSTM and Transformer 
+baselines, our model achieves significant reductions in MAE (𝑝< 0.001) 
+with large effect sizes (Cohen’s 𝑑> 0.8). Regarding RMSE, while SL-
+AgentNet achieves a lower mean error with a large effect size (𝑑= 2.07
+vs. Transformer), the 𝑝-value (0.026) did not reach the Bonferroni 
+threshold. This suggests that while the improvement magnitude is 
+practically significant, statistical power is limited by the small sample 
+size (𝑁= 4 cells).
+CALCE dataset (Engineering equivalence). On the CALCE dataset, SL-
+AgentNet maintains a significant lead over the Transformer in MAE 
+(𝑝< 0.001). Compared to the LSTM baseline, the analysis reveals:
+1. RMSE Equivalence: No statistically significant difference was 
+observed (𝑝= 0.332), indicating comparable performance in 
+minimizing large squared errors.
+2. MAE Engineering Equivalence: Although LSTM shows a slight 
+statistical preference in MAE (𝑝< 0.001), the mean difference is 
+merely −0.0014 (0.14% SOH), which is negligible compared to 
+typical sensor noise.
+Thus, SL-AgentNet demonstrates engineering equivalence to LSTM 
+while offering the advantage of valid uncertainty quantification.
+6.2. Prediction uncertainty and calibration
+90% Prediction Intervals (PIs) were constructed using conformal 
+prediction. The comprehensive performance metrics, including error 
+Engineering Applications of Artiϧcial Intelligence 181 (2026) 115420 
+19 
+
+
+=== 第20页 ===
+H. Wang et al.
+ 
+(a) NASA (B0018)
+  
+(b) CALCE (CS2_38)
+ 
+Fig. 13. Prediction Uncertainty Visualization. The red line represents ground truth, and the shaded area is the 90% Prediction Interval (PI). B0018 shows 
+strong capacity regeneration, while CS2_38 exhibits rapid non-linear decay. SL-AgentNet effectively brackets these challenging fluctuations.
+ 
+(a) NASA Reliability
+  
+(b) CALCE Reliability
+ 
+Fig. 14. Reliability Diagrams. Calibration curves across confidence levels (50%, 80%, 90%, 95%). Error bars indicate 95% Wilson score intervals. (a) NASA 
+shows consistent conservative calibration (points above diagonal). (b) CALCE shows precise calibration at the 90% operating point (error bar intersects the 
+diagonal).
+margins and uncertainty quantification results, are summarized in Ta-
+ble 14. The calibration quality was further verified via statistical testing 
+(Table 15) and visual analysis (Fig. 14). The assessment relies on the 
+probabilistic metrics (PICP, MPIW, and ACE) defined in Section 5.1.
+Calibration analysis. Using the Exact Binomial Test (𝐻0 ∶PICP =
+0.90):
+• NASA (Conservative Safety): The aggregate coverage is 95.83% 
+(𝑝< 0.001), indicating a safety-conservative bias that supports 
+higher fault tolerance for degradation risks.
+• CALCE (Precise Calibration): The aggregate coverage is 90.01% 
+(𝑝= 1.00), confirming no significant deviation from the nominal 
+level and demonstrating precise calibration.
+Reliability diagrams (Fig. 14) further support these findings, with 
+CALCE closely following the ideal diagonal (ACE=0.061) and NASA 
+showing consistent conservative behavior (ACE=0.129). This frame-
+work offers a stable safety margin (constant width intervals, Fig. 13) 
+beneficial for robust BMS deployment.
+7. Conclusion
+This study presents a practical, computationally efficient framework 
+for battery SOH estimation, designed to address the stringent opera-
+tional constraints of vehicular BMS. By recognizing the limitations of 
+direct measurement and the high computational cost of standard deep 
+learning models, a dual-pronged solution comprising systematic feature 
+selection and a lightweight network architecture was developed.
+The proposed SL-AgentNet is characterized by its linear compu-
+tational complexity. By integrating the AFF module with the Fast 
+Local–Global Fusion Attention (FLFA) mechanism, the model captures 
+long-range degradation dependencies while addressing the quadratic 
+computational overhead (𝑂(𝑁2)) associated with traditional Trans-
+formers. Furthermore, the incorporation of FDFA and PIAF modules 
+enhances feature diversity and non-linear representation, facilitating 
+high estimation accuracy within a lightweight architecture.
+Experimental results on the Oxford, NASA, and CALCE datasets 
+indicate that SL-AgentNet demonstrates enhanced performance com-
+pared to baseline models, including the LSTM and CNN-Transformer. 
+Specifically, the model achieves significant accuracy gains, with MAE 
+reductions reaching 74.78% on the Oxford dataset compared to the 
+CNN-Transformer baseline. Crucially, this competitive performance is 
+realized with a parameter count of only 6114 and a storage footprint of 
+40.92 KB. Hardware-in-the-loop validation on a TI Cortex-M4 MCU has 
+further confirmed the model’s engineering feasibility, where LUT opti-
+mization ensured real-time responsiveness with a negligible accuracy 
+loss of within 0.3%.
+Despite these advancements, limitations remain regarding the re-
+liance on stable constant-current segments for feature extraction. Fu-
+ture work aims to extend the framework to encompass a wider range 
+Engineering Applications of Artiϧcial Intelligence 181 (2026) 115420 
+20 
+
+
+=== 第21页 ===
+H. Wang et al.
+of battery chemistries (e.g., LFP) and extreme dynamic operating con-
+ditions to further broaden its applicability in real-world scenarios.
+CRediT authorship contribution statement
+Huajiang Wang: Writing – review & editing, Writing – original 
+draft, Conceptualization. Hao Li: Formal analysis, Data curation, Con-
+ceptualization. Zhengxing He: Methodology, Investigation, Funding 
+acquisition. Xuan Chen: Methodology, Investigation. Hanglin Liu: 
+Software, Resources, Project administration. Chao Chen: Validation, 
+Supervision.
+Declaration of competing interest
+The authors declare that they have no known competing finan-
+cial interests or personal relationships that could have appeared to 
+influence the work reported in this paper.
+Acknowledgments
+This research was supported by the Sichuan Science and Tech-
+nology Innovation Talent Project (No. 2024JDRC0013), the Scientific 
+Research and Innovation Team Program of Sichuan University of Tech-
+nology (No. SUSE652A006), and The Innovation Fund of Postgraduate, 
+Sichuan University of Science & Engineering (No. Y2025098). Addition-
+ally, this study was supported by the computational resources provided 
+by the High-Performance Computing Center, School of Computer Sci-
+ence and Engineering, Sichuan University of Science and Engineering. 
+We would like to express our gratitude to the Sichuan New Energy Ve-
+hicle Innovation Center and the Ouyang Minggao Academy of Sciences 
+Youth Talent Development Fund for their support of this project.
+Data availability
+Data will be made available on request.
+References
+Bai, J., Huang, J., Luo, K., Yang, F., Xian, Y., 2023. A feature reuse based multi-model 
+fusion method for state of health estimation of lithium-ion batteries. J. Energy 
+Storage 70, 107965. http://dx.doi.org/10.1016/j.est.2023.107965.
+Bai, T., Wang, H., 2023. Convolutional transformer -based multiview information 
+perception framework for lithium-ion battery state-of-health estimation. IEEE 
+Trans. Instrum. Meas. 72, 1–12. http://dx.doi.org/10.1109/TIM.2023.3300451, 
+tLDR: Experiments by working through real operation datasets such as NASA 
+PCoE and Oxford prove that the proposed convolution transformer-based multiview 
+information perception framework (MVIP-Trans) can perfectly accomplish the SOH 
+estimating task.https://ieeexplore.ieee.org/document/10198842/.
+Birkl, C.R., Roberts, M.R., McTurk, E., Bruce, P.G., Howey, D.A., 2017. Degradation 
+diagnostics for lithium ion cells. J. Power Sources 341, 373–386. http://dx.
+doi.org/10.1016/j.jpowsour.2016.12.011, https://www.sciencedirect.com/science/
+article/pii/S0378775316316998.
+Cadini, F., Sbarufatti, C., Cancelliere, F., Giglio, M., 2019. State-of-life prognosis 
+and diagnosis of lithium-ion batteries by data-driven particle filters. Appl. En-
+ergy 235, 661–672. http://dx.doi.org/10.1016/j.apenergy.2018.10.095, https://
+linkinghub.elsevier.com/retrieve/pii/S0306261918316635.
+Chaturvedi, N.A., Klein, R., Christensen, J., Ahmed, J., Kojic, A., 2010. Algorithms 
+for advanced battery-management systems. IEEE Control Syst. Mag. 30 (3), 
+49–68. http://dx.doi.org/10.1109/MCS.2010.936293, https://ieeexplore.ieee.org/
+document/5466167.
+Chen, Z., 2023. Attention is not all you need anymore. arXiv:2308.07661.
+Chen, L., Xie, S., Lopes, A.M., Bao, X., 2023. A vision transformer-based deep neural 
+network for state of health estimation of lithium-ion batteries. Int. J. Electr. 
+Power Energy Syst. 152, 109233. http://dx.doi.org/10.1016/j.ijepes.2023.109233, 
+https://linkinghub.elsevier.com/retrieve/pii/S0142061523002909.
+Chicco, D., Warrens, M.J., Jurman, G., 2021. The coefficient of determination R -
+squared is more informative than SMAPE, MAE, MAPE,MSE and RMSE in regression 
+analysis evaluation. PeerJ Comput. Sci. 7, e623. http://dx.doi.org/10.7717/peerj-
+cs.623, tLDR: The results demonstrate that the coefficient of determination (R-
+squared) is more informative and truthful than SMAPE, and does not have the 
+interpretability limitations of MSE, RMSE, MAE and MAPE.https://peerj.com/
+articles/cs-623.
+Feng, H., Zhang, L., 2024. A heterogeneous learner fusion method with supplementary 
+feature for lithium-ion batteries state of health estimation. J. Energy Storage 92, 
+111896. http://dx.doi.org/10.1016/j.est.2024.111896.
+Glorot, X., Bengio, Y., 2010. Understanding the difficulty of training deep feedfor-
+ward neural networks. In: Teh, Y.W., Titterington, M. (Eds.), Proceedings of the 
+Thirteenth International Conference on Artificial Intelligence and Statistics. In: 
+Proceedings of Machine Learning Research, Vol. 9, PMLR, Chia Laguna Resort, 
+Sardinia, Italy, pp. 249–256, https://proceedings.mlr.press/v9/glorot10a.html.
+Gomez, W., Wang, F.-K., Chou, J.-H., 2024. Li-ion battery capacity prediction 
+using improved temporal fusion transformer model. Energy 296, 131114. 
+http://dx.doi.org/10.1016/j.energy.2024.131114, https://linkinghub.elsevier.com/
+retrieve/pii/S0360544224008867.
+Gu, X., See, K., Li, P., Shan, K., Wang, Y., Zhao, L., Lim, K.C., Zhang, N., 
+2023. A novel state-of-health estimation for the lithium-ion battery using a 
+convolutional neural network and transformer model. Energy 262, 125501. 
+http://dx.doi.org/10.1016/j.energy.2022.125501, https://linkinghub.elsevier.com/
+retrieve/pii/S0360544222023830.
+Han, D., Pan, X., Han, Y., Song, S., Huang, G., 2023. Flatten transformer: vision 
+transformer using focused linear attention. In: 2023 IEEE/CVF International Con-
+ference on Computer Vision (ICCV). IEEE, Paris, France, pp. 5938–5948. http:
+//dx.doi.org/10.1109/ICCV51070.2023.00548, tLDR: This paper proposes a novel 
+Focused Linear Attention module, which introduces a simple yet effective mapping 
+function and an efficient rank restoration module to enhance the expressiveness of 
+self-attention while maintaining low computation complexity. https://ieeexplore.
+ieee.org/document/10377196/.
+Han, D., Ye, T., Han, Y., Xia, Z., Pan, S., Wan, P., Song, S., Huang, G., 2024. Agent 
+attention : on the integration of softmax and linear attention. http://dx.doi.org/
+10.48550/arXiv.2312.08874,  TLDR: Interestingly, it is shown that the proposed 
+agent attention is equivalent to a generalized form of linear attention, therefore, 
+agent attention seamlessly integrates the powerful Softmax attention and the highly 
+efficient linear attention. http://arxiv.org/abs/2312.08874. cs.
+Hannan, M.A., How, D.N.T., Lipu, M.S.H., Mansor, M., Ker, P.J., Dong, Z.Y., Sa-
+hari, K.S.M., Tiong, S.K., Muttaqi, K.M., Mahlia, T.M.I., Blaabjerg, F., 2021. Deep 
+learning approach towards accurate state of charge estimation for lithium-ion 
+batteries using self-supervised transformer model. Sci. Rep. 11 (1), 19541. http:
+//dx.doi.org/10.1038/s41598-021-98915-8, tLDR: This article proposes the deep 
+learning-based transformer model trained with self-supervised learning (SSL) for 
+end-to-end SOC estimation without the requirements of feature engineering or 
+adaptive filtering and achieves the lowest root-mean-square-error (RMSE) with the 
+SSL framework.https://www.nature.com/articles/s41598-021-98915-8.
+He, K., Zhang, X., Ren, S., Sun, J., 2015a. Deep residual learning for image recognition. 
+CoRR abs/1512.03385. http://arxiv.org/abs/1512.03385. arXiv:1512.03385.
+He, K., Zhang, X., Ren, S., Sun, J., 2015b. Delving deep into rectifiers: Surpassing 
+human-level performance on imagenet classification. CoRR abs/1502.01852. http:
+//arxiv.org/abs/1502.01852. arXiv:1502.01852.
+Hu, Y., Du, H., Lu, J., Zhang, H., Li, S., Du, X., 2024. Interface synergistic stabilization 
+of zinc anodes via polyacrylic acid doped polyvinyl alcohol ultra-thin coating. J. 
+Energy Storage 87, 111444. http://dx.doi.org/10.1016/j.est.2024.111444.
+Huang, J., He, T., Zhu, W., et al., 2025. State of health estimation method for lithium-
+ion batteries based on multi-feature fusion and swin transformer model. Ionics 31 
+(11), 11811–11834. http://dx.doi.org/10.1007/s11581-025-06657-8, https://link.
+springer.com/article/10.1007/s11581-025-06657-8.
+Huang, K., Yao, K., Guo, Y., Lv, Z., 2023. State of health estimation of lithium-ion 
+batteries based on fine-tuning or rebuilding transfer learning strategies combined 
+with new features mining. Energy 282, 128739. http://dx.doi.org/10.1016/j.
+energy.2023.128739.
+Jia, C., Tian, Y., Shi, Y., Jia, J., Wen, J., Zeng, J., 2023. State of health prediction of 
+lithium-ion batteries based on bidirectional gated recurrent unit and transformer. 
+Energy 285, 129401. http://dx.doi.org/10.1016/j.energy.2023.129401, https://
+linkinghub.elsevier.com/retrieve/pii/S0360544223027950.
+Jin, H., Cui, N., Cai, L., Meng, J., Li, J., Peng, J., Zhao, X., 2023. State-of-health 
+estimation for lithium-ion batteries with hierarchical feature construction and auto-
+configurable Gaussian process regression. Energy 262, 125503. http://dx.doi.org/
+10.1016/j.energy.2022.125503.
+z. Kong, J., Yang, F., Zhang, X., Pan, E., Peng, Z., Wang, D., 2021. Voltage-temperature 
+health feature extraction to improve prognostics and health management of 
+lithium-ion batteries. Energy 223, 120114. http://dx.doi.org/10.1016/j.energy.
+2021.120114, tLDR: Using the proposed method, state of health and remaining 
+useful life of lithium-ion batteries can be estimated and predicted with uncertainty 
+measurements and root mean square error is smaller than 1% in all capacity esti-
+mation and relative RMSE is around 5% for RUL prediction, which provide higher 
+accuracies than the existing methods.https://linkinghub.elsevier.com/retrieve/pii/
+S0360544221003637.
+Krause, F.C., Ruiz, J.P., Jones, S.C., Brandon, E.J., Darcy, E.C., Iannello, C.J., 
+Bugga, R.V., 2021. Performance of commercial Li-ion cells for future NASA missions 
+and aerospace applications. J. Electrochem. Soc. 168 (4), http://dx.doi.org/10.
+1149/1945-7111/abf05f, 040504, publisher:IOP Publishing.
+Kuleshov, V., Fenner, N., Ermon, S., 2018. Accurate uncertainties for deep learning 
+using calibrated regression. In: Dy, J., Krause, A. (Eds.), Proceedings of the 
+35th International Conference on Machine Learning. In: Proceedings of Machine 
+Engineering Applications of Artiϧcial Intelligence 181 (2026) 115420 
+21 
+
+
+=== 第22页 ===
+H. Wang et al.
+Learning Research, Vol. 80, PMLR, pp. 2796–2804, https://proceedings.mlr.press/
+v80/kuleshov18a.html.
+Lee, G., Kwon, D., Lee, C., 2023. A convolutional neural network model for SOH 
+estimation of Li-ion batteries with physical interpretability. Mech. Syst. Signal 
+Process. 188, 110004. http://dx.doi.org/10.1016/j.ymssp.2022.110004, https://
+linkinghub.elsevier.com/retrieve/pii/S088832702201072X.
+Li, H., Chen, C., 2025. Lithium-ion battery soh prediction based on multi-
+dimensional features and multi-model feature selector. Energy 331, 136844. 
+http://dx.doi.org/10.1016/j.energy.2025.136844, https://www.sciencedirect.com/
+science/article/pii/S0360544225024867.
+Li, X., Zhao, M., Zhong, S., Li, J., Fu, S., Yan, Z., 2024. Bmsformer: An efficient 
+deep learning model for online state-of-health estimation of lithium-ion batteries 
+under high-frequency early soc data with strong correlated single health indica-
+tor. Energy 313, 134030. http://dx.doi.org/10.1016/j.energy.2024.134030, https:
+//www.sciencedirect.com/science/article/pii/S0360544224038088.
+Lin, M., Ke, L., Wang, W., Meng, J., Guan, Y., Wu, J., 2024. Health prognosis via 
+feature optimization and convolutional neural network for lithium-ion batteries. 
+Eng. Appl. Artif. Intell. 133, 108666. http://dx.doi.org/10.1016/j.engappai.2024.
+108666, https://linkinghub.elsevier.com/retrieve/pii/S0952197624008248.
+Lin, M., Wu, D., Meng, J., Wu, J., Wu, H., 2022. A multi-feature-based multi-
+model fusion method for state of health estimation of lithium-ion batteries. J. 
+Power Sources 518, 230774. http://dx.doi.org/10.1016/j.jpowsour.2021.230774, 
+https://linkinghub.elsevier.com/retrieve/pii/S0378775321012660.
+Liu, D., Wang, H., Peng, Y., Xie, W., Liao, H., 2013. Satellite lithium -ion battery 
+remaining cycle life prediction with novel indirect health indicator extraction. 
+Energies 6 (8), 3654–3668. http://dx.doi.org/10.3390/en6083654, https://www.
+mdpi.com/1996-1073/6/8/3654.
+Lu, J., Xiong, R., Tian, J., Wang, C., Sun, F., 2023. Deep learning to estimate 
+lithium-ion battery state of health without additional degradation experiments. Nat. 
+Commun. 14 (1), 2760. http://dx.doi.org/10.1038/s41467-023-38458-w, tLDR: A 
+deep-learning framework is designed to enable the estimation of Li-ion battery 
+state of health in the absence of target battery labels that integrates a swarm 
+of deep neural networks equipped with domain adaptation to produce accurate 
+estimation.https://www.nature.com/articles/s41467-023-38458-w.
+Luo, K., Chen, X., Zheng, H., Shi, Z., 2022. A review of deep learning approach 
+to predicting the state of health and state of charge of lithium-ion batteries. 
+J. Energy Chem. 74, 159–173. http://dx.doi.org/10.1016/j.jechem.2022.06.049, 
+https://linkinghub.elsevier.com/retrieve/pii/S2095495622003564.
+Ma, G., Zhang, Y., Cheng, C., Zhou, B., Hu, P., Yuan, Y., 2019. Remaining useful 
+life prediction of lithium-ion batteries based on false nearest neighbors and a 
+hybrid neural network. Applied Energy 253, 113626. http://dx.doi.org/10.1016/
+j.apenergy.2019.113626, tLDR: A hybrid neural network that combines the advan-
+tages of a convolutional neural network with those of long short-term memory 
+is designed for model training and prediction and demonstrates wide generality 
+and reduced errors when compared with the other state-of-the-art methods.https:
+//linkinghub.elsevier.com/retrieve/pii/S0306261919313005.
+Mohanty, S.K., Nayak, P.K., Bera, P.K., Alhelou, H.H., 2024. An enhanced protective 
+relaying scheme for tcsc compensated line connecting dfig-based wind farm. 
+IEEE Trans. Ind. Inform. 20 (3), 3425–3435. http://dx.doi.org/10.1109/TII.2023.
+3306575.
+Mohanty, S.K., Swetapadma, A., Nayak, P.K., Malik, O.P., 2023. Decision tree approach 
+for fault detection in a tcsc compensated line during power swing. Int. J. Electr. 
+Power Energy Syst. 146, 108758. http://dx.doi.org/10.1016/j.ijepes.2022.108758.
+Peng, S., Zhang, D., Dai, G., Wang, L., Jiang, Y., Zhou, F., 2025. State of charge 
+estimation for LiFePO4 batteries joint by PID observer and improved EKF in various 
+OCV ranges. Appl. Energy 377, 124435. http://dx.doi.org/10.1016/j.apenergy.
+2024.124435, https://linkinghub.elsevier.com/retrieve/pii/S030626192401818X.
+Rechkemmer, S.K., Zang, X., Zhang, W., Sawodny, O., 2019. Empirical Li -ion aging 
+model derived from single particle model. J. Energy Storage 21, 773–786. http:
+//dx.doi.org/10.1016/j.est.2019.01.005, tLDR: A more comprehensive empirical 
+aging model for EEMs denoted by SPM–EEM is described and compared to already 
+existing models and shows first promising results to improve the accuracy.https:
+//linkinghub.elsevier.com/retrieve/pii/S2352152X18307588.
+Richardson, R.R., Osborne, M.A., Howey, D.A., 2017. Gaussian process regression 
+for forecasting battery state of health. J. Power Sources 357, 209–219. http:
+//dx.doi.org/10.1016/j.jpowsour.2017.05.004, tLDR: This work proposes Gaussian 
+process (GP) regression for forecasting battery state of health, and highlights 
+various advantages of GPs over other data-driven and mechanistic approaches.https:
+//www.sciencedirect.com/science/article/pii/S0378775317306250.
+Roman, D., Saxena, S., Robu, V., Pecht, M., Flynn, D., 2021. Machine learning pipeline 
+for battery state-of-health estimation. Nat. Mach. Intell. 3 (5), 447–456. http:
+//dx.doi.org/10.1038/s42256-021-00312-3, tLDR: This work designs and evaluates 
+a machine learning pipeline for estimation of battery capacity fade—a metric 
+of battery health—on 179 cells cycled under various conditions, and provides 
+insights into the design of scalable data-driven models for battery SOH estimation, 
+emphasizing the value of confidence bounds around the prediction. https://www.
+nature.com/articles/s42256-021-00312-3.
+Rouholamini, M., Wang, C., Nehrir, H., Hu, X., Hu, Z., Aki, H., Zhao, B., Miao, Z., 
+Strunz, K., 2022. A review of modeling, management, and applications of grid-
+connected li-ion battery storage systems. IEEE Trans. Smart Grid 13 (6), 4505–4524. 
+http://dx.doi.org/10.1109/TSG.2022.3188598.
+Son, S., Jeong, S., Kwak, E., h. Kim, J., Oh, K.-Y., 2022. Integrated framework for SOH 
+estimation of lithium-ion batteries using multiphysics features. Energy 238, 121712. 
+http://dx.doi.org/10.1016/j.energy.2021.121712, tLDR: Although the lifespan of 
+LIBs is estimated using the training set in the 5% SOH range, the estimation 
+errors of the proposed framework are less than 2.5% in all test sets, ensuring its 
+potential applicability in practical implementations of onboard battery management 
+systems.https://linkinghub.elsevier.com/retrieve/pii/S0360544221019605.
+Tan, Y., Zhao, G., 2020. Transfer learning with long short-term memory network 
+for state-of-health prediction of lithium-ion batteries. IEEE Trans. Ind. Electron. 
+67 (10), 8723–8731. http://dx.doi.org/10.1109/TIE.2019.2946551, tLDR: A novel 
+SOH prediction method based on transfer learning using the long short-term 
+memory combined with fully connected layers as the base model and a feature 
+expression scoring (FES) rule to assess the relevance of multiple prediction tasks..
+Tian, E., Chen, H., Wang, C., Wang, L., 2023. Security-ensured state of charge 
+estimation of lithium-ion batteries subject to malicious attacks. IEEE Trans. Smart 
+Grid 14 (3), 2250–2261. http://dx.doi.org/10.1109/TSG.2022.3202811.
+Tian, J., Xiong, R., Shen, W., 2020. State-of-health estimation based on differential 
+temperature for lithium ion batteries. IEEE Trans. Power Electron. 35 (10), 
+10363–10373. http://dx.doi.org/10.1109/TPEL.2020.2978493, https://ieeexplore.
+ieee.org/document/9025057/.
+Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., u. Kaiser, A.N. Gomez, 
+Polosukhin, I., 2017. Attention is all you need. In: Advances in Neural Information 
+Processing Systems, Vol. 30, Curran Associates, Inc., pp. 4271–4286, https:
+//proceedings.neurips.cc/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-
+Abstract.html.
+Wang, G., Jiang, B., Liu, Y., Wang, L., Zhang, Y., Yan, J., Wang, K., 2025. Source-
+load coordinated optimization framework for distributed energy systems using 
+quasi-potential game method. Prot. Control. Mod. Power Syst. 10 (5), 103–122. 
+http://dx.doi.org/10.23919/PCMP.2024.000161.
+Wei, J., Dong, G., Chen, Z., 2018. Remaining useful life prediction and state of health 
+diagnosis for lithium-ion batteries using particle filter and support vector regression. 
+IEEE Trans. Ind. Electron. 65 (7), 5634–5643. http://dx.doi.org/10.1109/TIE.2017.
+2782224, tLDR: A novel support vector regression-based battery SOH state-space 
+model is established to simulate the battery aging mechanism and the results show 
+that the proposed SOH estimation method can provide an accurate and robustness 
+result.http://ieeexplore.ieee.org/document/8186223/.
+Widodo, A., Shim, M.-C., Caesarendra, W., Yang, B.-S., 2011. Intelligent prognostics 
+for battery health monitoring based on sample entropy. Expert Syst. Appl. 38 (9), 
+11763–11769. http://dx.doi.org/10.1016/j.eswa.2011.03.063, tLDR: RVM outper-
+forms SVM based battery health prognostics and SampEn and estimated state of 
+charge (SOH) are employed as data input and target vector of learning algorithms, 
+respectively.https://linkinghub.elsevier.com/retrieve/pii/S0957417411004714.
+Wu, L., Hu, Y., Du, X., Lu, J., Li, Z., Cao, N., Zhang, S., Du, H., 2025. Movable 
+sio2 reinforced polymethyl methacrylate dual network coating for highly stable 
+zinc anodes. J. Energy Storage 132, 117752. http://dx.doi.org/10.1016/j.est.2025.
+117752.
+Wu, J., Liu, Z., Zhang, Y., Lei, D., Zhang, B., Cao, W., 2023. Data-driven state of health 
+estimation for lithium-ion battery based on voltage variation curves. J. Energy 
+Storage 73, 109191. http://dx.doi.org/10.1016/j.est.2023.109191.
+Xie, Y., Wang, S., Zhang, G., Takyi-Aninakwa, P., Fernandez, C., Blaabjerg, F., 2024. 
+A review of data-driven whole-life state of health prediction for lithium-ion bat-
+teries: Data preprocessing, aging characteristics, algorithms and future challenges. 
+J. Energy Chem. 97, 630–649. http://dx.doi.org/10.1016/j.jechem.2024.06.017, 
+https://linkinghub.elsevier.com/retrieve/pii/S2095495624004194.
+Xiong, R., Zhang, Y., Wang, J., He, H., Peng, S., Pecht, M., 2019. Lithium-ion battery 
+health prognosis based on a real battery management system used in electric vehi-
+cles. IEEE Trans. Veh. Technol. 68 (5), 4110–4121. http://dx.doi.org/10.1109/TVT.
+2018.2864688, tLDR: An effective health indicator to indicate lithium-ion battery 
+state of health and moving-window-based method to predict battery remaining 
+useful life and capacity estimation results show that the capacity estimation errors 
+were within 1.5%.https://ieeexplore.ieee.org/document/8430563/.
+Xu, Z., Chen, Z., Yang, L., Zhang, S., 2024. State of health estimation for lithium-
+ion batteries based on incremental capacity analysis and transformer modeling. 
+Appl. Soft Comput. 165, 112072. http://dx.doi.org/10.1016/j.asoc.2024.112072, 
+https://www.sciencedirect.com/science/article/pii/S1568494624008469.
+Xu, H., Peng, Y., Su, L., Health state estimation method of lithium ion battery based 
+on NASA experimental data set. In: IOP Conference Series: Materials Science and 
+Engineering 452 (3) (2018) 032067, http://dx.doi.org/10.1088/1757-899X/452/3/
+032067, publisher: IOP Publishing, TLDR: Two novel methods for estimating the 
+health status of lithium-ion battery are proposed using Bootstrap methods and two 
+machine learning models, regression tree and random forest, are compared.
+Yan, Z., Han, X., Zhang, D., Hong, H., Han, W., 2025. A novel hybrid neural network-
+based state of health estimation method with multi-feature extraction for lithium-
+ion batteries. J. Energy Storage 137, 118550. http://dx.doi.org/10.1016/j.est.2025.
+118550, https://www.sciencedirect.com/science/article/pii/S2352152X25032633.
+Yang, N., Song, Z., Hofmann, H., Sun, J., 2022. Robust state of health estimation 
+of lithium-ion batteries using convolutional neural network and random forest. 
+J. Energy Storage 48, 103857. http://dx.doi.org/10.1016/j.est.2021.103857, tLDR: 
+The convolutional neural network is explored to extract indicators for both SOH 
+and changes in SOH ($\Delta$SOH) between two successive charge/discharge 
+Engineering Applications of Artiϧcial Intelligence 181 (2026) 115420 
+22 
+
+
+=== 第23页 ===
+H. Wang et al.
+cycles and the random forest algorithm is adopted to produce the final SOH 
+estimate.https://linkinghub.elsevier.com/retrieve/pii/S2352152X21015231.
+Zhang, C., Allafi, W., Dinh, Q., Ascencio, P., Marco, J., 2018. Online estimation of bat-
+tery equivalent circuit model parameters and state of charge using decoupled least 
+squares technique. Energy 142, 678–688. http://dx.doi.org/10.1016/j.energy.2017.
+10.043, https://www.sciencedirect.com/science/article/pii/S0360544217317127.
+Zhang, Y., Li, Y.-F., Zhang, M., Wang, H., 2024a. A novel health indicator by 
+dominant invariant subspace on grassmann manifold for state of health assessment 
+of lithium-ion battery. Eng. Appl. Artif. Intell. 130, 107698. http://dx.doi.org/10.
+1016/j.engappai.2023.107698, https://www.sciencedirect.com/science/article/pii/
+S0952197623018821.
+Zhang, Z., Min, H., Guo, H., Yu, Y., Sun, W., Jiang, J., Zhao, H., 2023. 
+State of health estimation method for lithium-ion batteries using incremen-
+tal capacity and long short-term memory network. J. Energy Storage 64, 
+107063. http://dx.doi.org/10.1016/j.est.2023.107063, https://www.sciencedirect.
+com/science/article/pii/S2352152X23004607.
+Zhang, Y., Wang, Y., Zhang, C., Qiao, X., Ge, Y., Li, X., Peng, T., Nazir, M.S., 
+2024b. State-of-health estimation for lithium-ion battery via an evolution-
+ary stacking ensemble learning paradigm of random vector functional link 
+and active-state-tracking long–short-term memory neural network. Appl. En-
+ergy 356, 122417. http://dx.doi.org/10.1016/j.apenergy.2023.122417, https://
+linkinghub.elsevier.com/retrieve/pii/S0306261923017816.
+Zheng, Y., Hu, J., Chen, J., Deng, H., Hu, W., 2023. State of health estimation for 
+lithium battery random charging process based on CNN -GRU method. Energy Rep. 
+9, 1–10. http://dx.doi.org/10.1016/j.egyr.2022.12.093, https://linkinghub.elsevier.
+com/retrieve/pii/S2352484722026944.
+Zhou, Y., Huang, M., Chen, Y., Tao, Y., 2016. A novel health indicator for on-
+line lithium-ion batteries remaining useful life prediction. J. Power Sources 
+321, 1–10. http://dx.doi.org/10.1016/j.jpowsour.2016.04.119, https://linkinghub.
+elsevier.com/retrieve/pii/S037877531630492X.
+Engineering Applications of Artiϧcial Intelligence 181 (2026) 115420 
+23 

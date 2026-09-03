@@ -1,0 +1,28 @@
+\begin{table}[!htbp]
+\caption{Description of the four battery datasets.}
+\label{tab:2-1}
+\raggedright
+\zihao{-5}
+\setlength{\tabcolsep}{3.0pt}
+\renewcommand{\arraystretch}{1.08}
+\begin{ThreePartTable}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{0.20\linewidth}>{\raggedright\arraybackslash}p{0.165\linewidth}>{\raggedright\arraybackslash}p{0.175\linewidth}>{\raggedright\arraybackslash}p{0.175\linewidth}>{\raggedright\arraybackslash}p{0.205\linewidth}}
+\toprule
+Item & Oxford & CALCE CS2 & CALCE CX2 & MIT/Severson \\
+\midrule
+Data source & Oxford \cite{ref60} & CALCE \cite{ref18,ref61} & CALCE \cite{ref18,ref61} & \makecell[l]{MIT / Stanford /\\TRI \cite{ref62}} \\
+Cell type & Pouch cell & Prismatic cell & Prismatic cell & 18650 cylindrical cell \\
+Cathode material & NCO-LCO & LCO & LCO & LFP \\
+Rated capacity (Ah) & 0.74 & 1.10 & 1.35 & 1.10 \\
+Charge protocol (rate) & CC (2C) & \makecell[l]{CC-CV\\(0.5C, 4.2 V)} & \makecell[l]{CC-CV\\(0.5C, 4.2 V)} & \makecell[l]{Multi-step fast charge\\+ CC-CV (3.6 V)} \\
+Discharge protocol (rate) & ARTEMIS drive cycle & CC (1C) & CC (1C) & CC (4C) \\
+Cut-off voltage (V) & \makecell[l]{Charge to 4.2\\Discharge to 2.7} & \makecell[l]{Charge to 4.2\\Discharge to 2.7} & \makecell[l]{Charge to 4.2\\Discharge to 2.7} & \makecell[l]{Charge to 3.6\\Discharge to 2.0} \\
+Cut-off current (A) & --- & 0.05 & 0.05 & \makecell[l]{0.022\\(C/50)} \\
+Temperature ($^\circ$C) & 40 & 24 & 24 & 30 \\
+Capacity failure threshold & 70\% & \makecell[l]{0.84 Ah\\(76.4\%)} & \makecell[l]{1.08 Ah\\(80\%)} & 80\% \\
+Selected cell series & Cell1--Cell8 & CS2\_36--CS2\_38 & CX2\_36--CX2\_38 & \makecell[l]{b3c8, b3c13,\\b3c29} \\
+Total cycle number & \makecell[l]{8200 / 7700 / 8100 /\\5100 / 5000 / 5000 /\\8100 / 8100} & \makecell[l]{976 / 1043 /\\1082} & \makecell[l]{1971 / 1281 /\\1961} & \makecell[l]{828 / 816 /\\858} \\
+\bottomrule
+\end{tabularx}
+\end{ThreePartTable}
+\end{table}

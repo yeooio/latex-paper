@@ -1,0 +1,22 @@
+\begin{table}[!htbp]
+\caption{Hyperparameter search space of MS-AgentNet.}
+\label{tab:4-1}
+\raggedright
+\zihao{-5}
+\setlength{\tabcolsep}{3.0pt}
+\renewcommand{\arraystretch}{1.05}
+\begin{ThreePartTable}
+\begin{adjustbox}{max width=\linewidth}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{0.26\linewidth}>{\raggedright\arraybackslash}p{0.58\linewidth}}
+\toprule
+超参数 & 搜索空间 \\
+\midrule
+学习率 & 0.001, 0.01 \\
+网络深度 $L$ & 1, 2, 4, 8 \\
+嵌入维度 $d$ & 16, 32, 64, 128 \\
+全连接层维度 & 16, 32, 64, 128 \\
+\bottomrule
+\end{tabularx}
+\end{adjustbox}
+\end{ThreePartTable}
+\end{table}

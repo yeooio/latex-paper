@@ -1,0 +1,5 @@
+PWD D:/初稿/latex-paper
+INPUT d:/latex/texlive/2025/texmf.cnf
+INPUT d:/latex/texlive/2025/texmf-dist/web2c/texmf.cnf
+INPUT d:/latex/texlive/2025/texmf-var/web2c/xetex/xelatex.fmt
+INPUT main.tex

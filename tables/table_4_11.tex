@@ -1,0 +1,33 @@
+\begin{table}[!htbp]
+\caption{Effects of different convolution scales.}
+\label{tab:4-11}
+\centering
+\zihao{-5}
+\setlength{\tabcolsep}{2.5pt}
+\renewcommand{\arraystretch}{1.04}
+\begin{tabularx}{0.96\linewidth}{>{\centering\arraybackslash}p{0.10\linewidth}>{\centering\arraybackslash}p{0.10\linewidth}>{\centering\arraybackslash}p{0.08\linewidth}>{\centering\arraybackslash}p{0.08\linewidth}>{\centering\arraybackslash}p{0.07\linewidth}>{\centering\arraybackslash}p{0.10\linewidth}>{\centering\arraybackslash}p{0.10\linewidth}>{\centering\arraybackslash}p{0.12\linewidth}>{\centering\arraybackslash}p{0.10\linewidth}}
+\toprule
+Dataset & Model & $K=5$ & $K=31$ & RAA & MAE & RMSE & MAPE & Average \\
+\midrule
+CS2    & S0    & ---       & ---       & \ding{51} & 0.0119 & 0.0178 & 0.0161 & 0.0152 \\
+       & S5    & \ding{51} & ---       & \ding{51} & 0.0128 & 0.0184 & 0.0170 & 0.0161 \\
+       & S31   & ---       & \ding{51} & \ding{51} & 0.0124 & 0.0179 & 0.0166 & 0.0156 \\
+       & SFull & \ding{51} & \ding{51} & \ding{51} & 0.0120 & 0.0174 & 0.0160 & 0.0151 \\
+\addlinespace[1pt]
+CX2    & S0    & ---       & ---       & \ding{51} & 0.0156 & 0.0270 & 0.0899 & 0.0442 \\
+       & S5    & \ding{51} & ---       & \ding{51} & 0.0162 & 0.0285 & 0.1036 & 0.0494 \\
+       & S31   & ---       & \ding{51} & \ding{51} & 0.0135 & 0.0232 & 0.0677 & 0.0348 \\
+       & SFull & \ding{51} & \ding{51} & \ding{51} & 0.0106 & 0.0193 & 0.0377 & 0.0225 \\
+\addlinespace[1pt]
+MIT    & S0    & ---       & ---       & \ding{51} & 0.0024 & 0.0028 & 0.0026 & 0.0026 \\
+       & S5    & \ding{51} & ---       & \ding{51} & 0.0023 & 0.0027 & 0.0025 & 0.0025 \\
+       & S31   & ---       & \ding{51} & \ding{51} & 0.0025 & 0.0028 & 0.0026 & 0.0026 \\
+       & SFull & \ding{51} & \ding{51} & \ding{51} & 0.0018 & 0.0022 & 0.0020 & 0.0020 \\
+\addlinespace[1pt]
+Oxford & S0    & ---       & ---       & \ding{51} & 0.0054 & 0.0063 & 0.0062 & 0.0060 \\
+       & S5    & \ding{51} & ---       & \ding{51} & 0.0056 & 0.0066 & 0.0065 & 0.0062 \\
+       & S31   & ---       & \ding{51} & \ding{51} & 0.0055 & 0.0065 & 0.0064 & 0.0061 \\
+       & SFull & \ding{51} & \ding{51} & \ding{51} & 0.0053 & 0.0062 & 0.0062 & 0.0059 \\
+\bottomrule
+\end{tabularx}
+\end{table}

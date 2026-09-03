@@ -1,0 +1,66 @@
+\usepackage[a4paper,left=2.05cm,right=2.05cm,top=2.20cm,bottom=2.20cm]{geometry}
+\usepackage{amsmath,amssymb,bm,mathtools}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{makecell}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{newfloat}
+\usepackage{threeparttablex}
+\usepackage{adjustbox}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{url}
+\Urlmuskip=0mu plus 1mu
+\urlstyle{same}
+\usepackage{pifont}
+\usepackage{chngcntr}
+\usepackage{cite}
+\definecolor{thesislinkblue}{HTML}{2196D1}
+\usepackage[colorlinks=true,linkcolor=thesislinkblue,citecolor=thesislinkblue,urlcolor=thesislinkblue,hypertexnames=false]{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{indentfirst}
+\setlength{\heavyrulewidth}{0.9pt}
+\setlength{\lightrulewidth}{0.55pt}
+\setlength{\cmidrulewidth}{0.55pt}
+\setlength{\belowrulesep}{0.55ex}
+\setlength{\aboverulesep}{0.45ex}
+\setmainfont{Times New Roman}
+\setCJKmainfont{SimSun}[BoldFont=SimHei]
+\AtBeginDocument{\fontsize{10.2pt}{14.9pt}\selectfont}
+\setstretch{1.015}
+\setlength{\parindent}{2em}
+\setlength{\parskip}{0pt}
+\setlength{\emergencystretch}{1em}
+\setlength{\textfloatsep}{9pt plus 2pt minus 1pt}
+\setlength{\floatsep}{8pt plus 2pt minus 1pt}
+\setlength{\intextsep}{8pt plus 2pt minus 1pt}
+\renewcommand{\theequation}{\arabic{equation}}
+\DeclareFloatingEnvironment[fileext=loa,listname={Algorithms},name=Algorithm]{algorithm}
+\DeclareCaptionLabelFormat{figlabel}{Fig.\ #2}
+\DeclareCaptionLabelFormat{tablelabel}{Table\ #2}
+\DeclareCaptionFormat{tabletwoline}{#1#2\\#3}
+\captionsetup[figure]{skip=4.5pt,justification=centering,singlelinecheck=false,font={small},labelfont=normalfont,textfont=normalfont,labelformat=figlabel,labelsep=period}
+\captionsetup[table]{skip=3.5pt,justification=raggedright,singlelinecheck=false,font={small},labelfont=bf,textfont=normalfont,labelformat=tablelabel,labelsep=none,format=tabletwoline}
+\captionsetup[algorithm]{skip=4pt,justification=raggedright,singlelinecheck=false,font={small},labelfont=bf,textfont=normalfont}
+\crefname{figure}{Fig.}{Figs.}
+\Crefname{figure}{Fig.}{Figs.}
+\crefname{table}{Table}{Tables}
+\Crefname{table}{Table}{Tables}
+\crefname{algorithm}{Algorithm}{Algorithms}
+\Crefname{algorithm}{Algorithm}{Algorithms}
+\crefname{equation}{Eq.}{Eqs.}
+\Crefname{equation}{Eq.}{Eqs.}
+\titleformat{\section}{\bfseries\zihao{4}}{\thesection.}{0.45em}{}
+\titleformat{\subsection}{\bfseries\zihao{4}}{\thesubsection}{0.45em}{}
+\titleformat{\subsubsection}{\bfseries\zihao{-4}}{\thesubsubsection}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.12ex plus .34ex minus .16ex}{0.64ex}
+\titlespacing*{\subsection}{0pt}{1.02ex plus .30ex minus .14ex}{0.56ex}
+\titlespacing*{\subsubsection}{0pt}{0.82ex plus .24ex minus .1ex}{0.42ex}
+\setcounter{secnumdepth}{3}
+\pagestyle{plain}

@@ -1,0 +1,72 @@
+\begin{table}[!htbp]
+\caption{Layer configurations of different deep learning models.}
+\label{tab:4-4}
+\raggedright
+\zihao{-5}
+\setlength{\tabcolsep}{2.7pt}
+\renewcommand{\arraystretch}{1.10}
+\newcommand{\cfgsep}{\par\vspace{0.58\baselineskip}}
+\begin{ThreePartTable}
+\begin{tabularx}{\linewidth}{@{}
+  >{\hsize=.96\hsize\raggedright\arraybackslash}X
+  >{\hsize=1.10\hsize\raggedright\arraybackslash}X
+  >{\hsize=1.03\hsize\raggedright\arraybackslash}X
+  >{\hsize=1.18\hsize\raggedright\arraybackslash}X
+  >{\hsize=.73\hsize\raggedright\arraybackslash}X@{}}
+\toprule
+MS-AgentNet & CNN-\newline Transformer & Transformer & CNN-LSTM & LSTM \\
+\midrule
+\begin{minipage}[t]{\hsize}\vspace{0pt}\raggedright\setlength{\parskip}{0pt}
+Input\cfgsep
+Embedding layer\newline(16)\cfgsep
+SLFA module\cfgsep
+DSConv-L module\cfgsep
+Add \& Norm\cfgsep
+FFN\cfgsep
+Add \& Norm\cfgsep
+Linear layer
+\end{minipage}
+&
+\begin{minipage}[t]{\hsize}\vspace{0pt}\raggedright\setlength{\parskip}{0pt}
+Input\cfgsep
+Embedding layer\newline(16)\cfgsep
+Positional encoder\cfgsep
+Softmax attention\cfgsep
+$2\times$ Conv1D + ReLU\cfgsep
+MLP\cfgsep
+Transformer decoder\cfgsep
+Linear layer
+\end{minipage}
+&
+\begin{minipage}[t]{\hsize}\vspace{0pt}\raggedright\setlength{\parskip}{0pt}
+Input\cfgsep
+Embedding layer\newline(16)\cfgsep
+Positional encoder\cfgsep
+Softmax attention\cfgsep
+Add \& Norm\cfgsep
+MLP\cfgsep
+Add \& Norm\cfgsep
+Transformer decoder\cfgsep
+Linear layer
+\end{minipage}
+&
+\begin{minipage}[t]{\hsize}\vspace{0pt}\raggedright\setlength{\parskip}{0pt}
+Input\cfgsep
+Conv1D + ReLU\cfgsep
+MaxPooling1D\cfgsep
+$3\times$ Conv1D + ReLU\cfgsep
+$3\times$ LSTM layer (16)\cfgsep
+Linear layer
+\end{minipage}
+&
+\begin{minipage}[t]{\hsize}\vspace{0pt}\raggedright\setlength{\parskip}{0pt}
+Input\cfgsep
+Linear layer (16)\cfgsep
+$5\times$ LSTM layer (16)\cfgsep
+Linear layer
+\end{minipage}
+\\
+\bottomrule
+\end{tabularx}
+\end{ThreePartTable}
+\end{table}

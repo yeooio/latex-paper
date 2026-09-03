@@ -1,0 +1,35 @@
+\begin{table}[!htbp]
+\caption{Ablation results on different datasets.}
+\label{tab:4-10}
+\centering
+\zihao{-5}
+\setlength{\tabcolsep}{2.4pt}
+\renewcommand{\arraystretch}{1.04}
+\begin{ThreePartTable}
+\begin{tabularx}{0.98\linewidth}{>{\centering\arraybackslash}p{0.08\linewidth}>{\centering\arraybackslash}p{0.11\linewidth}>{\centering\arraybackslash}p{0.08\linewidth}>{\centering\arraybackslash}p{0.10\linewidth}>{\centering\arraybackslash}p{0.06\linewidth}>{\centering\arraybackslash}p{0.08\linewidth}>{\centering\arraybackslash}p{0.08\linewidth}>{\centering\arraybackslash}p{0.09\linewidth}>{\centering\arraybackslash}p{0.09\linewidth}>{\centering\arraybackslash}p{0.09\linewidth}}
+\toprule
+Dataset & Model & Backbone & \makecell[c]{Multi-scale\\DSConv} & RAA & MAE & RMSE & MAPE & Average & Reduction \\
+\midrule
+CS2    & M1                           & \ding{51} & ---        & ---        & 0.0123 & 0.0183 & 0.0166 & 0.0157 & 3.74\%  \\
+       & M2                           & \ding{51} & \ding{51}  & ---        & 0.0130 & 0.0184 & 0.0171 & 0.0162 & 6.49\%  \\
+       & M3                           & \ding{51} & ---        & \ding{51}  & 0.0119 & 0.0178 & 0.0161 & 0.0152 & 0.62\%  \\
+       & \makecell[c]{M4\\(Proposed)} & \ding{51} & \ding{51}  & \ding{51}  & 0.0120 & 0.0174 & 0.0160 & 0.0151 & ---     \\
+\addlinespace[1pt]
+CX2    & M1                           & \ding{51} & ---        & ---        & 0.0170 & 0.0294 & 0.1035 & 0.0500 & 54.94\% \\
+       & M2                           & \ding{51} & \ding{51}  & ---        & 0.0164 & 0.0284 & 0.1033 & 0.0494 & 54.40\% \\
+       & M3                           & \ding{51} & ---        & \ding{51}  & 0.0156 & 0.0270 & 0.0899 & 0.0442 & 49.05\% \\
+       & \makecell[c]{M4\\(Proposed)} & \ding{51} & \ding{51}  & \ding{51}  & 0.0106 & 0.0193 & 0.0377 & 0.0225 & ---     \\
+\addlinespace[1pt]
+MIT    & M1                           & \ding{51} & ---        & ---        & 0.0019 & 0.0022 & 0.0020 & 0.0020 & 2.43\%  \\
+       & M2                           & \ding{51} & \ding{51}  & ---        & 0.0021 & 0.0025 & 0.0023 & 0.0023 & 14.16\% \\
+       & M3                           & \ding{51} & ---        & \ding{51}  & 0.0024 & 0.0028 & 0.0026 & 0.0026 & 23.91\% \\
+       & \makecell[c]{M4\\(Proposed)} & \ding{51} & \ding{51}  & \ding{51}  & 0.0018 & 0.0022 & 0.0020 & 0.0020 & ---     \\
+\addlinespace[1pt]
+Oxford & M1                           & \ding{51} & ---        & ---        & 0.0063 & 0.0076 & 0.0073 & 0.0071 & 16.52\% \\
+       & M2                           & \ding{51} & \ding{51}  & ---        & 0.0058 & 0.0070 & 0.0067 & 0.0065 & 9.50\%  \\
+       & M3                           & \ding{51} & ---        & \ding{51}  & 0.0054 & 0.0063 & 0.0062 & 0.0060 & 1.52\%  \\
+       & \makecell[c]{M4\\(Proposed)} & \ding{51} & \ding{51}  & \ding{51}  & 0.0053 & 0.0062 & 0.0062 & 0.0059 & ---     \\
+\bottomrule
+\end{tabularx}
+\end{ThreePartTable}
+\end{table}

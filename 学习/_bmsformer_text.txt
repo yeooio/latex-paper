@@ -1,0 +1,2802 @@
+==== PAGE 1 ====
+《能源》第313卷(cid:1)(2024年)(cid:1)134030 Energy 313 (2024) 134030
+《能源》
+目录列表可在(cid:1)ScienceDirect 期刊主 Contents lists available at ScienceDirect
+页：www.elsevier.com/locate/energy
+Energy
+journal homepage: www.elsevier.com/locate/energy
+BMSFormer：一种用于高频早期荷电状态数据下具有强相关性单一健康 BMSFormer: An efficient deep learning model for online state-of-health
+estimation of lithium-ion batteries under high-frequency early SOC data
+指标的锂离子电池在线健康状态估计的高效深度学习模型
+with strong correlated single health indicator
+李晓鹏a，赵明航(cid:1) a，c，* ，钟世胜(cid:1) a，b，c ，李俊福(cid:1) d ，付松(cid:1) b ，闫志奇(cid:1) e Xiaopeng Lia, Minghang Zhaoa,c,*, Shisheng Zhonga,b,c, Junfu Lid, Song Fub, Zhiqi Yane
+a机械工程系，哈尔滨工业大学，威海，山东，264209，中国(cid:3)b机电工程学院，哈尔滨工业大学，哈尔滨，黑龙江省，150000，中 aDepartment of Mechanical Engineering, Harbin Institute of Technology, Weihai, Shandong, 264209, China
+国c威海市智能运维重点实验室，哈尔滨工业大学，威海，山东，264209，中国(cid:3)d汽车工程学院，哈尔滨工业大学，威海，山东， bSchool of Mechatronics Engineering, Harbin Institute of Technology, Harbin, Heilongjiang, 150000, China
+264209，中国e航空工程学院，中国民航大学，天津市，300300，中国 cWeihai Key Laboratory of Intelligent Operation and Maintenance, Harbin Institute of Technology, Weihai, Shandong, 264209, China
+dSchool of Automotive Engineering, Harbin Institute of Technology, Weihai, Shandong, 264209, China
+eCollege of Aeronautical Engineering, Civil Aviation University of China, Tianjin, 300300, China
+文(cid:1)章(cid:1)信(cid:1)息 摘(cid:1)(cid:1)要 A R T I C L E I N F O A B S T R A C T
+责任编辑：Prof(cid:1)X(cid:1)Ou 高效且准确的健康状态估计对于降低风险、确保其在资源受限设备的电池管理系统中有效应用至关重要。然而， Handling editor: Prof X Ou The efficient and accurate state-of-health (SOH) estimation is crucial for reducing risks and ensuring effective
+许多近期先进的健康状态估计方法依赖于资源消耗型结构以获得良好性能。本文构建了一种用于健康状态估计的 application in battery management systems (BMS) of resource-limited devices. However, many recent state-of-
+关键词：健康状态(cid:1)锂离子电 Keywords: the-art SOH estimation approaches rely on resource-consuming structures to obtain good performance. In this
+高效深度学习模型，即BMSFormer。BMSFormer主要集成了一个局部‑全局融合注意力模块，以同时捕获长期
+池(cid:1)效率估计(cid:1)局部‑全局融合 State of health paper, an efficient deep learning model for SOH estimation, namely BMSFormer, is constructed. BMSFormer
+注意力(cid:1)深度特征融合 和短期依赖关系，同时相比传统的基于Softmax的注意力机制降低了计算复杂度。此外，模型嵌入了两种深度可 Lithium-ion batteries mainly integrates a Local-Global Fusion Attention module to capture both long-term and short-term de-
+分离卷积来融合多尺度和多通道特征，以比标准卷积更少的参数增强了特征多样性。我们使用了三个广泛应用的 Efficiency estimation
+pendencies while reducing computational complexity compared to traditional Softmax-based attention. Addi-
+电池数据集（每个数据集具有不同的化学体系和运行条件）来评估BMSFormer的性能。实验结果表明，与替代 Local-global fusion attention tionally, two kinds of depthwise separable convolution are embedded to fuse multi-scale and multi-channel
+Depthwise feature fusion
+模型相比，所提出的模型在各种超参数组合下实现了更高的准确性、更低的计算消耗以及更稳定的性能。 features, enhancing feature diversity with fewer parameters than standard convolution. Three widely used
+battery datasets, each with different chemistries and operating conditions, are employed to evaluate the per-
+formance of BMSFormer. The experiments results illustrate that the proposed model achieves higher accuracy,
+lower computational consumption, and stabler performance across various hyperparameter combinations
+compared to alternative models.
+1.(cid:1)引言 直接进行。同时，由于嵌入式设备存储空间有限，它们通常依赖使用简 1. Introduction directly. At the same time, due to the limited storage space of embedded
+单方法的在线估计，例如卡尔曼滤波器（KF）及其变体[5——7], 经典 devices, they often rely on online estimations using simple approaches,
+如今，凭借高能量密度、低自放电率和长使用寿命等优势，锂离子 Nowadays, with the advantages of high energy density, low self- such as Kalman filter (KF) and its variants [5–7], classical physical
+的物理模型[8], 等效电路模型（ECM）[9] 以及传统的机器学习（
+电池已成为民航、电动汽车、移动设备、航空航天及其他领域的主要储 discharge rate and long service life, lithium-ion batteries have become models [8], equivalent circuit models (ECM) [9] and traditional ma-
+ML）算法，如支持向量机（SVM）[10]和随机森林（RF）[11]。然而，
+能设备之一[1]。尽管锂离子电池为人们’的生活带来了便利，但也带来 one of the main energy storage devices in civil airlines, electric vehicles, chine learning (ML) algorithms like support vector machines (SVM) [10]
+一方面，当面对来自在线监测和历史循环的非线性、不稳定数据时，传
+mobile devices, aerospace and other domains [1]. Although, lithium-ion and random forest (RF) [11]. However, on one hand, when faced with
+了潜在的安全隐患。这些隐患主要源于复杂的内部化学结构、不同的工
+统模型因其结构限制而难以提供高性能 [12,13]；另一方面，高性能的 batteries bring convenience to people’s lives, they also pose latent safety nonlinear and unstable data from online monitoring and historical cy-
+作条件和环境所带来的复杂退化过程。因此，精确的监测和状态估计对
+深度模型由于其计算成本高昂的结构，通常不足以方便地部署在电池管 hazards. These hazards primarily arise from the complicated degrada- cles, traditional models struggle to provide high performance due to
+于提升电池的安全性、可靠性和性能至关重要。
+理系统上。实际上，自AlexNet出现以来[14], 模型架构的主要趋势一直 tion processes brought by complex internal chemical structure, different their structural constraints [12,13]; On the other hand,
+是增加深度和规模，但许多现实世界的应用需要在实时和/或资源有限的 working conditions and environment. Therefore, precise monitoring and high-performance deep models are generally not feasible enough for
+state estimation are essential to enhance battery safety, reliability, and convenient deployment on BMS due to their computationally expensive
+移动设备上执行 [15]。因此，高性能的深度模型需要在一定程度上变得
+performance. structures. Actually, since the emergence of AlexNet [14], the predom-
+紧凑
+作为电池安全高效运行的重要保障，电池管理系统（BMS）能够记 As an essential guard of battery safe and efficient operation, battery inant trend in model architecture has been towards increasing depth and
+录实时数据、管理电池均衡、估计内部状态并提供紧急保护[2–4]。而内 management system (BMS) can record real-time data, manage cell bal- size, but many real-world applications need to be performed in real-time
+ance, estimate internal status and provide emergency protection [2–4]. and/or on limited resource mobile devices [15]. Thereby, the
+部状态，如健康状态（SOH），无法直接测量
+The internal states, such as state-of-health (SOH), cannot be measured high-performance deep models have a certain demand to be compact
+*(cid:1)通讯作者。机械工程系，哈尔滨工业大学，威海，山东，264209，中国。电子邮件地址：zhaomh@hit.edu.cn(M.(cid:1)Zhao)。 * Corresponding author. Department of Mechanical Engineering, Harbin Institute of Technology, Weihai, Shandong, 264209, China.
+E-mail address: zhaomh@hit.edu.cn(M. Zhao).
+https://doi.org/10.1016/j.energy.2024.134030收稿日期：2024年9月27日；修回日期：2024年11月15日； https://doi.org/10.1016/j.energy.2024.134030
+接受日期：2024年11月27日 Received 27 September 2024; Received in revised form 15 November 2024; Accepted 27 November 2024
+在线发布日期：2024年11月30日(cid:1)0360‑5442/©(cid:1)2024年(cid:1)爱思唯尔有限公司。保留所有权利，包括文本和数据挖掘、人工智能训练及类似技术的使用权。 Available online 30 November 2024
+0360-5442/© 2024 Elsevier Ltd. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+==== PAGE 2 ====
+X.(cid:3)Li(cid:3)等人 《能源》 313 (2024年) 134030 X. Li et al. E n e r g y 313 (2024) 134030
+并为未来的实际应用展现出低计算成本。 自注意力机制来捕获输入与输出之间全局依赖关系的模型架构。凭借其 and exhibit low computational cost for practical applications in the a self-attention mechanism to capture global dependencies between
+在并行计算和全局建模方面的显著优势，Transformer已在多个领域取 future. input and output. Due to its significant advantage in parallel computing
+近期的健康状态估计方法主要可分为两大类：(1)(cid:1)基于模型的方法， 得巨大成功[39——41]。自Hannan等人[42] 于2021年将 The recent SOH estimation approaches could be divided into two and global modeling, Transformer has already achieved immense suc-
+包括电化学模型和经验模型；(2)(cid:1)数据驱动方法，包括机器学习和深度 Transformer应用于电池健康状态估计以来，后续模型往往趋于复杂化。 main categories: (1) model-based approaches, including electrochemical cess across multiple domains [39–41]. Since Hannan et al. [42] applied
+学习方法[16——19]。 例如，Gomez等人[43] 引入了一种改进的时序融合Transformer，集 m
+m
+o
+ac
+d
+h
+e
+i
+l
+n
+s
+e
+a
+l
+n
+e
+d
+a r
+e
+n
+m
+in
+p
+g
+i r
+a
+i
+n
+c
+d
+al
+d
+m
+ee
+o
+p
+d e
+le
+ls
+a
+,
+r n
+(
+i
+2
+n
+)
+g
+d
+m
+at
+e
+a
+t
+-
+h
+d
+o
+r
+d
+iv
+s
+e
+[
+n
+1 6
+a
+–
+p
+1
+p
+9
+r
+]
+o
+.
+a ches, including t
+m
+h
+o
+e
+d e
+T
+l
+r
+s
+a
+h
+n
+a
+sf
+v
+o
+e
+r
+t
+m
+en
+er
+d e
+t
+d
+o
+to
+e s
+in
+ti
+c
+m
+re
+a
+a
+te
+se
+S
+in
+O
+c
+H
+o m
+o
+p
+f
+le
+b
+x
+a
+i
+t
+t
+t
+y
+e
+.
+r
+F
+ie
+o
+s
+r i
+i
+n
+n
+s t
+2
+a
+0
+n
+2
+ce
+1
+,
+,
+G
+s
+o
+u
+m
+bs
+e
+e
+z
+q
+e
+u
+t
+e
+a
+n
+l
+t
+.
+成了双向长短期记忆编码器‑解码器层以提升性能。Jia等人[44]提出了一
+[43] introduced an improved temporal fusion Transformer, integrating a
+(1)(cid:1)基于模型的方法使用数学方程或电路元件来模拟电池中的电化学 种结合双向门控循环单元和Transformer的混合预测模型。在另一项研 (1) Model-based approaches simulate the electrochemical principles Bi-LSTM encoder-decoder layer to enhance performance. Jia et al. [44]
+原理[20]。电化学模型（例如，单粒子模型和准二维模型）利用一系 究中，Gu等人[45] 提出了一种利用数据预处理方法和 in batteries using mathematical equations or circuit components proposed a hybrid prediction model by combining bidirectional gated
+列微分方程来表示电池中的电化学反应过程。虽然这些模型可能提供 CNN‑Transformer框架的新方法。Bai等人 [46] 引入了一种使用矩 [20]. Electrochemical models (e.g., single-particle model and recurrent unit and Transformer. In another study, Gu et al. [45] sug-
+较高的准确性，但它们通常需要大量的计算资源，使得在线估计具有 阵化数据的二维CNN‑Transformer模型，而Chen等人[47]则应用视觉 pseudo-two-dimensional model) utilize a series of differential gested a novel approach using data pre-processing methods and a
+equations to represent the electrochemical reaction processes in CNN-Transformer framework. Bai et al. [46] introduced a
+挑战性；并且许多参数，如颗粒半径和扩散系数，难以获取[21,22]。 Transformer网络进行健康状态估计，这涉及额外的数据展平操作。大
+the battery. While these models may offer high accuracy, they 2D-CNN-Transformer model using matrixing data, while Chen et al. [47]
+相比之下，作为一种广泛采用的经验模型，等效电路模型（ECM） 多数现有方法并未尝试简化基于Transformer的网络结构，而是直接将
+often require extensive computational resources, making online applied a vision-Transformer network (VIT) for SOH estimation,
+使用电阻器和电容器等电路元件来模拟电池内部行为[9,23]。ECM 其与其他模块或模型集成，导致计算复杂度较高。 estimation challenging; and many parameters, such as particle involving extra data flattening operations. Most existing methods do not
+（例如，戴维南、PNGV、GNL和RC模型）具有相对较低的计算复 radius and diffusion coefficients, are difficult to obtain [21,22]. attempt to simplify the structures of the Transformer-based networks,
+杂度和易于参数识别的特点。然而，它们无法完全捕捉电池内部的变 In contrast, as a widely employed empirical model, equivalent instead, they integrated it directly with other modules or models,
+化，与电化学模型相比，可能导致准确性较低。 circuit model (ECM), simulates battery internal behavior with resulting in computationally complicated approaches.
+当前许多电池健康状态估计方法面临的主要问题可归纳为以下三点。 circuit components such as resistors and capacitors [9,23]. ECMs Three main problems faced by many recent approaches for battery
+(e.g., Thevenin, PNGV, GNL and RC models) have relatively low SOH estimation, can be summarized as follows.
+computational complexity and easy parameter identification.
+(1)(cid:1)计算复杂度限制：在电池状态估计领域，许多现有的深度学习模 However, they cannot fully capture battery internal changes, (1) Computational Complexity Limitations: In the field of battery
+型试图通过增加模型结构的复杂度和/或结合不同的经典模型来实现 probably resulting in lower accuracy compared to electro- state estimation, many existing deep learning models attempt to
+更高的准确性。这些方法引入了大量不必要的参数更新，从而增加了 chemical models. achieve higher accuracy by increasing the complexity of model
+(2)(cid:1)与基于模型的方法相比，数据驱动方法可以利用历史数据进行训 (2) Data-driven approaches can be trained using historical data and structures or/and combining different classical models. Those
+计算资源需求。这种复杂性可能会阻碍未来在资源受限设备（如电池
+练，并且通常对电池内部衰减机制的依赖性较低[23]。它们采用各种 mostly have lower dependencies on the internal degradation approaches introduce numerous unnecessary parameter updates,
+管理系统）中的应用。(2)(cid:1)估计精度挑战：许多现有方法面临精度挑
+算法来建立输入（健康指标，HIs）与输出（健康状态，SOH）之间 mechanism of batteries compared to model-based approaches thereby increasing computational resource demands. Such
+战，原因在于模型本身固有的计算限制、所提取健康指标的表征能力
+[23]. They employ various algorithms to establish the relation- complexity may hinder future applications in resource-
+的关系，然后利用新数据进行健康状态估计。因此，自几年前起，许
+不足，或输入了过多弱相关的健康指标，这些因素共同对健康状态估 ships between input (health indicators, HIs) and output (state-- constrained devices, such as BMS.
+多研究者倾向于专注于建立更强大的数据驱动模型。例如，Fei等人
+计结果的准确性产生了负面影响。 of-health, SOH), then use new data for SOH estimation. Thereby, (2) Estimation Accuracy Challenges: Many current approaches
+[24]从电压、电流、温度、内阻和容量这五类主要记录数据中构建了
+since a few years ago, many researchers tend to focus on estab- face accuracy challenges due to inherent computational con-
+42个健康指标，然后将它们输入到五个代表性的机器学习（ML）模 lishing stronger data-driven models. For instance, Fei et al. [24] straints within the model itself, insufficient representational ca-
+型中，包括高斯过程回归（GPR）[25],、支持向量机（SVM） crafted 42 HIs from five kinds of main recorded data including pabilities of the extracted health indicators, or the input of many
+[10], 、随机森林（RF）[26],、梯度提升回归树（GBRT）[27] 和 voltage, current, temperature, internal resistance and capacity, weakly correlated health indicators, which together negatively
+神经网络（NN）[28]。得益于深度学习（DL）方法的蓬勃发展，近 and then fed them into five representative machine learning (ML) impact the accuracy of SOH estimation results.
+(3)(cid:1)性能稳定性问题：训练和优化过程通常需要进行大量的超参数调 models including the Gaussian process regression (GPR) [25], (3) Performance Stability Issues: The training and optimization
+年来许多研究采用卷积神经网络（CNNs）、循环神经网络（
+优才能达到更高的性能，这在达成预期目标前会消耗大量时间和计算 support vector machine (SVM) [10], random forest (RF) [26], process often require extensive hyperparameter tuning to achieve
+RNNs）和Transformer模型来估计电池的状态。例如，基于卷积神
+资源。如果模型能够在各种超参数配置下保持稳定且高性能，此类消 gradient boosting regression tree (GBRT) [27] and neural higher performance, which consumes a lot of time and compu-
+经网络强大的局部特征提取能力，Yang等人[29] 利用一维卷积神经
+network (NN) [28]. Benefiting from the prosperity of deep tational resources before reaching the desired goals. Such con-
+耗便可有效降低。然而，大多数现有方法仅展示其最优结果，并未证
+网络处理容量衰减数据集，而Lee等人[30]则将数据转换为二维格式 learning (DL) methods, in recent years, many works employ sumption can be effectively reduced if the model is able to
+明模型具备解决此问题的能力。
+并采用二维卷积神经网络。此外，密集神经网络[31] 也在类似研究 convolutional neural networks (CNNs), recurrent neural net- maintain stable and high performance across various hyper-
+中被尝试使用。 works (RNNs), and Transformers to estimate the states of batte- parameter configurations. However, most existing methods only
+ries. For example, depending on the powerful local feature present their optimal results without demonstrating the model’s
+extraction ability of CNNs, Yang et al. [29] utilized 1D-CNN to ability to solve this problem.
+handle capacity degradation datasets, while Lee et al. [30]
+为应对这些挑战，本文开发了一种高效的深度学习模型，即 transformed the data into a two-dimensional format and To address these challenges, this article develops an efficient deep
+BMSFormer，用于锂离子电池的健康状态估计，旨在优化计算资源使 employed 2D-CNN. Additionally, dense neural network [31] was learning model, namely BMSFormer, for SOH estimation of lithium-ion
+用、平衡准确性与效率，并增强模型稳定性以实现可靠的性能。主要贡 also attempted in similar research. batteries, with the goal of optimizing computational resource usage,
+balancing accuracy and efficiency, and enhancing model stability for
+献总结如下。
+然而，传统的卷积神经网络并不擅长处理长时间序列数据，因为这 However, traditional CNNs are not adept at dealing with long time- reliable performance. The main contributions are summarized as
+需要大量的卷积层来融合彼此相距较远的局部特征。循环神经网络及其 series data, as this requires numerous convolutional layers to fuse local follows.
+变体，如门控循环单元和长短期记忆，试图通过隐藏层、状态单元和各 features that are distant from each other. RNNs and their variants such
+(1)(cid:1)通过逐步缩短窗口大小和步长，在两个高频SOC充放电片段中识 as gated recurrent unit (GRU) and long short-term memory (LSTM) (1) By progressively shortening the window size and step size, health
+种门控结构来克服这一挑战。这些组件就像一个“神经细胞”，能够存
+别出与电池健康状态相关性更高的健康指标。该方法成功实现了在三 attempt to overcome this challenge with hidden layers, state cells and indicators (HIs) with higher correlations to the battery health
+储信息并将其从一个时间步传递到下一个时间步进行计算。尽管如此，
+种不同类型电池上平均超过0.99的皮尔逊相关系数值。 various gates. These components function like a “nerve cell” that can state are identified within two high-frequency SOC charge and
+由于存在顺序依赖性，传统的循环神经网络即使借助现代多线程GPU资
+storage information and pass it from one time step to the next for discharge segments. This approach successfully achieves Pearson
+源，其利用效率仍不够便捷，尽管近期研究在计算效率方面取得了一些 computation. Nonetheless, due to the sequential dependence, it is not correlation coefficient (PCC) values averaging over 0.99 across
+改进，例如双向长短期记忆、基于注意力的时空长短期记忆、 convenient enough for traditional RNNs to make full use of modern three different kinds of battery.
+CNN‑LSTM、CNN‑ASTLSTM以及CNN‑GRU，但有限顺序计算的根 (2)(cid:1)构建了一个局部‑全局融合注意力模块，以有效捕获短期和长期特 multi-threaded GPU resources, even though recent works have achieved (2) A Local-Global Fusion Attention module is constructed to effec-
+本约束依然存在。 征，同时相比传统的基于Softmax的注意力机制降低了计算复杂度。 some improvements in computational efficiency like bidirectional long tively capture both short-term and long-term features while
+(3)(cid:1)嵌入了两种深度可分离卷积模块，分别采用小卷积核尺寸（ short-term memory (Bi-LSTM) [32,33], Attention-based Spa- reducing computational complexity compared to traditional
+tial-Temporal LSTM (ASTLSTM) [34], CNN-LSTM [35], CNN-ASTLSTM Softmax-based attention mechanisms.
+DSConv‑S）和大核尺寸（DSConv‑L），以融合多尺度和多通道特
+[36], and CNN-GRU [37], while the fundamental constraint of (3) Two kinds of depthwise separable convolution module with small
+征，
+limited-sequential computation still remains. kernel size (DSConv-S) and large kernel size (DSConv-L) are
+为解决上述问题，Vaswani(cid:1)[38] 提出了Transformer，这是一种 To address the above problem, Vaswani [38] proposed the Trans- embedded to fuse multi-scale and multi-channel features,
+避免循环、转而依赖 former, a model architecture avoiding recurrence and instead relying on
+2 2
+==== PAGE 3 ====
+X.(cid:3)Li(cid:3)等人 《能源》 313 (2024年) 134030 X. Li et al. E n e r g y 313 (2024) 134030
+在比标准卷积使用更少参数的情况下，增强了特征多样性。 2.(cid:1)预备知识 enhancing feature diversity with fewer parameters than standard 2. Preliminaries
+convolution.
+2.1.(cid:3)所开发的健康状态估计方法概述 2.1. Overview of the developed SOH estimation approach
+本文其余部分的安排如下。第2节描述了所开发的健康状态估计方 The remaining sections of this paper are arranged as follows. Sec-
+法的主要步骤以及三种不同类型电池数据集的基本信息。第3节介绍了 健康状态是评估电池健康状况的关键指标。虽然目前对健康状态尚 tion2 describes the major steps of the developed SOH estimation The SOH is a critical metric for evaluating health status of batteries.
+BMSFormer的结构与模块。第4节进行了全面的验证，并将 无标准化定义，但电池容量仍是最常用的表征方式[31], ，如下所示： approach and the basic information of three different kinds of battery While there is still no standardized definition for SOH, battery capacity
+datasets. Section 3introduces the structure and modules of BMSFormer. remains the most utilized representation [31], as illustrated below:
+BMSFormer与四种主流的深度学习模型进行了比较。最后，结论总结
+Section 4presents comprehensive validations and compares BMSFormer
+于第5节。
+SOH=
+Ccurrent×100%,
+(1) with four prevailing deep learning models. Finally, the conclusions are SOH=
+Ccurrent×100%,
+(1)
+Crated
+summarized in Section 5.
+Crated
+其中Ccurrent 和Crated 分别为当前容量和额定容量。 where Ccurrent and Crated are the current capacity and rated capacity,
+respectively.
+如图1所示，所开发的健康状态估计方法 As illustrated in Fig. 1, the developed SOH estimation approach
+图1.(cid:1)所开发的健康状态估计方法流程图。 Fig. 1. Flowchart of developed SOH estimation approach.
+3 3
+==== PAGE 4 ====
+X.(cid:3)Li(cid:3)等人 《能源》 313 (2024年) 134030 X. Li et al. E n e r g y 313 (2024) 134030
+包含四个步骤。 表1三个电池数据集的描述。 consists of four steps. Table 1
+Description of three battery datasets.
+(1)(cid:1)数据采集。三种不同化学材料的电池在全生命周期老化测试中经 数据源 牛津大学(cid:1)[48] NASA(cid:1)[49] CALCE(cid:1)[50] (1) Data acquisition. Three types of batteries with different chemical Data Sources Oxford [48] NASA [49] CALCE [50]
+受各种充放电协议，以评估所提出的模型。选取日常电池运行中荷电 materials were subjected to full lifecycle aging tests under various
+制造商 Kokam LG化学 LG化学 Manufacturer Kokam LG Chem LG Chem
+状态的高频中间段、3.8(cid:1)V至4.2(cid:1)V的充电段以及3.8(cid:1)V至3.4(cid:1)V的放电 电池类型 软包电池 18650圆柱电池 方形电池 charge/discharge protocols to evaluate the proposed model. The Cell types Pouch 18650 Cylindrical Prismatic
+段进行健康指标提取。 正极材料 NCO‑LCO NCA LCO high frequency of the intermediate SOC during daily battery Cathode material NCO-LCO NCA LCO
+选定电池 电芯(cid:1)(1–8) B00(cid:1)(05–07(cid:1)和 CS2(cid:1)(35–38) operation, charge segment from 3.8 V to 4.2 V and discharge Selected battery Cell (1–8) B00 (05–07 and CS2 (35–38)
+串联 18) segment from 3.8 V to 3.4 V are selected for HI extraction. series 18)
+(2)(cid:1)特征工程。提取每个循环的恒流充电与放电时间作为健康指标。 电池编号 8 4 4 (2) Feature engineering. The constant current charge and discharge Battery number 8 4 4
+额定容量 0.74 2 1.1 Rated capacity 0.74 2 1.1
+从选定的区段开始，使用逐渐缩小的窗口和步长来优化健康指标搜索 (Ah) times for each cycle are extracted as health indicators (HIs). (Ah)
+过程，直至达到0.01V的窗口或无法找到更高的皮尔逊相关系数值。 容量失效 70 % 1.4(cid:1)(70(cid:1)%) 0.84(cid:1)(76.4(cid:1)%) Starting from the selected segments, the HI search process is Capacity failure 70 % 1.4 (70 %) 0.84 (76.4 %)
+阈值(cid:1)(安时) refined using progressively smaller windows and steps until a threshold (Ah)
+随 动 后 一 ， 步 使 。 用 每 滑 个 动 窗 窗 口 口 下 将 一 健 步 康 的 指 真 标 实 的 健 时 康 间 状 序 态 列 作 划 为 分 其 为 对 子 应 集 子 ， 集 每 的 次 标 向 签 前 。 移 充 ( 电 倍 协 率 议 ) 恒 (2C 流 ) 充电(cid:1) 恒 (0 流 . 恒 75 压 C 充 , 电 4.2V) 恒 (0 流 . 恒 5 压 C 充电 ,4.2V) 0.01V window is reached or no higher Pearson correlation coef- Ch ( a ra rg te e ) protocol CC (2C) C (0 C .7 -C 5 V C ,4.2V) C (0 C .5 -C C V ,4 .2V)
+放电协议 方差 恒流（1C） 恒流（1C） ficient (PCC) value is found. A sliding window is then used to Discharge protocol variance CC (1C) CC (1C)
+倍率 divide the time series of HIs into subsets, moving forward one (rate)
+截止电压（V） 充电至4.2V 充电至4.2V 充电至4.2V step at a time. The true SOH at the next step of each window Cut-off voltage (V) charge to 4.2 charge to 4.2 charge to 4.2
+放电至2.7V 放电至2.7V/ 放电至 serves as the label for its corresponding subset. discharge to 2.7 discharge to 2.7/ discharge to
+(3)(cid:1)模型训练。为方便起见，使用Cell1、B0005和CS2‑35作为训练集， 2.5V/2.2V/2.5V 2.7 (3) Model training. For convenience, Cell1, B0005, and CS2-35 are 2.5/2.2/2.5 2.7
+截止电流（A） – 充电至0.02 充电至 Cut-off current (A) – charge to 0.02 charge to
+其中前30%的数据用于在384种超参数组合（包括训练轮数、学习率、 0.05 used as training sets, with the first 30 % of the data employed for 0.05
+块与层数、以及密集层和嵌入层的维度）上进行训练。剩余的70%数 实验 40 24 24 training across 384 hyperparameter combinations including Experiment 40 24 24
+温度（◦℃） epochs, learning rate, number of blocks and layers, and dimen- temperature (◦C)
+据用于验证和比较，以选择性能最佳的模型。然后，将最佳性能模型
+循环次数 8200/7700/8100/ 168/168/168/ 881/935/ sion of dense and embedding layer. The remaining 70 % data is Cycle numbers 8200/7700/8100/ 168/168/168/ 881/935/
+直接在对应数据集中其他电池的完整数据上进行测试，以评估模型泛 5100/5000/5000/ 132 971/995 5100/5000/5000/ 132 971/995
+used for validation and comparison to select the best-performing
+化能力，并将BMSFormer与四种不同的深度学习模型的性能进行比 8100/8100 8100/8100
+model. Then the best perform model is tested directly on the
+较。 entire data of other batteries in the corresponding dataset to
+四节来自LG化学的18650圆柱形锂离子电池（编号5、6、7和18），每 evaluate the model generalization and compare the performance of Excellence Data Set Repository-NASA. Four Lithium-ion 18650 cy-
+节标称容量为2安时，在室温下经历三种运行工况：以1.5A（0.75C）倍 of BMSFormer with four different deep learning models. lindrical batteries (#5, 6, 7, and 18) from LG Chem, each with 2Ah
+(4)(cid:1)模型评估。评估不同模型的准确性、效率和稳定性。使用四种典型 率在恒流模式下充电至4.2V，随后转入恒压模式直至电流降至20(cid:1)mA； (4) Model evaluation. The accuracy, efficiency, and stability of nominal capacity, undergo three operational profiles at room tempera-
+的评估指标来衡量准确性，使用四种常见的计算复杂度指标来评估训 分别以2A倍率在恒流模式下放电至2.7V、2.5V、2.2V和2.5V。老化过 different models are evaluated. Four typical evaluation metrics ture: charging at 1.5A (0.75C) in CC mode to 4.2V, followed by CV mode
+练效率，并使用384种超参数组合的R2 结果来评估训练结果的稳定性。 程通过重复循环加速，寿命终止定义为容量损失30%至1.4安时。其正极 are used to measure the accuracy, four common computational until the current fell to 20 mA; discharging at 2A in CC mode down to
+complexity metrics are used to evaluate the training efficiency, 2.7V, 2.5V, 2.2V and 2.5V, respectively. The aging process is accelerated
+材料为镍钴铝酸锂（NCA）。
+and the R2 results of 384 hyperparameter combinations are used through repeated cycles, with EOL defined as a 30 % capacity loss to
+to assess the stability of training results. 1.4Ahr. The positive electrode material is lithium nickel cobalt
+aluminum oxide (NCA).
+2.2.(cid:3)典型电池数据集获取 2.2. Typical battery datasets acquisition
+2.2.3.(cid:3)CALCE锂电池数据集 2.2.3. CALCE lithium battery dataset
+本文使用了来自牛津大学、NASA和CALCE的三种主流电池数据集， CALCE锂电池数据集源自马里兰大学先进生命周期工程中心（ Three kinds of prevailing battery datasets from Oxford, NASA and The CALCE lithium-ion battery dataset originates from the Center for
+这些数据集被广泛认可且源自领先的电池研究机构，确保了标准化的实 CALCE）。这些电池的额定容量为1.1安时，并使用LiCoO2作为正极材 CALCE are used in this paper, which are widely recognized and originate Advanced Life Cycle Engineering (CALCE) at the University of Mary-
+验协议和可靠的数据。它们涵盖了各种电池材料、规格和工作条件。因 料。电池寿命的老化测试在室温下进行。充电策略是以0.5(cid:1)C（0.55A） from leading battery research institutions, ensuring standardized land. These batteries have a rated capacity of 1.1 Ah and utilize lithium
+此，通过对具有不同材料并经受各种工作条件的多样化电池进行评估， 的恒流倍率充电，直至电压达到4.2(cid:1)V，然后保持在4.2(cid:1)V直至充电电流 experimental protocols and reliable data. They encompass various bat- cobalt oxide (LiCoO2) as the cathode material. The aging tests for bat-
+可以验证所提方法的适用性和精确性。本工作中使用的电池数据集的主 降至0.02(cid:1)A以下，随后以2(cid:1)A的恒定电流放电，直至电压降至2.7(cid:1)V。 tery materials, specifications, and work conditions. Hence, the applica- tery life are performed at room temperature. The charge strategy is to
+bility and precision of the proposed approach can be evaluated through charge at a constant-current rate of 0.5 C (0.55A) until the voltage
+要特征总结于表1；图2(a)‑(c)(cid:1)展示了三种不同电池在各种工作条件下的 evaluation on a diverse range of batteries with different materials and reaches 4.2 V and then hold at 4.2 V until the charging current drops
+容量衰减和增量现象，而图2(d)–(f)(cid:1)则显示了每个数据集中第一个电池 subjected to various operating conditions. The main characteristics of below 0.02 A, then the batteries are discharged with a constant current
+在若干循环内的恒流充电电压曲线。在每种电池类型内部观察到相似的 battery datasets used in this work are summarized in Table 1; Fig. 2(a)- of 2 A until the voltage decreases to 2.7 V.
+趋势，而在不同类型的电池之间则存在明显的差异。 (c) illustrates the capacity degradation and increment phenomenon of
+2.3.(cid:3)健康指标提取 three different batteries under various work conditions, while Fig. 2(d)– 2.3. Health indicators extraction
+(f) displays the constant-current charge voltage curves in several cycle of
+选定的健康指标（HIs）灵感来源于一系列参考文献[51——58] 这 the first battery from each dataset. Similar trends are observed within The selected health indicators (HIs) are inspired by a range of ref-
+些文献服务于不同的研究目的。考虑到日常电池运行中中间荷电状态的 each battery type and distinct differences are noticeable between erences [51–58] serving various research purposes. Considering the high
+高频特性，选取了从3.8(cid:1)V到4.2(cid:1)V的充电段以及从3.8(cid:1)V到3.4(cid:1)V的放电 different types of batteries. frequency of the intermediate SOC during daily battery operation,
+charge segment from 3.8 V to 4.2 V and discharge segment from 3.8 V to
+段用于健康指标提取。
+2.2.1.(cid:3)牛津大学锂电池数据集 2.2.1. Oxford lithium battery dataset 3.4 V are selected for HI extraction.
+牛津大学锂电池数据集由牛津大学电池智能实验室提供，包含八个 如图3所示，在我们健康指标提取流程的第一步中，利用一个0.2V The Oxford lithium-ion battery dataset is provided by the Battery As shown in Fig. 3, in the first step of our HIs extraction procedures, a
+Kokam(cid:1)SLPB533459H4锂离子软包电池的退化数据，每个电池的标称 的窗口大小和0.2V的移动步长，将选定的充电或放电段划分为更短的区 Intelligence Laboratory at the University of Oxford including degrada- 0.2V window size with a 0.2V moving step size is utilized to divide the
+容量为0.74安时，并在40°C下进行测试。Kokam软包电池的负极材料 段：充电段中的3.8–4.0V、3.9–4.1V和4.0–4.2V（放电段中的3.8– tion data from eight Kokam SLPB533459H4 lithium-ion pouch cells, selected charge or discharge segment into shorter segments: 3.8–4.0V,
+each with a 0.74 Ah nominal capacity and test at 40 ◦C. The negative 3.9–4.1V, and 4.0–4.2V in charge segment (3.8–3.6V, 3.7–3.5V,
+为石墨，正极材料为钴酸锂（LCO）和镍钴酸锂（NCO）的混合物。这 3.6V、3.7–3.5V、3.6–3.4V）。然后，取每个数据集中所有电池的最小
+electrode material of the Kokam pouch cells is graphite, the positive 3.6–3.4V in discharge segment). Then the minimum Pearson correlation
+八个电池采用恒流然后恒压充电曲线充电至4.2(cid:1)V，随后按照源自城市 皮尔逊相关系数值作为基线，并选择基线值最高的区段作为下一步的搜
+electrode material is a blend of lithium cobalt oxide (LCO) and lithium coefficient (PCC) value across all batteries of each dataset is taken as the
+Artemis的放电曲线过程，以变化的放电倍率放电至2.7(cid:1)V。 索区段。在第二、第三和第四步中，使用逐渐减小的窗口和步长重复搜
+nickel cobalt oxide (NCO). The eight batteries are subjected to a baseline, and the segment with the highest baseline value is selected as
+索过程，直到达到0.01V的窗口，或者未识别出比前一步更高的基线。 constant-current and then constant-voltage charging profile up to 4.2 V, the search segment for the next step. In the 2nd, 3rd, and 4th steps, the
+最终，分别确认从4.16V到4.17V的恒流充电时间序列和从3.8V到3.4V followed by a variance discharge current rate from the urban Artemis- search procedures are repeated with progressively smaller windows and
+的恒流放电时间序列作为 derived profile process down to 2.7 V. steps until a 0.01V window is reached or no higher baseline is identified
+than in the previous step. Finally, the constant current charge time
+2.2.2.(cid:3)NASA锂电池数据集 2.2.2. NASA lithium battery dataset (CCCT) series from 4.16V to 4.17V and the constant current discharge
+NASA锂电池数据集由NASA卓越预测中心数据集存储库提供。 The NASA lithium battery dataset is provided by Prognostics Center time (CCDT) series from 3.8V to 3.4V are respectively confirmed as the
+4 4
+==== PAGE 5 ====
+X.(cid:3)Li(cid:3)等人 《能源》 313 (2024年) 134030 X. Li et al. E n e r g y 313 (2024) 134030
+图2.(cid:1)三种不同类型的电池数据集：(a)–(c)(cid:1)分别为牛津大学、NASA和CALCE电池的容量衰减与临时增量曲线。(d)–(f)(cid:1)分别为牛津大学Cell1、NASA(cid:1)B0005和 Fig. 2. Three different kinds of battery datasets: (a)–(c) capacity degradation and temporary increment curves of the Oxford, NASA and CALCE cells, respectively.
+CALCE(cid:1)CS2‑35的恒流充电电压曲线。 (d)–(f) constant current charge voltage curves of Oxford Cell1, NASA B0005 and CALCE CS2-35, respectively.
+表明相关性更强。皮尔逊相关系数公式如下所示： indicating a stronger relationship. The PCC formula is shown as follows:
+∑n ∑n
+(xk (cid:0) x)(yk (cid:0) y) (xk (cid:0) x)(yk (cid:0) y)
+PCC=√̅̅̅̅k̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅ (2) PCC=√̅̅̅̅k̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅ (2)
+∑n ∑n ∑n ∑n
+(xk (cid:0) x)2 (yk (cid:0) y)2 (xk (cid:0) x)2 (yk (cid:0) y)2
+k k k k
+其中，x、y、x、y 和n 分别代表选定的健康指标序列值、电池健康状态 where x, y, x, y and n represent the value of the selected HI sequence and
+序列值、x 和y的平均值以及样本数量。 the battery SOH sequence, the average value of x and y, the number of
+samples, respectively.
+如表2所示，选定的健康指标（即电压从4.16V到4.17V的恒流充电 As shown in Table 2, the selected HI, which is the constant current
+时间）与近期其他方法相比具有最高的皮尔逊相关系数。类似地，如表 charging time from 4.16 to 4.17V, has the highest PCC compared to
+3所示，选定的健康指标（即电压从3.8V到3.4V的恒流放电时间）与近 others of recent methods. Similarly, as shown in Table 3, the selected HI,
+which is the constant current discharge time from 3.8 to 3.4V, has the
+期其他方法相比也具有最高的皮尔逊相关系数。
+highest PCC compared to others.
+3.(cid:1)所开发的BMSFormer 3. The developed BMSFormer
+本节首先介绍BMSFormer的整体架构与工作流程。随后，阐述所 In this section, the overall architecture and workflow of BMSFormer
+设计的包含DSConv‑L和DSConv‑S在内的多尺度深度可分离卷积模块。 are first introduced. Then, the designed Multi-scale Depthwise Separable
+图(cid:1)3.选定充电段中选定健康指标的提取流程。 Fig. 3. The extraction procedures of the selected HI in the selected
+接着，详细说明提出的局部‑全局融合注意力（LGFA）模块。最后，简 Convolution modules, including DSConv-L and DSConv-S, are described.
+charge segment.
+Following that, the proposed Local-Global Fusion Attention (LGFA)
+要介绍几个基础模块。
+module is detailed. Finally, several foundational modules are briefly
+选定的健康指标。 selected HIs.
+introduced.
+皮尔逊相关系数是一种广泛使用的统计指标，用于评估健康指标与真实 The PCC is a widely utilized statistical metric for evaluating the
+健康状态之间线性关联的强度[59,60]。皮尔逊相关系数的取值范围从(cid:0) 1 到 strength of linear association between HIs and true SOH [59,60]. The
+1，其绝对值越接近1 value of the PCC ranges from (cid:0) 1 to 1, with the absolute value closer to 1
+表(cid:1)2不同健康指标在牛津数据集上的皮尔逊相关系数 Table 2
+对比。 PCC comparison of different HIs on Oxford datasets.
+电池 选定的 来自ICA的CCCT 来自DTA的CCCT CCCQ CCDQ IC峰值 样本熵 放电电压曲线斜率 Battery selected CCCT from ICA CCCT from DTA CCCQ CCDQ IC peak sample entropy Discharge voltage curve slope
+串联 HI [55] [56] [57] [55] [58] [55] [58] series HI [55] [56] [57] [55] [58] [55] [58]
+Cell1 0.99996 0.9999 0.9989 0.99947 0.9998 0.9444 (cid:0)0.9853 0.9999 Cell1 0.99996 0.9999 0.9989 0.99947 0.9998 0.9444 (cid:0) 0.9853 0.9999
+电池2 0.99999 0.9999 0.9959 0.98677 0.9999 – (cid:0)0.9839 – Cell2 0.99999 0.9999 0.9959 0.98677 0.9999 – (cid:0) 0.9839 –
+电池3 0.99996 0.9999 0.9993 0.99948 0.9989 0.9375 (cid:0)0.9876 0.9998 Cell3 0.99996 0.9999 0.9993 0.99948 0.9989 0.9375 (cid:0) 0.9876 0.9998
+Cell4 0.99998 0.9104 – 0.99981 0.9999 – (cid:0)0.9885 – Cell4 0.99998 0.9104 – 0.99981 0.9999 – (cid:0) 0.9885 –
+Cell5 0.99992 0.9999 – 0.99960 0.9999 – (cid:0)0.9133 – Cell5 0.99992 0.9999 – 0.99960 0.9999 – (cid:0) 0.9133 –
+电池6 0.99998 0.9999 – 0.99961 0.9991 – (cid:0)0.9848 – Cell6 0.99998 0.9999 – 0.99961 0.9991 – (cid:0) 0.9848 –
+Cell7 0.99999 0.9999 – 0.99973 0.9999 0.9296 (cid:0)0.9896 0.9998 Cell7 0.99999 0.9999 – 0.99973 0.9999 0.9296 (cid:0) 0.9896 0.9998
+电池8 0.99999 0.9999 – 0.99970 0.9999 0.9378 (cid:0)0.9908 0.9998 Cell8 0.99999 0.9999 – 0.99970 0.9999 0.9378 (cid:0) 0.9908 0.9998
+5 5
+==== PAGE 6 ====
+X.(cid:3)Li(cid:3)等人 《能源》 313 (2024年) 134030 X. Li et al. E n e r g y 313 (2024) 134030
+表(cid:1)3NASA和CALCE数据集上不同健康指标的PCC对比。 Table 3
+PCC comparison of different HIs on NASA and CALCE datasets.
+电池 选定的 CCCT CCCQ 起始与结束充电的最大投影距离 IC峰值 充放电循环间的弛豫时间 Battery selected CCCT CCCQ Max projection distance of start and end charge IC peak Relax time between charge and discharge cycle
+串联 HI [61] [57] 电压(cid:1)[62] [58] [63] series HI [61] [57] voltage [62] [58] [63]
+B0005 0.9934 0.9703 0.94268 0.95 0.9910 (cid:0)0.8941 B0005 0.9934 0.9703 0.94268 0.95 0.9910 (cid:0) 0.8941
+B0006 0.9858 0.9366 0.94518 0.97 0.9800 (cid:0)0.9373 B0006 0.9858 0.9366 0.94518 0.97 0.9800 (cid:0) 0.9373
+B0007 0.9983 0.9745 0.92037 0.99 0.9251 (cid:0)0.9049 B0007 0.9983 0.9745 0.92037 0.99 0.9251 (cid:0) 0.9049
+B0018 0.9987 – 0.81248 – – – B0018 0.9987 – 0.81248 – – –
+CS2‑35 0.9960 0.9799 0.90290 0.95 – (cid:0)0.9843 CS2-35 0.9960 0.9799 0.90290 0.95 – (cid:0) 0.9843
+CS2‑36 0.9968 0.9827 0.93370 0.99 – (cid:0)0.9829 CS2-36 0.9968 0.9827 0.93370 0.99 – (cid:0) 0.9829
+CS2‑37 0.9943 0.9789 0.93920 0.98 – – CS2-37 0.9943 0.9789 0.93920 0.98 – –
+CS2‑38 0.9952 0.9748 – 0.96 – – CS2-38 0.9952 0.9748 – 0.96 – –
+3.1.(cid:3)架构概述 卷积（采用大核尺寸）以及多层感知机。Turn(cid:1)和(cid:1)Back(cid:1)指张量的转置 3.1. Architecture overview convolution with large kernel size, and multilayer perceptron. Turn and
+操作，而Wa 是一个可学习的权重参数。 Back refer to the transposing operation of tensor, and Wa is a learnable
+在本研究中，为解决当前模型在准确性与效率上往往难以同时达到 In this research, to solve the problem that the accuracy and efficiency weight parameter.
+最优的问题，提出了一种兼具全局特征与局部信息捕获能力的轻量级网 of the current models often cannot be optimal together, a lightweight
+络，称为BMSFormer。 3.2.(cid:3)所设计的多尺度深度可分离卷积模块 network termed BMSFormer with both global features and local infor- 3.2. The designed multi-scale depthwise separable convolutional modules
+mation capturing capabilities is proposed.
+整个框架如图4所示，描述如下：将健康指标作为输入，通过窗口 The entire framwork is illustrated in Fig. 4and described as follows:
+本节介绍了DSConv的基本结构，并将其与标准卷积进行了比较， In this section, the fundamental structure of DSConv is introduced
+分割成片段，嵌入高维空间，然后馈入一个BMSFormer块，该块包含 HIs are taken as input, segmented into fragments via window splitting,
+随后详细阐述了DSConv‑S和DSConv‑L的多尺度特性。 and compared to standard convolution, then the multi-scale properties
+LGFA模块和DSConv‑L模块。LGFA模块的输出被转置，通过一个 embedded in a high-dimensional space, and then fed into a BMSFormer
+of DSConv-S and DSConv-L are elaborated subsequently.
+block, which includes the LGFA module and DSConv-L module. The
+DSConv‑L模块，再转置回来。最后，所有BMSFormer块的输出被馈
+output from LGFA module is transposed, passed through a DSConv-L
+入一个多层感知机层，然后输出结果。在训练过程中，每个窗口段之后 3.2.1.(cid:3)DSConv-S与DSConv-L模块的基本结构 3.2.1. Fundamental structure of DSConv-S and DSConv-L modules
+module, and transposed back. Finally, the output from all BMSFormer
+紧邻的真实健康状态值被用作标签，指导模型调整梯度下降优化。 卷积运算擅长通过滑动滤波器提取局部信息[30,46,64]。标准卷积 Convolutions operations are adept in extracting local information
+blocks is fed into a Multilayer Perceptron (MLP) layer before outputting
+在所有输入通道数上进行操作，每个卷积核生成一个特征图作为一个输 through sliding filters [30,46,64]. Standard convolution operates across
+the result. During the training process, the true SOH value right
+出通道数。因此，在处理大规模时间序列数据集时，计算资源和训练时 all input channels, with each convolutional kernel generating a feature
+following each window segment is utilized as a label, which guides the
+map as one output channel. Therefore, the consumption of computa-
+间的消耗将显著增加。标准卷积的计算成本为： model to adjust the gradient descent optimization.
+tional resources and training time will significantly increase when
+从数学上讲，这意味着，对于BMSFormer块xi 的输入i，该块对应 Mathematically, this means, for the input xi of BMSFormer block i,
+dealing with large time-series datasets. The standard convolutions have
+的输出yi 使用以下公式计算： the corresponding output yi of the block is calculated using
+the computational cost of:
+xi ʹ=Wa ⋅LGFA(xi )+LN(xi ), (3) k×k×Nin ×Nout ×NF ×NF (6) xi ʹ=Wa ⋅LGFA(xi )+LN(xi ), (3) k×k×Nin ×Nout ×NF ×NF (6)
+x’’=Back(DSConv-L(LN(Turn(xi ’))))+xi ’, (4) 其中，k、Nin 、Nout 、NF 分别代表卷积核大小、输入通道数、输出通道 x’’=Back(DSConv-L(LN(Turn(xi ’))))+xi ’, (4) where the k,Nin ,Nout ,NF represent the kernel size, input channels,
+yi =MLP(LN(xi ʹʹ))+xi ʹ, (5) 数和特
+与
+征
+标
+图
+准
+尺
+卷
+寸
+积
+。
+相比，首先，深度可分离卷积通常使用比标准卷积更小
+yi =MLP(LN(xi ʹʹ))+xi ʹ, (5) outp
+C
+u
+o
+t
+m
+c
+p
+h
+a
+a
+r
+n
+e
+n
+d
+e l
+t
+s
+o
+, a
+s
+n
+ta
+d
+n
+t
+d
+h
+a
+e
+r d
+fe a
+c
+t
+o
+u
+n
+r
+v
+e
+o
+m
+lu
+a
+ti
+p
+o n
+si
+,
+z e
+fi
+,
+r
+r
+s
+e
+tl
+s
+y
+p
+,
+e c
+in
+ti v
+g
+e
+e
+ly
+n
+.
+eral, depthwise
+其中(cid:1)LGFA、LN、DSConv‑L、MLP(cid:1)分别代表(cid:1)Local‑Global(cid:1)Fusion(cid:1)
+的滤波器[15,65——68], 如图5左上角区域所示。其次，深度卷积将特征
+where LGFA, LN, DSConv-L, MLP respectively represent the Local-
+separable convolution utilizes smaller filter than standard convolution
+Attention、层归一化、深度可分离 图分离为多个 Global Fusion Attention, layer normalization, depthwise separable [15,65–68], as illustrated in the upper left area of Fig. 5. Secondly,
+depthwise convolution separates the features map into multiple
+图(cid:1)4.(cid:1) 架。(a)(cid:1)LGFA模块,(cid:1)(b)(cid:1)BMSFormer块,(cid:1)(c)(cid:1)DSConv‑L模块,(cid:1)(d)(cid:1)BMSFormer核心结构 . Fig. 4. Framework of BMSFormer. (a) LGFA module, (b) BMSFormer block, (c) DSConv-L module, (d) BMSFormer core structure.
+BMSFormer框
+6 6
+==== PAGE 7 ====
+X.(cid:3)Li(cid:3)等人 《能源》 313 (2024年) 134030 X. Li et al. E n e r g y 313 (2024) 134030
+图(cid:1)5.(cid:1)基本结构：(a)(cid:1)标准卷积；(b)(cid:1)标准深度可分离卷积；(c)(cid:1)DSConv‑S模块；(d)(cid:1)DSConv‑L模块。 Fig. 5. The fundamental structure of: (a) Standard convolution; (b) Standard Depthwise separable convolution; (c) DSConv-S module; (d) DSConv-L module.
+通道，每个通道使用其自身的一组滤波器进行卷积。这两个操作不仅允 应用一个1×31 深度卷积核大小来提取长期特征，旨在进一步增强特征 channels, and each channel is convolved with its own set of filters. These module applies a 1×31 depthwise convolutional kernel size to extract
+许提取多种特征，还能显著降低计算负载。第三，深度可分离步骤的输 多样性和模型泛化能力。该模块还包含两层1×1逐点卷积。因此， two operations not only allow for the extraction of a variety of features long-term features, aiming to further enhance the feature diversity and
+出随后通过逐点卷积的1×1 滤波器进行组合。此步骤混合所有通道的特 DSConv‑L的计算成本可表示为： but also significantly decreases the computational load. Thirdly, the model generalization. This module also incorporates two layers of 1×1
+outputs from the depthwise step are then combined using 1×1 filter of pointwise convolutions. Therefore, the computational cost of DSConv-L
+征，从而学习它们之间的交互。最后，残差连接有助于缓解梯度消失问
+pointwise convolution. This step mixes the features across all channels, can be expressed as:
+题，并使网络能够学习更复杂的函数。
+allowing for learning interactions between them. Finally, the residual
+Nin ×3Nin ×NF ×NF +1×31×3Nin ×NF ×NF +3Nin ×Nout ×NF
+connection helps in mitigating the vanishing gradient problem and al-
+Nin ×3Nin ×NF ×NF +1×31×3Nin ×NF ×NF +3Nin ×Nout ×NF
+×NF
+lows the network to learn more complex functions.
+×NF
+深度可分离卷积将空间与通道操作分离，通过先在空间维度上应用 (10) DSConv separates the spatial and channel-wise operations, reducing (10)
+深度卷积，再通过逐点卷积调整输出通道数，从而降低计算复杂度： computational complexity by first applying a depthwise convolution
+其中(cid:1)3Nin 和(cid:1)NF ×NF 分别代表扩展后的输入通道数和特征图尺寸。 across spatial dimensions, followed by a pointwise convolution to adjust where 3Nin and NF ×NF represents the input channels after expanding
+the number of output channels: and the feature map size, respectively.
+k×k×Nin ×NF ×NF +Nin ×Nout ×NF ×NF (7) 3.3.(cid:3)所提出的局部-全局融合注意力模块 k×k×Nin ×NF ×NF +Nin ×Nout ×NF ×NF (7) 3.3. The proposed Local-Global Fusion Attention module
+其中k、Nin 、Nout 、NF 分别代表卷积核大小、输入通道数、输出通道数
+本节描述了Transformer模型中自注意力机制的一般形式，简要分
+where k,Nin ,Nout ,NF represent the kernel size, input channels, output
+In this section, the general form of self-attention mechanism in
+和特征图尺寸。 channels, and the feature map size, respectively.
+析了传统Softmax注意力与线性注意力的优缺点，并随后介绍了所提出 Transformers is described, the advantages and disadvantages of tradi-
+通过将卷积操作分解为先进行深度滤波再进行逐点组合的两步过程， By breaking convolution operation into a two-step process of
+的局部‑全局融合注意力（LGFA）模块的两大优势，包括全局感受野和 tional Softmax and linear attention are briefly analyzed, and two main
+计算量得以减少，其减少倍率为： depthwise filtering followed by pointwise combination, a reduction is
+superiorities of proposed Local-Global Fusion Attention (LGFA) module,
+局部信息敏感性。 achieved in computation of:
+including global receptive field and local information sensitivity are
+k×k×Nin ×NF ×NF +Nin ×Nout ×NF ×NF k×k×Nin ×NF ×NF +Nin ×Nout ×NF ×NF introduced subsequently.
+k×k×Nin ×Nout ×NF ×NF
+(8)
+大多数现有的SOH估计方法仍依赖于传统的Softmax注意力 [45—— k×k×Nin ×Nout ×NF ×NF
+(8)
+Most existing SOH estimation methods still rely on traditional Soft-
+= 1 + 1 47], 其存在计算复杂度过高的问题。同时，尽管线性注意力降低了复 = 1 + 1 max attention [45–47], suffering from excessive computational
+Nout k2 杂度，但其模型表达能力不足的问题依然存在。因此，本文提出了局部‑ Nout k2 complexity. Meanwhile, although the linear attention reduces the
+complexity, it continues to struggle with insufficient model expressive-
+全局融合注意力（LGFA）模块，旨在融合线性复杂度与高表达能力，
+3.2.2.(cid:3)DSConv-S与DSConv-L模块的计算分析 3.2.2. Computational analysis of DSConv-S and DSConv-L modules ness. Therefore, the Local-Global Fusion Attention (LGFA) module is
+这对于高效且准确的健康状态估计具有潜在益处。
+采用小卷积核尺寸的深度可分离卷积（DSConv‑S）与大核尺寸的 The depthwise separable convolution with small kernel size proposed to integrate linear complexity and high expressiveness, which
+深度可分离卷积（DSConv‑L）旨在提取多尺度与多通道特征，以解决 (DSConv-S) and large kernel size (DSConv-L) are designed to extract are potentially beneficial for efficient and accurate SOH estimation.
+ReLU注意力机制因其线性注意力机制而受限的表达能力问题，同时保 multi-scale and multi-channel feature, aiming to addresses the expres-
+持较高的计算效率。 3.3.1.(cid:3)多头自注意力的一般形式 siveness limitations of ReLU attention, which is constrained by its linear 3.3.1. General form of multi-head self-attention
+为了提高模型的表征能力，多头自注意力通过多个并行的“头”来 attention mechanism, while maintaining high computational efficiency. To improve the model’s representational capacity, multi-head self-
+如图5所示，在输入通道数采用双倍扩展因子的情况下， 处理输入，每个头代表一个独立的自注意力机制。每个头计算其自身的 As illustrated in Fig. 5, with a double expansion factor for input attention processes the input through several parallel “heads”, each
+DSConv‑S模块应用1×3 的深度卷积核尺寸，以提升输入信息质量及对 注意力权重，并生成一个独特的注意力表示。自注意力机制计算输入中 channels, the DSConv-S module applies a 1×3 depthwise convolutional representing an independent self-attention mechanism. Each head cal-
+局部变化的注意力敏感性。该模块进一步整合了两层1×1 的逐点卷积， 每个元素与所有其他元素之间的关系（注意力权重），然后生成这些关 kernel size to enhance the quality of input information and the sensi- culates its own attention weights and generates a unique attention
+以融合多通道特征，从而进一步提升特征表示能力。DSConv‑S的计算 系的加权和以创建新的表示。这使得模型能够聚焦于序列中的重要信息， tivity of attention for local variety. This module further incorporates two representation. The self-attention mechanism computes the relation-
+layers of 1×1 pointwise convolutions to integrate multi-channel fea- ships (attention weights) between each element in the input and all
+成本可表示为： 尤其是长距离依赖关系。
+tures, further improving feature representation. The computational cost other elements. It then produces a weighted sum of these relationships to
+of DSConv-S can be expressed as: create new representations. This allows the model to focus on important
+Nin ×2Nin ×NF ×NF +1×3×2Nin ×NF ×NF +2Nin ×Nout ×NF ×NF
+在第(cid:0) 个头中，给定输入X ∈∈(cid:1)RN×C，自注意力机制的一般形式可表述如
+Nin ×2Nin ×NF ×NF +1×3×2Nin ×NF ×NF +2Nin ×Nout ×NF ×NF info
+I
+r
+n
+m
+i
+a
+(cid:0)
+tio
+th
+n i
+h
+n
+e a
+th
+d
+e
+,
+s
+g
+e
+iv
+q
+e
+u
+n
+e n
+a
+c
+n
+e ,
+i
+e
+n
+s
+p
+p
+u
+e
+t
+c i
+X
+al
+∈
+ly
+R
+lo
+N
+n
+×
+g
+C
+-
+,
+r a
+th
+n
+e
+g e
+g e
+d
+n
+ep
+er
+e
+a
+n
+l
+d
+f
+e
+o
+n
+r
+c
+m
+ie s
+o
+.
+f self-
+(9) (9)
+下： attention can be formulated as follows:
+其中(cid:1)2Nin 和(cid:1)NF ×NF 分别代表扩展后的输入通道数和特征图尺寸。 Q=XWQ , (11) where 2Nin and NF ×NF represents the input channels after expanding Q=XWQ , (11)
+and the feature map size, respectively.
+DSConv‑L模块采用三倍扩展因子处理输入通道数， K=XWK , (12) With a triple expansion factor for input channels, the DSConv-L K=XWK , (12)
+7 7
+==== PAGE 8 ====
+X.(cid:3)Li(cid:3)等人 《能源》 313 (2024年) 134030 X. Li et al. E n e r g y 313 (2024) 134030
+V=XWV , (13) 注意力机制定义为：
+(cid:0) )
+V=XWV , (13) attention mechanism is defi
+(cid:0)
+ned as:
+)
+(cid:0) ) Sim(Q,K)=ReLU(Q)ReLU DSConv-S(K)T (15) (cid:0) ) Sim(Q,K)=ReLU(Q)ReLU DSConv-S(K)T (15)
+Oi = ∑ j= N 1 ∑N Si S m im Q (cid:0) Q i , i K ,K j j )Vj , (14) 其中自注意力模块可以重写为： Oi = ∑ j= N 1 ∑N Si S m im Q (cid:0) Q i , i K ,K j j )Vj , (14) where the self-attention module can be rewritten as:
+其 模 中 块 W 和 Q 每 、 j 个 = W 1 头 K 和 的 W 通 V 道 ∈ 维 ∈ 度 (cid:1)R 。 C× S d i m 是 (⋅, 可 ⋅) 学 是 习 自 的 注 线 意 性 力 投 机 影 制 矩 的 阵 相 ， 似 C 度 和 函 d 数 分 。 别是 Oi = ∑ j= N 1 [ ReLU R ( e Q L i U )R (Q eL i ) U ∑ j= N ( 1 D R S e C L o U n ( v D -S S (cid:0) C K o j n ) T v- ) S ] (cid:0) D Kj S ) C T o ) nv-S (cid:0) Vj ) (16) w m Si h m a e t ( r r ⋅ i , e c ⋅ e ) s W i , j s = C Q 1 t , h a W e n d K si , m d a n a il d r a e r W i t t h y V e f ∈ c u h n R a c C n t × i n o d e n l a o d r f i e m s e e t l h n f- e s a i t o t l n e e s n a t o r i n f o a n m b o m le d e u c l l h i e n a a e n a n i r s d m e p . a r c o h je h c e ti a o d n . Oi = ∑ j= N 1 [ ReLU R ( e Q L i U )R (Q eL i ) U ∑ j= N ( 1 D R S e C L o U n ( v D -S S (cid:0) C K o j n ) T v- ) S ] (cid:0) D Kj S ) C T o ) nv-S (cid:0) Vj ) (16)
+然后，利用矩阵乘法的结合律，可以在保持相同功能的同时，将计 Then, by using the associative property of matrix multiplication, the
+3.3.2.(cid:3)Softmax注意力机制与线性注意力机制 3.3.2. Softmax attention mechanism and linear attention mechanism
+算复杂度从二次降低到线性： computational complexity can be reduced from quadratic to linear while
+Transformer模型主要利用Softmax注意力机制，其相似度函数 Transformers( main
+√
+ly
+̅
+̅̅)utilize Softmax Attention [38] with the
+maintaining the same functionality:
+S
+所
+im
+有
+(
+查
+Q
+询
+,(cid:1)K
+‑
+)
+键
+如
+对
+公
+之
+式
+间
+(1
+的
+4)
+相
+所
+似
+示
+度
+：
+获
+ex
+得
+p(
+的
+QK
+，
+/
+这
+√
+导
+d)
+致
+。
+了
+然
+如
+而
+图
+，
+6
+注
+(a
+意
+)所
+力
+示
+图
+的
+是
+O
+通
+(N
+过
+²
+计
+)计
+算
+算
+∑N {
+ReLU(Qi )ReLU
+[
+DSConv-S
+(cid:0)
+Kj
+)
+T
+]}
+DSConv-S
+(cid:0)
+Vj
+)
+o
+Si
+b
+m
+ta
+(
+i
+Q
+n
+,
+e
+K
+d
+) =
+by
+e x
+c
+p
+om
+Q
+p
+K
+u
+T
+ti
+/
+ng
+d
+the
+i n
+s i
+E
+m
+q.
+i l
+(
+a
+1
+ri
+4
+t
+)
+y
+. H
+b
+o
+et
+w
+(cid:0)w
+e
+e
+v
+e
+e
+)n
+r ,
+a
+th
+ll
+e
+q
+a
+u
+tt
+e
+e
+r
+n
+y
+t
+-
+i
+k
+o
+e
+n
+y
+m
+p
+a
+a
+p
+ir
+i
+s
+s
+,
+∑N {
+ReLU(Qi )ReLU
+[
+DSConv-S
+(cid:0)
+Kj
+)
+T
+]}
+DSConv-S
+(cid:0)
+Vj
+)
+复
+似
+杂
+度
+度
+函
+。
+数
+相
+Sim
+比
+(
+之
+Q
+下
+,(cid:1)K
+，
+)(cid:1)=
+线
+(cid:1)φ
+性
+(Q
+注
+)
+意
+φ(
+力
+K)
+机
+ᵀ，
+制
+有
+（
+效
+如
+地
+图
+降
+6(
+低
+b)
+了
+所
+计
+示
+算
+）
+复
+通
+杂
+过
+度
+精
+。
+心
+它
+设
+基
+计
+于
+的
+矩
+相 Oi =j=1
+ReLU(Qi )
+∑N
+ReLU
+[
+DSConv-S
+(cid:0)
+Kj
+)
+T
+] l
+(
+e
+a
+a
+).
+d i
+I
+n
+n
+g
+c
+t
+o
+o
+n t
+t
+r
+h
+a
+e
+s t
+c
+,
+o
+l
+m
+in
+p
+e
+u
+a
+t
+r
+a
+a
+ti
+t
+o
+te
+n
+n
+c
+ti
+o
+o
+m
+n
+p
+[
+l
+6
+e
+9
+x
+]
+it
+,
+y
+a
+o
+s
+f
+s
+O
+how
+N
+n
+2
+in
+a s
+F
+i
+i
+l
+g
+lu
+.
+s
+6
+t
+(
+r
+b
+a
+)
+t
+,
+e d
+ef
+i
+fi
+n
+c i
+F
+e
+i
+n
+g
+t
+.
+l
+6
+y
+Oi =j=1
+ReLU(Qi )
+∑N
+ReLU
+[
+DSConv-S
+(cid:0)
+Kj
+)
+T
+]
+阵
+列
+乘
+中
+法
+标
+的
+记
+结
+数
+合
+量
+律
+的
+，
+计
+将
+算
+计
+复
+算
+杂
+顺
+度
+序
+被
+从
+降
+φ
+低
+(
+至
+Q)
+O
+(φ
+(N
+(K
+)，
+)ᵀV
+其
+)
+中
+改
+N
+为
+代
+φ
+表
+(Q
+序
+)φ
+列
+(K
+长
+)ᵀ
+度
+V。
+。
+关
+这
+于
+种
+序
+ReLU(Qi )
+{ ∑N
+ReLU
+[ j=
+D
+1
+SConv-S
+(cid:0)
+Kj
+)
+T
+]
+DSConv-S
+(cid:0)
+Vj
+) } (17) r
+fu
+ed
+n
+u
+ct
+c
+i
+e
+o
+s
+n s
+t h
+w
+e
+it
+c
+h
+o m
+S (cid:0) i
+p
+m
+uta
+(Q
+ti
+,
+o
+K
+n
+)
+c
+=
+o
+)
+m
+ϕ(
+p
+Q
+le
+)
+x
+ϕ
+i
+(
+t
+K
+y
+) (cid:0) T
+b
+,
+y
+w
+ca
+h
+r
+i
+e
+c
+f
+h )
+u l
+c
+ly
+h a
+d
+n
+e
+g
+s
+e
+ig
+s
+n
+t
+e
+h
+d
+e
+s
+c
+i
+o
+m
+m
+il
+p
+a
+u
+ri
+t
+t
+a
+y
+- ReLU(Qi )
+{ ∑N
+ReLU
+[ j=
+D
+1
+SConv-S
+(cid:0)
+Kj
+)
+T
+]
+DSConv-S
+(cid:0)
+Vj
+) } (17)
+线性复杂度使得模型能够高效处理长序列，这对于时间序列分析尤其有益。 = Re j L = U 1 (Qi ) ∑
+j=
+N
+1
+ReLU [ DSConv-S (cid:0) Kj ) T ] p
+r
+ti
+e
+r o
+s
+o n
+p
+p
+e
+o e
+c
+r r
+t
+t d y
+t
+e
+o
+r o f f
+t
+r
+h
+o m
+e
+m a
+n
+t
+u
+r ϕ i
+m
+x ( Q
+b
+m
+e
+)
+r
+ϕ u ( l
+o
+t K
+f
+i p )T
+t
+l
+o
+ic
+k
+V a
+e
+t
+n
+t i o o
+s
+n ϕ
+i
+.
+n
+( Q T
+t
+) h
+h
+e
+e
+ϕ ( c
+s
+K
+e
+o
+q
+) m T
+u
+V p
+e
+u
+n
+t
+c
+b a
+e
+a t i s
+i
+o e
+s
+n o
+r e
+c n
+d
+o t
+u
+m h
+c
+e p
+e
+l
+d
+a e s x
+t
+s i
+o
+o t y c
+O
+i a w
+(
+t
+N
+i i v t
+)
+h e
+,
+= Re j L = U 1 (Qi ) ∑
+j=
+N
+1
+ReLU [ DSConv-S (cid:0) Kj ) T ]
+j ) T∈ 如 R 公 d×1 式 的 (1 计 7 算 )所 仅 示 执 ， 行 ∑ 一 N 次 j=1 ， R 之 eL 后 U 这 (cid:0) K 些 j ) T 结 Vj 果 ∈ 可 R 以 d×d 针 和 对 ∑ 每 N j 个 =1 查 Re 询 L 重 U (cid:0) 复 K 使用。 w t b h e h e n e e m r fi e o c N i d a e l r l e fo p to r r e t e s i f e m fi n e c t s i s e e t n h r t i e l e y s s e h a q n a u n a e l d y n l s e c i e s l . o le n n g g t s h e . q T ue h n is c e li s n , e w ar h i c c o h m i p s l e p x a i r t t y i c a u l l l a o r w ly s and A ∑ s s N j= h 1 o R w e n L U in (cid:0) K E j q ) T . ( ∈ 17 R ) d , × t 1 h a e r e c o p m er p f u o t r a m ti e o d n o o n f l y ∑ o N j= n 1 c R e, e a L f U te (cid:0) r K w j ) T h V ic j h ∈ t R he d× se d
+传统的Softmax注意力机制利用指数函数放大所有查询‑键对之间的 因此，这种方法仅需要O(N)的计算成本和O(N)的存储内存。 Traditional Softmax attention amplifies the differences between all results can be reused for each query. This approach thereby requires
+差异，在计算注意力权重时显著增强了较大的相似性数值。虽然 query-key pairs using the exponential function, significantly enhancing only O(N)computational cost and O(N)storage memory.
+Softmax注意力提供了更强的表达能力，但其计算成本对于其在大规模 基于ReLU的全局注意力的另一个关键优势在于，它能防止梯度消 larger similarity values when calculating attention weights. Although Another key advantage of ReLU-based global attention is that it
+序列中的应用略有不利。相比之下，线性注意力使用不同的核函数ϕ(⋅) 失问题，且仅涉及简单的(cid:1)max(0,x)(cid:1)操作，这使得其计算速度比需要进 Softmax attention provides stronger expressive power, its computational prevents the vanishing gradient problem and involves simple operation
+将Q和K 映射到一个新空间，从而增强差异。虽然这可能导致一些表达 行指数运算和归一化的Softmax更快。例如，之前的一些延迟比较(cid:1) c
+c
+o
+o
+s
+n
+t
+t r
+i
+a
+s
+s
+a
+t,
+b
+li
+i
+n
+t
+e
+u
+a
+n
+r
+b
+a
+e
+t
+n
+te
+e
+n
+fi
+t
+c
+i
+i
+o
+a
+n
+l t
+u
+o
+s e
+i
+s
+t s
+d
+a
+if
+p
+f
+p
+er
+li
+e
+c
+n
+a
+t
+t i
+k
+o
+e
+n
+r n
+in
+el
+l
+f
+a
+u
+r
+n
+g
+c
+e
+t
+-
+i
+s
+o
+c
+n
+al
+s
+e
+ϕ
+s
+(
+e
+⋅
+q
+)
+u
+t
+e
+o
+n
+m
+ce
+a
+s
+p
+. I
+Q
+n m
+ex
+a
+p
+x
+o
+(
+n
+0
+e
+,
+n
+x
+t
+)
+i
+,
+a t
+m
+io
+a
+n
+k i
+a
+n
+n
+g
+d
+i
+n
+t
+o
+f
+r
+a
+m
+st
+a
+e
+l
+r
+i z
+t
+a
+o
+t i
+c
+o
+o
+n
+m
+. F
+p
+o
+u
+r
+t e
+i n
+t
+s
+h
+t
+a
+a
+n
+n c
+S
+e
+o
+,
+f
+s
+t
+o
+m
+m
+a
+e
+x ,
+p r
+w
+e
+h
+v
+i
+i
+c
+o
+h
+u s
+r
+l
+e
+a
+q
+t
+u
+e
+i
+n
+r
+c
+e
+y
+s
+能力上的损失，但线性注意力中权重矩阵的新计算顺序降低了计算复杂 [70] 表明，在计算需求相似的情况下，基于ReLU的线性注意力优于
+and K into a new space, thereby enhancing the differences. While this comparisons [70] show that, with similar computational demands,
+度，这为处理像电池健康状态估计这样的长时间序列提供了优势。 Softmax注意力，尤其是在移动设备上。 may result in some loss of expressiveness, the new calculation order of ReLU-based linear attention outperforms Softmax attention, particularly
+the weight matrix in linear attention reduces computational complexity, on mobile devices.
+which offers an advantage in processing long time-series sequences like
+4.(cid:1)实验与分析 battery SOH estimation. 4. Experiments and analysis
+3.3.3.(cid:3)所提出的注意力模块 本节对五种模型（BMSFormer、CNN‑Transformer、 3.3.3. The proposed attention module This section presents a comprehensive evaluation of five models
+如图6(c)所示，所提出的局部‑全局融合注意力机制（LGFA）模块 CNN‑LSTM、Transformer(cid:1)和(cid:1)LSTM）在三个公开电池数据集上进行 As illustrated in Fig. 6(c), the proposed Local-Global Fusion Atten- (BMSFormer, CNN-Transformer, CNN-LSTM, Transformer and LSTM)
+利用了修正线性单元注意力机制，并通过第3.2.1节介绍的DSConv‑S模 了全面评估。使用(cid:1)Cell1、B0005(cid:1)和(cid:1)CS2‑35(cid:1)作为训练集，利用前(cid:1)30%(cid:1) tion (LGFA) module utilizes the Rectified Linear Unit attention mecha- across three public battery datasets. The Cell1, B0005, and CS2-35 are
+块增强了特征多样性。该注意力机制的相似度函数Eq.(14)定义为： 的数据，在(cid:1)384(cid:1)种超参数组合（包括 nism and enhances feature diversity through the DSConv-S module employed as training sets, with the first 30 % of the data utilized for
+introduced in Section 3.2.1. The similarity function Eq. (14) of this training across 384 hyperparameter combinations, including variations
+图(cid:1)6.(cid:1)(a)(cid:1)传统Softmax注意力机制、(b)(cid:1)传统线性注意力机制与(cid:1)(3)(cid:1)所提出的局部‑全局融合注意力模块之间的区别。 Fig. 6. Difference between (a) traditional Softmax attention mechanism, (b) traditional Linear Attention mechanism, and (3) the proposed Local-Global Fusion
+attention module.
+8 8
+==== PAGE 9 ====
+X.(cid:3)Li(cid:3)等人 《能源》 313 (2024年) 134030 X. Li et al. E n e r g y 313 (2024) 134030
+训练轮数、学习率、块与层数、以及全连接层和嵌入层维度上的变化） 表(cid:1)4不同深度学习模型的层配置。 in epochs, learning rate, number of blocks and layers, and the di- Table 4
+下进行训练。剩余(cid:1)70%(cid:1)的数据留作验证和比较，以确定性能最佳的模 mensions of the dense and embedding layers. The remaining 70 % of the The layer configurations of different deep learning models.
+型参数。随后，将选定的模型直接在其他电池的完整数据集上进行测试， BMSFormer CNN- Transformer CNN‑LSTM LSTM data is reserved for validation and comparison to identify the best- BMSFormer CNN- Transformer CNN-LSTM LSTM
+以评估其泛化能力，并将(cid:1)BMSFormer(cid:1)的性能与替代模型进行比较。此 Transformer performing model parameters. The selected model is then directly Transformer
+tested on the entire datasets of other batteries to assess its generalization
+外，通过对(cid:1)384(cid:1)个训练结果的详细分析，比较了五种模型的鲁棒性，期 输入 输入 输入 输入 输入 Input Input Input Input Input
+嵌入层 嵌入层 嵌入层 一维卷积(cid:1)(1 ×3, 线性层 capability and to compare the performance of BMSFormer against the Embed layer Embed layer Embed layer Conv1D (1 ×3, Linear
+间未进行任何进一步的超参数调优。
+(32) (32) (32) 1) alternative models. Moreover, the robustness of the five models is (32) (32) (32) 1)
+ReLU compared through a detailed analysis of the 384 training results, ReLU
+LGFA 位置 位置 一维最大池化 LSTM LGFA Positional Positional MaxPooling1D LSTM
+模块 编码器 编码器 (2 ×2,(cid:1)2) 层 without any further hyperparameter refinement. module Encoder Encoder (2 ×2, 2) layer
+训练过程在一台ASUS(cid:1)TUF(cid:1)A15计算机上进行，该计算机配备 (32) The training process is conducted on an ASUS TUF A15 computer, (32)
+AMD(cid:1)Ryzen(cid:1)R7‑4800H（2.90(cid:1)GHz）处理器、NVIDIA(cid:1)GeForce(cid:1) DSConv‑L Softmax Softmax 一维卷积(cid:1)(1 ×3, LSTM which is equipped with an AMD Ryzen R7-4800H (2.90 GHz), an NVIDA DSConv-L Softmax Softmax Conv1D (1 ×3, LSTM
+RTX(cid:1)2060显卡和24(cid:1)GB内存。该机器的操作系统为Windows(cid:1)11(cid:1)专业版。 模块 注意力机制 注意力机制 1) 层 GeForce RTX 2060 and 24 GB of RAM. The operation system on this module Attention Attention 1) layer
+ReLU (32) machine is Windows 11 Professional. The prediction models are built ReLU (32)
+预测模型使用PyTorch(cid:1)2.0.0构建，并以Python(cid:1)3.9.16作为编程语言。 加法和归一化 一维卷积(cid:1)(1 ×3, 加法和归一化 长短期记忆网络层(cid:1)(32) LSTM Add&Norm Conv1D (1 ×3, Add&Norm LSTM layer (32) LSTM
+1)(cid:1)ReLU 层 using PyTorch 2.0.0, utilizing Python 3.9.16 as the programming 1) ReLU layer
+(32) language. (32)
+MLP 一维最大池化 Softmax 长短期记忆网络层(cid:1)(32) 线性层 MLP MaxPooling1D Softmax LSTM layer (32) Linear
+4.1.(cid:3)评估标准 (2,(cid:1)2) 注意力机制 4.1. The evaluation criteria (2, 2) Attention
+加法和归一化 一维卷积(cid:1)(1 ×3, 加法和归一化 长短期记忆网络层(cid:1)(32) ​ Add&Norm Conv1D (1 ×3, Add&Norm LSTM layer (32) ​
+1) 1)
+选定了几个广泛采用的评估指标来评估模型的性能：平均绝对误差 ReLU, Several widely adopted evaluation metrics are selected to assess the ReLU,
+（MAE）、平均绝对百分比误差（MAPE）、均方根误差（RMSE）、 加法和归一化 models’ performance: Mean Absolute Error (MAE), Mean Absolute Add&Norm
+决定系数R2, 以及平均均方根误差（ARMSE）。MAE衡量预测误差的 线性层 Softmax MLP 线性层 ​ Percentage Error (MAPE), Root Mean Squared Error (RMSE), the coef- Linear Softmax MLP Linear ​
+平均幅度，不考虑其方向（即预测值是高于还是低于实际值），为预测 ​ 注 加 意 法 力 和 机 归 制 一化 加法和归一化 ​ ​ ficient of determination R2, and the Average Root Mean Squared Error ​ A A t d t d e & nt N io o n rm Add&Norm ​ ​
+精度提供了一个直接的度量。MAPE以百分比形式表示准确性，便于在 ​ MLP ​ ​ ​ (ARMSE). MAE measures the average magnitude of the errors in pre- ​ MLP ​ ​ ​
+​ 加法和归一化 ​ ​ ​ dictions without considering their direction, which refers to whether the ​ Add&Norm ​ ​ ​
+不同数据集之间比较性能。RMSE是预测值与实际值之间平均平方差的 ​ 线性层 ​ ​ ​ predicted values are above or below the actual values, providing a ​ Linear ​ ​ ​
+平方根，对较大的误差赋予更大的权重。R2 分数表示因变量的方差中可
+straightforward measure of prediction accuracy. MAPE expresses accu-
+由自变量预测的比例，数值越大表明性能越好。ARMSE是多个子集或 牛津数据集上的估计结果和误差。如图所示，在电池1的验证结果中， racy as a percentage, making it useful for comparing performance across the Oxford dataset. As shown in the figure, in the validation results for
+折迭上RMSE值的平均值，提供了模型在不同数据分区上性能的稳定度 CNN‑Transformer(cid:1)的估计误差四分位距接近零。然而，箱线图须线的 different datasets. RMSE is the square root of the average squared dif- Cell1, CNN-Transformer’s estimation error IQR is close to zero. How-
+量。这些指标的公式如下： 不对称性表明估计结果中存在较多的低离群值。从电池2到电池8也观察 ferences between predicted and actual values, giving larger weight to ever, the asymmetry in the whiskers of the boxplot indicates a greater
+larger errors. The R2 score indicates the proportion of variance in the
+number of low outliers in the estimation results. This trend is also
+到了这一趋势，表明该模型的估计稳定性可能不足。八个电池的预测误
+dependent variable predictable from the independent variables, with observed from Cell2 to Cell8, suggesting that the model’s estimation
+差箱线图和正态分布图清晰地显示，BMSFormer(cid:1)的预测误差更小且更 larger values showing better performance. ARMSE, the average of RMSE
+stability may be insufficient. The boxplot of prediction errors and the
+集中，说明了其优越的预测精度和鲁棒性。 values over several subsets or folds, provides a stable measure of model
+normal distribution plot across the eight batteries clearly show that
+performance across different data partitions. The formulas for these
+BMSFormer has smaller and more concentrated prediction errors,
+metrics are as follows:
+illustrating superior prediction accuracy and robustness.
+MAE= 1
+n
+∑n
+|yi (cid:0) ̂yi | (18) CNN
+值
+‑T
+得
+ra
+注
+ns
+意
+fo
+的
+rm
+是
+e
+，
+r和
+在
+B
+电
+M
+池
+S
+2
+F
+和
+or
+6
+m
+（
+e
+存
+r能
+在
+够
+数
+最
+次
+准
+突
+确
+然
+地
+衰
+跟
+减
+踪
+）
+真
+中
+实
+，
+数值，其中 MAE= 1
+n
+∑n
+|yi (cid:0) ̂yi | (18) Tran
+N
+s
+o
+f
+t
+o
+a
+r
+b
+m
+ly
+e
+,
+r
+in
+a n
+C
+d
+e l
+B
+ls
+M
+2
+S
+a
+F
+n
+o
+d
+r m
+6,
+e
+w
+r
+h
+w
+e
+e
+re
+re
+t h
+a
+e
+b
+r
+l
+e
+e
+a
+t
+r
+o
+e s
+tr
+e
+a
+v
+c
+e
+k
+r a
+t
+l
+h
+s
+e
+u d
+tr
+d
+u
+e
+e
+n d
+va
+ro
+lu
+p
+e
+s
+s
+, C
+m
+N
+o
+N
+st
+-
+i=1
+BMSFormer在应对电池6的突变时显示出最小的预测误差。对于其他六
+i=1
+accurately, with BMSFormer showing the smallest prediction errors in
+MAPE= 1 ∑n ⃒ ⃒ ⃒ ⃒ yi (cid:0) ̂yi ⃒ ⃒ ⃒ ⃒ (19) 个健康状态变化相对稳定的电池（不包括电池3和8），BMSFormer表 MAPE= 1 ∑n ⃒ ⃒ ⃒ ⃒ yi (cid:0) ̂yi ⃒ ⃒ ⃒ ⃒ (19) r r e e s la p t o iv n e se ly t s o t a s b u l d e d S e O n H c h c a h n a g n e g s e s i n ( e C x e cl l u l6 d . i n F g o r C t e h ll e 3 o a t n h d e r C s e i l x l8 b ), a B tt M er S ie F s o r w m it e h r
+n
+i=1
+yi 现最佳，并在所有八个电池的平均预测结果中排名第一，与 n
+i=1
+yi
+performed the best and ranked first in the mean prediction results across
+CNN‑Transformer、Transformer、CNN‑LSTM和LSTM相比，其平
+√̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅ √̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅ all eight batteries, showing improvements in the average MAE of 14.81
+RMSE= 1
+n
+∑
+i=
+n
+1
+(yi (cid:0) ̂yi )2 (20) 均
+方
+绝
+根
+对
+误
+误
+差
+差
+分
+分
+别
+别
+提
+提
+升
+升
+了
+了
+16
+1
+.2
+4
+1
+.8
+%
+1
+、
+%、
+62
+5
+.1
+9
+9
+.6
+%
+5
+、
+%
+4
+、
+4
+4
+.6
+6
+4
+.5
+%
+1
+、
+%
+7
+、
+3
+7
+.2
+3
+7
+.5
+%
+6
+，
+%
+平
+，
+均
+平
+绝
+均
+对
+均 RMSE= 1
+n
+∑
+i=
+n
+1
+(yi (cid:0) ̂yi )2 (20) %
+44
+,
+.
+5
+6
+9
+4
+. 6
+%
+5
+,
+%
+an
+,
+d
+4 6
+7
+.5
+3
+1
+.2
+%
+7
+,
+%
+7
+,
+3 .
+a
+5
+n
+6
+d
+%
+th
+,
+e
+th
+a
+e
+v
+a
+e
+v
+r
+e
+a
+r
+g
+a
+e
+g e
+M
+R
+A
+M
+PE
+S E
+o
+o
+f
+f
+2
+1
+0
+6
+.0
+.2
+0
+1
+%
+%
+,
+,
+6
+6
+3
+2
+.
+.
+6
+1
+3
+9 %
+%
+,
+,
+百分比误差分别提升了20.00%、63.63%、50.00%、76.32%。 50.00 %, 76.32 % compared to CNN-Transformer, Transformer, CNN-
+∑n (yi (cid:0) ̂yi )2 ∑n (yi (cid:0) ̂yi )2 LSTM, and LSTM, respectively.
+R2=1(cid:0) i ∑ = n 1 (21) 4.2.2.(cid:3)效率比较 R2=1(cid:0) i ∑ = n 1 (21) 4.2.2. Efficiency comparison
+i=1
+(yi (cid:0) y)2
+在实际应用中，除了准确性[72]，考虑训练成本（浮点运算、训练 i=1
+(yi (cid:0) y)2
+In practical application, it is important to consider training cost
+√̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅ 时间、参数）和硬件成本（存储大小）也很重要。为确保公平比较，我 √̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅ (floating-point operations, training time, parameters) and hardware cost
+ARMSE=
+m
+1 ∑
+j=
+m
+1
+1
+n
+∑
+i=
+n
+1
+(yi (cid:0) ̂yi )2 (22) 们
+评
+设
+估
+置
+指
+了
+标
+相
+的
+同
+定
+的
+义
+训
+及
+练
+超
+和
+参
+模
+数
+型
+设
+超
+置
+参
+如
+数
+下
+，
+所
+以
+述
+评
+。
+估不同模型的综合性能。这些 ARMSE=
+m
+1 ∑
+j=
+m
+1
+1
+n
+∑
+i=
+n
+1
+(yi (cid:0) ̂yi )2 (22) ( s
+c
+s a
+o
+t m
+m
+or e
+p
+a
+r
+g
+e
+t e r
+h
+a s
+e
+i i
+n
+n z
+s
+e in
+i
+)
+v
+g b
+e
+e
+p
+a s
+e
+n id
+r
+d
+f
+e
+o
+s m
+r
+t
+m
+h o e
+a
+d
+n
+a e
+c
+c l
+e
+c u h
+o
+r y
+f
+a p
+d
+c e
+i
+y
+f
+r
+f
+p [
+e
+7 a
+r
+r 2
+e
+a
+n
+] m .
+t
+T
+m
+e o t
+o
+e e
+d
+r n s
+e
+s
+l
+u
+s
+a
+.
+r r e
+T
+e
+h
+a s
+e
+f e a
+d
+t i
+e
+r
+fi
+t c o
+n
+o
+i
+m
+t
+e
+i
+v p
+o
+a a
+n
+l r
+s
+u i s
+o
+a o
+f
+t e n
+t h
+, t t
+e
+h h
+se
+e e
+其中，y、̂y、y、n 和m 分别表示实际健康状态、预测健康状态、y的 where y, ̂y, y, n and m are the actual SOH, predicted SOH, the average evaluation metrics and the settings of hyperparameters are described as
+follows.
+平均值、测试样本数量和电池数量[71]。 value of y, the number of testing samples, and the number of batteries,
+respectively [71].
+1.(cid:1)评估指标：(1)(cid:1)浮点运算次数（FLOPs），使用(cid:1)THOP库(cid:1)的(cid:1) 1. Evaluation Metrics: (1) floating-point operations (FLOPs), which
+profile(cid:1)函数测量，量化了单次前向传播所需的(cid:1)FLOPs(cid:1)数量。(2)(cid:1)训练 are measured using the profile function from the THOP library,
+4.2.(cid:3)牛津数据集上的比较 4.2. Comparison on Oxford dataset
+时间，使用(cid:1)Python(cid:1)的(cid:1)time(cid:1)模块以秒为单位测量，表示在训练数据集 quantify the numbers of FLOPs required for a single forward pass. (2)
+Training time, measured in seconds using Python’s time module,
+4.2.1.(cid:3)准确性与泛化性比较 上训练模型所需的时长。(3)(cid:1)参数，使用(cid:1)torchsummary库(cid:1)的(cid:1) 4.2.1. Accuracy and generalization comparison
+represents the duration required to train a model on the training
+在BMSFormer与四种替代模型之间进行了对比实验。这些模型的 summary(cid:1)函数计数，通常以百万（Million）为单位测量，表示模型 Comparative experiments are conducted between BMSFormer and
+dataset. (3) Parameters, which are counted using the summary
+层配置如表4所示。 中可训练参数的总数。(4)(cid:1)存储大小，使用(cid:1)os.path。 four alternative models. The layer configurations of these models are
+function from the torchsummary library, typically measured in mil-
+presented in Table 4.
+lions (Million), indicate the total number of trainable parameters in
+图(cid:1)7(cid:1)和(cid:1)表(cid:1)5(cid:1)展示了(cid:1)BMSFormer、CNN‑Transformer、 Fig. 7 and Table 5 show the estimation results and errors of
+the model. (4) Storage size, which is counted using the os.path.
+CNN‑LSTM、Transformer(cid:1)和(cid:1)LSTM(cid:1)在 BMSFormer, CNN-Transformer, CNN-LSTM, Transformer and LSTM on
+9 9
+==== PAGE 10 ====
+X.(cid:3)Li(cid:3)等人 《能源》 313 (2024年) 134030 X. Li et al. E n e r g y 313 (2024) 134030
+图(cid:1)7.(cid:1)不同模型在牛津数据集上的实验结果。 Fig. 7. The experimental results of different models on the Oxford dataset.
+Python(cid:1)的(cid:1)getsize函数(cid:1)测量，以千字节（KB）为单位，表示模型 3.(cid:1)模型超参数：为了在相同的输入数据和训练超参数下比较不同模型结 getsize function of Python, measured in kilobytes (KB), indicates the 3. Model Hyperparameters: To compare the computational
+参数在设备上的存储需求。 构的计算复杂度，模型超参数设置如下：对于基于Transformer架构的 storage requirements of the model parameters on a device. complexity of different model structures under the same input data
+2.(cid:1)训练超参数：在实验中，所有模型均使用相同的训练超参数。每个模 模型，参数统一设置为：嵌入维度为16，稠密维度（多层感知机）为 2. Training Hyperparameters: For the experiments, the same training and training hyperparameters, the model hyperparameters are set as
+型以128的批大小训练1000轮。学习率统一设置为0.01，并应用0.1的丢 16，四个注意力头，且编码器和解码器各包含一层。对于基于LSTM架 hperparameters are used across all models. Each model is trained follows: For models based on the Transformer architecture, the pa-
+弃率。 构的模型，同样采用四层LSTM层和隐藏层维度为16。 with a batch size of 128 for 1000 epochs. The learning rate is uni- rameters are set uniformly: an embed dimension of 16, a dense
+formly set to 0.01, and a dropout rate of 0.1 is applied. dimension (MLP) of 16, four attention head, and both the encoder
+and decoder comprise one layer each. Four LSTM layers and hidden
+10 10
+==== PAGE 11 ====
+X.(cid:3)Li(cid:3)等人 《能源》 313 (2024年) 134030 X. Li et al. E n e r g y 313 (2024) 134030
+表5不同模型在牛津数据集上的健康状态估计误差。 第三层卷积层的卷积核大小为3，步长为1。使用的激活函数为ReLU。 Table 5 and the third convolutional layer has a kernel size of 3 and a stride of
+SOH estimation errors of different models on the Oxford dataset. 1. The activation function used is ReLU.
+电池 方法 MAE MAPE RMSE R2 Cells Methods MAE MAPE RMSE R2
+在几乎相同的配置和牛津数据集下，如表6所示，基于LSTM的网络 Under the almost same configuration and Oxford dataset, as illus-
+Cell1* BMSFormer 0.0032 0.0022 0.0018 0.9937 Cell1* BMSFormer 0.0032 0.0022 0.0018 0.9937
+CNN‑Transformer 0.0022 0.0038 0.0025 0.9913 由于其固有的顺序结构，训练时间低于其他三种网络；然而，这种架构 CNN-Transformer 0.0022 0.0038 0.0025 0.9913 trated in Table 6, the LSTM-based networks results in lower training
+CNN‑LSTM 0.0085 0.0154 0.0109 0.8641 限制了其捕捉复杂退化模式的能力，导致估计准确性较低。相比之下， CNN-LSTM 0.0085 0.0154 0.0109 0.8641 time than other three networks due to the inherently sequential struc-
+Transformer 0.0027 0.0049 0.0037 0.9814 与CNN‑Transformer和Transformer相比，BMSFormer实现了最短 Transformer 0.0027 0.0049 0.0037 0.9814 ture; however, this architecture limits their ability to capture complex
+LSTM 0.0140 0.0252 0.0160 0.7044 LSTM 0.0140 0.0252 0.0160 0.7044 degradation patterns, leading to lower estimaiton accuracy. In contrast,
+Cell2 BMSFormer 0.0040 0.0074 0.0083 0.9802 的训练时间。具体而言，尽管BMSFormer的浮点运算次数比 Cell2 BMSFormer 0.0040 0.0074 0.0083 0.9802 compared to CNN-Transformer and Transformer, BMSFormer achieves
+CNN‑Transformer 0.0058 0.0107 0.0091 0.9752 Transformer多63.04%，参数多12.03%，但其训练时间和存储容量仍 CNN-Transformer 0.0058 0.0107 0.0091 0.9752
+CNN‑LSTM 0.0059 0.0105 0.0095 0.9755 CNN-LSTM 0.0059 0.0105 0.0095 0.9755 the shortest training time. Specifically, despite having 63.04% more
+Transformer 0.0047 0.0084 0.0082 0.9798 分别减少了21.37%和7.88%。 Transformer 0.0047 0.0084 0.0082 0.9798 FLOPs and 12.03% more parameters than Transformer, BMSFormer still
+LSTM 0.0075 0.0139 0.0124 0.9765 LSTM 0.0075 0.0139 0.0124 0.9765 reduces training time and storage capacity by 21.37% and 7.88%,
+电池3 BMSFormer 0.0019 0.0031 0.0023 0.9977 Cell3 BMSFormer 0.0019 0.0031 0.0023 0.9977 respectively.
+CNN‑Transformer 0.0017 0.0028 0.0022 0.9978 当适应不同的电池类型或任务时，模型通常需要调整超参数组合以 CNN-Transformer 0.0017 0.0028 0.0022 0.9978 When adapting to different battery types or tasks, models usually
+CNN‑LSTM 0.0062 0.0110 0.0087 0.9710 CNN-LSTM 0.0062 0.0110 0.0087 0.9710
+Transformer 0.0040 0.0068 0.0049 0.9898 高效匹配数据模式。在五个可调超参数（包括e、lr、de、dd 和n）中， Transformer 0.0040 0.0068 0.0049 0.9898 require adjustments in hyperparameter combinations to match data
+LSTM 0.0093 0.0165 0.0126 0.9395 LSTM网络缺少嵌入维度（de），且存储大小仅取决于模型超参数（包 LSTM 0.0093 0.0165 0.0126 0.9395 patterns efficiently. Among the five adjustable hyperparameters
+Cell4 B
+C
+M
+NN
+SF
+‑T
+o
+r
+r
+a
+m
+n
+e
+s
+r
+former
+0
+0.
+.
+0
+0
+0
+0
+2
+2
+9
+7 0
+0.
+.
+0
+0
+0
+0
+4
+4
+6
+4 0
+0.
+.
+0
+0
+0
+0
+4
+3
+1
+2 0
+0.
+.
+9
+9
+9
+9
+0
+3
+1
+6
+括dd 和n）。因此，为了全面评估不同超参数组合下的存储内存消耗，
+Cell4 B
+C
+M
+NN
+SF
+-T
+o
+r
+r
+a
+m
+n
+e
+s
+r
+former
+0
+0.
+.
+0
+0
+0
+0
+2
+2
+9
+7 0
+0.
+.
+0
+0
+0
+0
+4
+4
+6
+4 0
+0.
+.
+0
+0
+0
+0
+4
+3
+1
+2 0
+0.
+.
+9
+9
+9
+9
+0
+3
+1
+6 (including e,lr,de ,ddandn), the LSTM network lacks embed dimension
+CNN‑LSTM 0.0045 0.0077 0.0069 0.9765 配置了三种隐藏层维度（16、32、64）和四种模型层数（1、2、3、4）， CNN-LSTM 0.0045 0.0077 0.0069 0.9765
+(de), and storage size depends only on model hyperparameters
+Transformer 0.0052 0.0083 0.0064 0.9753 共产生12种组合应用于五个模型，如表7所示。 Transformer 0.0052 0.0083 0.0064 0.9753
+(including ddandn). Therefore, to comprehensively evaluate storage
+LSTM 0.0077 0.0132 0.0102 0.9487 LSTM 0.0077 0.0132 0.0102 0.9487 memory consumption across different hyperparameter combinations,
+Cell5 BMSFormer 0.0020 0.0031 0.0026 0.9940 Cell5 BMSFormer 0.0020 0.0031 0.0026 0.9940 three hidden layer dimensions (16, 32, 64) and four model layers (1, 2,
+CNN‑Transformer 0.0039 0.0061 0.0043 0.9829 CNN-Transformer 0.0039 0.0061 0.0043 0.9829 3, 4) are configured, resulting in a total of 12 combinations applied to
+CNN‑LSTM 0.0051 0.0085 0.0069 0.9649 CNN-LSTM 0.0051 0.0085 0.0069 0.9649
+five models, as shown in Table 7.
+Transformer 0.0064 0.0101 0.0068 0.9591 Transformer 0.0064 0.0101 0.0068 0.9591
+LSTM 0.0078 0.0128 0.0098 0.9286 如图8(a)所示，针对12种组合的条形图表明，在G1‑G12配置中， LSTM 0.0078 0.0128 0.0098 0.9286 As shown in Fig. 8(a), the bar chart for the 12 combinations indicates
+Cell6 BMSFormer 0.0026 0.0043 0.0035 0.9905 BMSFormer的存储大小始终低于CNN‑Transformer和 Cell6 BMSFormer 0.0026 0.0043 0.0035 0.9905 that BMSFormer consistently exhibits a lower storage size compared to
+CNN‑Transformer 0.0028 0.0045 0.0039 0.9884 Transformer，使其更适合部署在资源受限的设备上。此外，当维度提 CNN-Transformer 0.0028 0.0045 0.0039 0.9884 CNN-Transformer and Transformer across the G1-G12 configurations,
+CNN‑LSTM 0.0041 0.0069 0.0067 0.9720 CNN-LSTM 0.0041 0.0069 0.0067 0.9720
+making it more suitable for deployment on resource-constrained de-
+Transformer 0.0054 0.0087 0.0067 0.9673 升至64时（如G3、G6、G9、G12所示），LSTM和CNN‑LSTM模型的 Transformer 0.0054 0.0087 0.0067 0.9673
+vices. Moreover, LSTM and CNN-LSTM models experience a significant
+LSTM 0.0068 0.0115 0.0095 0.9429 内存使用量显著增加，远超其他三种模型。尽管较低的维度和较少的层 LSTM 0.0068 0.0115 0.0095 0.9429
+Cell7 BMSFormer 0.0011 0.0018 0.0014 0.9987 Cell7 BMSFormer 0.0011 0.0018 0.0014 0.9987 increase in memory usage when dimensions are raised to 64 (as shown
+CNN‑Transformer 0.0012 0.0015 0.0019 0.9987 数可以减少LSTM和CNN‑LSTM的存储大小，但这些模型可能会面临估 CNN-Transformer 0.0012 0.0015 0.0019 0.9987 in G3, G6, G9, G12), far exceeding the memory usage of the other three
+CNN‑LSTM 0.0053 0.0091 0.0072 0.9719 计精度下降的问题，无法在精度与效率之间实现最佳平衡。 CNN-LSTM 0.0053 0.0091 0.0072 0.9719 models. Although lower dimensions and fewer layers reduce the storage
+Transformer 0.0029 0.0047 0.0037 0.9917 Transformer 0.0029 0.0047 0.0037 0.9917
+size of LSTM and CNN-LSTM, these models may suffer from a decline in
+LSTM 0.0076 0.0132 0.0104 0.9422 LSTM 0.0076 0.0132 0.0104 0.9422
+电池8 BMSFormer 0.0015 0.0026 0.0020 0.9983 Cell8 BMSFormer 0.0015 0.0026 0.0020 0.9983 estimation accuracy, failing to achieve an optimal balance between
+CNN‑Transformer 0.0012 0.0021 0.0016 0.9989 CNN-Transformer 0.0012 0.0021 0.0016 0.9989 precision and efficiency.
+CNN‑LSTM 0.0060 0.0106 0.0082 0.9739 如图8(b)所示，箱线图显示所提模型的箱体和须线最短，表明其平 CNN-LSTM 0.0060 0.0106 0.0082 0.9739 As illustrated in Fig. 8(b), the box plot shows that the proposed
+Transformer 0.0033 0.0057 0.0043 0.9924 均 Transformer 0.0033 0.0057 0.0043 0.9924 model has the shortest box and whiskers, indicating the lowest average
+LSTM 0.0087 0.0156 0.0119 0.9455 LSTM 0.0087 0.0156 0.0119 0.9455
+平均值 BMSFormer 0.0023 0.0036 0.0031 0.9934 Average BMSFormer 0.0023 0.0036 0.0031 0.9934
+CNN‑Transformer 0.0027 0.0045 0.0037 0.9904 CNN-Transformer 0.0027 0.0045 0.0037 0.9904
+CNN‑LSTM 0.0057 0.0099 0.0082 0.9587 表7模型超参数分组。 CNN-LSTM 0.0057 0.0099 0.0082 0.9587 Table 7
+Transformer 0.0043 0.0072 0.0056 0.9796 Transformer 0.0043 0.0072 0.0056 0.9796 Grouping of models hyperparameter.
+LSTM 0.0087 0.0152 0.0116 0.9160 LSTM 0.0087 0.0152 0.0116 0.9160
+组号 稠密维度 层数 Group number Dense dimension Layer number
+Cell1*(cid:1)表示使用(cid:1)80%(cid:1)数据构建的(cid:1)BMSFormer(cid:1)训练集，其数值为十次实验的 Cell1* denotes a training set of BMSFormer with 80 % data, and its values are
+平均值。最佳结果以粗体加下划线标出。 G1 16 1 averaged among ten experiments. The best results are marked in bold and G1 16 1
+G2 32 1 G2 32 1
+underlined.
+G3 64 1 G3 64 1
+G4 16 2 G4 16 2
+此外，对于CNN‑Transformer模型，其CNN模块对应于我们的深 G5 32 2 dimension of 16 are also employed for models based on the LSTM G5 32 2
+度可分离卷积模块，并且同样放置在多头自注意力模块之后。两个 G6 64 2 architecture. Additionally, for the CNN-Transformer models, the G6 64 2
+G7 16 3 G7 16 3
+卷积层的基本超参数设置如下：第一卷积层的卷积核大小为3、步长 G8 32 3 CNN module corresponds to our depthwise separable convolutional G8 32 3
+为1，第二池化层的卷积核大小为2、步长为2， G9 64 3 module and is also placed after the multi-head self-attention module. G9 64 3
+G10 16 4 The basic hyperparameters for the two convolutional layers are set as G10 16 4
+G11 32 4 follows: the first convolutional layer has a kernel size of 3 and a stride G11 32 4
+G12 64 4 of 1, the second pooling layer has a kernel size of 2 and a stride of 2, G12 64 4
+表6模型在相同及最优配置下的综合性能。 Table 6
+The comprehensive performance of models under the same and optimal configurations.
+模型 训练超参数 模型超参数 性能指标 Models Training hyperparameters Model hyperparameters Performance indicator
+e lr b de dd n 浮点运算次数（百万） 训练时间（秒） 参数 存储大小（KB） e lr b de dd n FLOPs (Million) Training time (s) Parameters Storage size(KB)
+BMSFormer 1000 0.01 128 16 16 4 0.46 19.83 5330 36.37 BMSFormer 1000 0.01 128 16 16 4 0.46 19.83 5330 36.37
+CNN‑Transformer 1000 0.01 128 16 16 4 0.27 26.57 6257 47.10 CNN-Transformer 1000 0.01 128 16 16 4 0.27 26.57 6257 47.10
+Transformer 1000 0.01 128 16 16 4 0.17 25.22 4689 39.48 Transformer 1000 0.01 128 16 16 4 0.17 25.22 4689 39.48
+CNN‑LSTM 1000 0.01 128 - 16 4 0.48 11.84 12719 53.72 CNN-LSTM 1000 0.01 128 - 16 4 0.48 11.84 12719 53.72
+LSTM 1000 0.01 128 - 16 4 0.83 8.07 8753 37.85 LSTM 1000 0.01 128 - 16 4 0.83 8.07 8753 37.85
+其中，e、lr、b、de、dd 以及n 分别代表训练轮数、学习率、批大小、嵌入维度、多层感知机的稠密维度或LSTM的隐藏层维度，以及层数。最佳结果以粗体加下划线 Here, the e,lr,b,de ,dd and n represent the epochs, learning rate, batch size, embedding dimension, dense dimension of MLP or hidden dimension of LSTM, and layer
+标出。 number, respectively. The best results are marked in bold and underlined.
+11 11
+==== PAGE 12 ====
+X.(cid:3)Li(cid:3)等人 《能源》 313 (2024年) 134030 X. Li et al. E n e r g y 313 (2024) 134030
+0.001和0.01，总共产生2×2=4 种基础组合，对应图(cid:1)9图(cid:1)9横轴上的 0.001 and 0.01, resulting in a total of 2×2=4 basic combinations,
+四个区段。同时，也考虑了多种模型超参数设置：BMSFormer、 which correspond to the four segments on the x-axis of Fig. 9. Mean-
+CNN‑Transformer和Transformer均基于注意力机制，各有 while, various model hyperparameter settings are also considered:
+2×3×4×4=96 组可能的超参数组合，其中2、3、4和4分别代表“块 BMSFormer, CNN-Transformer, and Transformer are based on attention
+mechanism and each have 2×3×4×4=96 possible hyperparameter
+数量”、“头数量”、“稠密维度” （MLP层）以及“嵌入维度” （嵌入层）。
+groups, in which 2, 3, 4 and 4 represent the “block number”, “head
+相比之下，LSTM和卷积神经网络‑长短期记忆模型仅有两个额外的可调 number”, “dense dimension” of MLP layer, and “embed dimension” of
+超参数：LSTM的“层数” 和隐藏层的“稠密维度” ，因此产生3×4=12
+embedding layer, respectively. In contrast, LSTM and CNN-LSTM
+种组合。 models just have two additional adjustable hyperparameters for the
+“layer number” of LSTM and the “dense dimension” of hidden layer,
+resulting in 3×4=12 combinations.
+因此，图中y轴所代表模型的总超参数组合数，前两个模型为 Consequently, the total number of hyperparameter combinations of
+4×12=48 ，后三个模型为4×96=384 。每个彩色条对应一个拟合 the models represented on the y-axis of the figure is 4×12=48 for the
+分数，颜色越红表示准确性越高，颜色越蓝表示准确性越差。最右侧的 first two models and 4×96=384 for the latter three models. Each color
+bar corresponds to a fitting score, with redder colors indicating higher
+红色垂直线代表拟合分数大于0.98的组合数量，组数越多表示性能越好。
+accuracy and bluer colors indicating worser. The red vertical line on the
+far right represents the number of combinations with a fitting score
+图(cid:1)8.(cid:1)五种模型在G1‑G12超参数组合下的存储大小：(a)(cid:1)条形图对比各组的存储 Fig. 8. Storage size of five models across G1-G12 hyperparameter combina-
+greater than 0.98, with a higher number of groups indicating better
+大小；(b)(cid:1)箱线图展示整体分布。 tions: (a) Bar chart comparing storage sizes for each group; (b) Box plot
+performance.
+showing overall distribution.
+总体而言，与近期主流模型相比，BMSFormer(cid:1)在不同超参数组合 Overall, compared to recent mainstream models, BMSFormer shows
+下均展现出稳健的性能和准确性。具体来说，BMSFormer(cid:1)有(cid:1)41(cid:1)种组合 robust performance and accuracy across different hyperparameter
+内存消耗最低，且在12种超参数配置下波动最小。这一特性在处理更复 memory consumption with minimal fluctuation across the 12 hyper-
+的预测模型的R2 值超过(cid:1)0.98，占总组合数的(cid:1)10.67%。此外，有(cid:1)43.23 combinations. Specifically, BMSFormer has 41 combinations where the
+杂的数据模式时非常有益，因为模型在增加维度或深度以提升估计精度 parameter configurations. This characteristic is helpful when handling
+的同时，能保持稳定的存储大小。 %(cid:1)的组合其R2 值大于(cid:1)0.9。BMSFormer(cid:1)还取得了最高的R2 值(cid:1)0.9892， more complex data patterns, as the model maintains stable storage size prediction model’s R2 value exceeds 0.98, representing 10.67 % of the
+total combinations. Additionally, 43.23 % of the combinations have an
+优于其他模型。 while increasing dimensions or depth to enhance estimation accuracy.
+R2 value greater than 0.9. BMSFormer also achieves the highest R2 of
+总之，实验结果表明，所提出的模型在384种超参数组合下均表现 In summary, the experimental results indicate that the proposed
+0.9892 than others.
+出较低且稳定的内存使用量，非常适合在资源受限设备上使用。 model exhibits low and stable memory usage across 384 hyperparameter
+combinations, making it well-suited for usage on resource-limited
+4.3.2.(cid:3)泛化评估 4.3.2. Generalization evaluation
+devices.
+本节展示并比较了使用五个验证准确率最高的最优模型，在未见测 This section presents and compares the testing results obtained
+试集上直接测试所得的测试结果。 through the process of directly testing on the unseen test sets using the
+4.3.(cid:3)在NASA和CALCE数据集上的比较 4.3. Comparison on NASA and CALCE datasets five optimal models with highest validation accuracies.
+如图(cid:1)10(cid:1)(a)‑(c)(cid:1)所示，与其他模型相比，BMSFormer(cid:1)估计的(cid:1) As illustrated in Fig. 10(a)-(c), the estimated SOH of BMSFormer is
+本节讨论了BMSFormer和四种主流深度学习模型在NASA和 SOH(cid:1)通常更接近真实(cid:1)SOH，其估计误差也更接近于零，这两点都表明 This section discusses the performance of BMSFormer and four generally closer to the true SOH compared to other models, and the
+CALCE数据集上的性能，这两个数据集在电池材料和充放电协议方面与 了其更高的准确性。‘SOH’ 图中的局部放大图进一步说明，在十个电 mainstream deep learning models on the NASA and CALCE datasets, estimation error is also closer to zero, both indicating higher accuracy.
+牛津数据集不同。对于这两个数据集，来自第一个电池（NASA的 池的退化过程中遇到(cid:1)SOH(cid:1)突变时，BMSFormer(cid:1)具有更好的稳定性。 which are different from the Oxford dataset in battery materials and The localized magnifications in the ‘SOH’ plots further illustrate the
+B0005和CALCE的CS2‑35）的30%数据被用作训练集，而剩余的70% charge/discharge protocols. For both datasets, 30 % of the data from the better stability of BMSFormer when encountering sudden SOH changes
+first cell (B0005 for NASA and CS2-35 for CALCE) is used as the training in the degradation process of ten batteries.
+则留作验证。其余六个电池（NASA的B0006、B0007、B0018以及
+如表9所示，在来自NASA和CALCE数据集的八个电池单体上，与 set, while the remaining 70 % is reserved for validation. The full datasets As detailed in Table 9, BMSFormer achieves improvements of 37.15
+CALCE的CS2‑36、CS2‑37、CS2‑38）的完整数据集被用作测试集。
+CNN‑Transformer、CNN‑LSTM、Transformer和LSTM相比， from the remaining six cells (B0006, B0007, B0018 for NASA and CS2- %, 42.65 %, 23.67 %, and 47.90 % in average MAE, 27.30 %, 48.20 %,
+BMSFormer在平均MAE上分别提升了37.15%、42.65%、23.67%和47.90%， 36, CS2-37, CS2-38 for CALCE) are used as the test set. 20.42 %, and 53.71 % in average MAPE, and 34.29 %, 40.69 %, 18.84 %,
+这五个模型的评估过程描述如下。首先，分别使用384种不同的超 在平均MAPE上分别提升了27.30%、48.20%、20.42%和53.71%，在平均 The five models’ evaluation process is described as follows. First, the and 46.29 % in average RMSE, compared to CNN-Transformer, CNN-
+参数组合在各自的训练集上训练这五个模型并进行验证。然后，所有验 RMSE上分别提升了34.29%、40.69%、18.84%和46.29%。值得注意的是，放 five models are respectively trained on their training sets using 384 LSTM, Transformer, and LSTM, respectively, across eight battery cells
+证结果被用来评估每个模型的稳定性，并选出验证准确率最高、性能最 大的预测 distinct hyperparameter combinations and validated. All the validation from NASA and CALCE datasets. Notably, the zoomed-in prediction
+results are then used to evaluate the stability of each model and the best-
+佳的模型作为最终训练好的模型。其次，选出的五个最终模型随后直接
+performance models, with highest validation accuracy, are selected as
+在未见测试集上进行测试，以进一步评估模型泛化能力。
+the final trained models. Second, the selected five final models are then
+directly tested on the unseen test sets to further evaluate the model
+generalization.
+4.3.1. 在384种超参数组合上的稳定性评估 组合 4.3.1. Stability evaluation across 384 hyperparameter combinations
+表(cid:1)8(cid:1)展示了完整的超参数组合集。每一列代表一个可调整的超参数 Table 8 presents the comprehensive set of hyperparameter combi-
+类别，包括训练轮次、学习率、注意力块数量、LSTM层（或注意力头） nations. Each column represents an adjustable hyperparameter cate-
+数量、多层感知机的全连接层维度（或LSTM的隐藏层维度）以及嵌入 gory, including the train epochs, the learning rate, the number of
+attention block, the number of LSTM layer (or attention head), the dense
+层的维度。这有助于识别出能产生高验证准确率的超参数组合集，并反
+layer dimension of MLP (or the hidden dimension of LSTM), and the
+映了模型在不同组合下的稳定性。
+dimension of embedding layer. This can help identify the sets of
+hyperparameter combinations that yield the high validation accuracies
+and reflects the model’s stability across different combinations.
+图(cid:1)9.(cid:1)使用不同模型和超参数组合时的完整验证结果。 Fig. 9. The whole validating results when using different models and hyper-
+为确保对训练超参数进行全面探索，“训练轮数”分别设定为 To ensure a comprehensive exploration of training hyperparameters,
+parameter combinations.
+1000和200，“学习率”则设置为 “epochs” are chosen as 1000 and 200, and “learning rates” are set to
+表(cid:1)8超参数组合。 Table 8
+The combination of hyperparameter.
+超参数 训练轮数 学习率 块数量 层数 稠密维度 嵌入维度 Hyperparameter Epochs Learning rate Block number Layer number Dense dimension Embedding dimension
+数值 [200,1000] [0.001,0.01] [1,2] [1,2,4] [16,32,64,128] [16,32,64,128] Values [200,1000] [0.001,0.01] [1,2] [1,2,4] [16,32,64,128] [16,32,64,128]
+12 12
+==== PAGE 13 ====
+X.(cid:3)Li(cid:3)等人 《能源》 313 (2024年) 134030 X. Li et al. E n e r g y 313 (2024) 134030
+图(cid:1)10.(cid:1)(a)(cid:1)五个模型在B0005和CS2‑35上的验证结果。(b)(cid:1)使用在B0005上训练的五个加权模型的测试结果。(c)(cid:1)使用在CS2‑35上训练的五个加权模型的测试结果。 Fig. 10. (a) The validation results of five models on B0005 and CS2-35. (b) The test results using five weighted models trained on B0005. (c) The test results using
+five weighted models trained on CS2-35.
+曲线显示，即使在健康状态波动最剧烈的场景中，例如在B0018和 在局部特征识别方面存在困难，导致误差曲线波动较大，在B0005上偏 curves reveal that BMSFormer performs exceptionally well even in struggles with local feature recognition, leading to larger fluctuations in
+CS2‑38中观察到的那些，BMSFormer的表现也异常出色。 差尤为明显。CNN‑Transformer和BMSFormer表现出相似的性能， scenarios with the most severe SOH fluctuations, such as those observed error curves and particularly noticeable deviations in B0005. CNN-
+但CNN‑Transformer的卷积核大小仅为1×3 且缺乏特征多样性，限 in B0018 and CS2-38. Transformer and BMSFormer show similar performance, but CNN-
+由于对局部特征敏感性不足，LSTM仍表现出最低的预测精度。尽 LSTM still exhibits the lowest prediction accuracy due to insufficient Transformer’s small convolution kernel size of 1×3 and the lack of
+制了其识别复杂特征模式的能力，导致其预测精度略低于
+管CNN‑LSTM部分解决了此问题，但其仍受结构限制，导致卷积处理后 sensitivity to local features. Although CNN-LSTM partially addresses this feature diversity constrain its ability to identify complex features
+BMSFormer。增大CNN‑Transformer的卷积核大小
+丢失重要信息。Transformer也 issue, it still suffers from structural limitations, resulting in the loss of pattern, resulting in slightly lower prediction accuracy compared to
+important information after convolution processing. Transformer also BMSFormer. Increasing the convolution kernel size in CNN-Transformer
+13 13
+==== PAGE 14 ====
+X.(cid:3)Li(cid:3)等人 《能源》 313 (2024年) 134030 X. Li et al. E n e r g y 313 (2024) 134030
+表(cid:1)9在NASA和CALCE数据集上的估计结果。 结果也说明了BMSFormer在384种超参数组合下的稳定性。这些进步 Table 9 results also illustrate the stability of BMSFormer across 384 hyper-
+使得BMSFormer成为一种潜在稳健的健康状态估计解决方案，尤其适 Estimation results on the NASA and CALCE datasets. parameter combinations. These advancements make BMSFormer a
+Cell 方法 MAE MAPE RMSE R2 用于某些资源受限环境。 Cell Methods MAE MAPE RMSE R2 potentially robust solution for SOH estimation, particularly in some
+resource-constrained environments.
+B0005* B C M NN SF ‑T o r r a m n e s r former 0 0. . 0 0 0 0 7 4 1 2 0 0. . 0 0 0 0 8 5 9 3 0 0. . 0 0 0 0 8 6 9 5 0 0. . 9 9 9 9 0 5 7 0 最后，模型架构仍有进一步优化的空间，特别是在提升计算效率和 B0005* B C M NN SF -T o r r a m n e s r former 0 0. . 0 0 0 0 7 4 1 2 0 0. . 0 0 0 0 8 5 9 3 0 0. . 0 0 0 0 8 6 9 5 0 0. . 9 9 9 9 0 5 7 0 Finally, there is still room for further optimization of the model ar-
+CNN‑LSTM 0.0104 0.0129 0.0121 0.9830 降低模型复杂度方面。未来的研究将侧重于优化BMSFormer的结构， CNN-LSTM 0.0104 0.0129 0.0121 0.9830 chitecture, particularly in enhancing computational efficiency and
+Transformer 0.0091 0.0115 0.0109 0.9861 将其适用性扩展到更广泛的电池类型和使用场景，并将模型集成到电池 Transformer 0.0091 0.0115 0.0109 0.9861 reducing model complexity. Future research will focus on refining the
+LSTM 0.0140 0.0181 0.0157 0.9716 LSTM 0.0140 0.0181 0.0157 0.9716 structure of BMSFormer, expanding its applicability to a wider range of
+管理系统中，以进行实际部署和评估。这些努力旨在扩大
+B0006 BMSFormer 0.0073 0.0117 0.0092 0.9905 B0006 BMSFormer 0.0073 0.0117 0.0092 0.9905 battery types and use cases, and integrating the model into Battery
+CNN‑Transformer 0.0123 0.0151 0.0155 0.9843 BMSFormer在推动电池健康管理领域发展的实际影响力。 CNN-Transformer 0.0123 0.0151 0.0155 0.9843
+CNN‑LSTM 0.0158 0.0194 0.0197 0.9730 CNN-LSTM 0.0158 0.0194 0.0197 0.9730 Management Systems (BMS) for real-world deployment and evaluation.
+Transformer 0.0118 0.0156 0.0148 0.9848 Transformer 0.0118 0.0156 0.0148 0.9848 These efforts aim to extend the practical impact of BMSFormer in
+LSTM 0.0209 0.0274 0.0246 0.9581 LSTM 0.0209 0.0274 0.0246 0.9581 advancing the field of battery health management.
+B0007 BMSFormer 0.0037 0.0045 0.0061 0.9939 B0007 BMSFormer 0.0037 0.0045 0.0061 0.9939
+CNN‑Transformer 0.0062 0.0074 0.0081 0.9893 CNN-Transformer 0.0062 0.0074 0.0081 0.9893
+CNN‑LSTM 0.0086 0.0102 0.0105 0.9821 作者贡献声明 CNN-LSTM 0.0086 0.0102 0.0105 0.9821 CRediT authorship contribution statement
+Transformer 0.0079 0.0095 0.0098 0.9841 Transformer 0.0079 0.0095 0.0098 0.9841
+LSTM 0.0131 0.0159 0.0152 0.9626 李晓鹏：撰写初稿，可视化，验证，软件，方法论。赵明航：撰写 LSTM 0.0131 0.0159 0.0152 0.9626 Xiaopeng Li: Writing – original draft, Visualization, Validation,
+B0018 B C M NN SF ‑T o r r a m n e s r former 0 0. . 0 0 0 0 9 6 3 8 0 0. . 0 0 1 1 1 1 9 1 0 0. . 0 0 1 0 2 8 3 7 0 0. . 9 9 7 7 1 7 3 1 审阅与编辑，方法论，形式分析。钟世胜：项目管理，资金获取。李俊 B0018 B C M NN SF -T o r r a m n e s r former 0 0. . 0 0 0 0 9 6 3 8 0 0. . 0 0 1 1 1 1 9 1 0 0. . 0 0 1 0 2 8 3 7 0 0. . 9 9 7 7 1 7 3 1 Software, Methodology. Minghang Zhao: Writing – review & editing,
+CNN‑LSTM 0.0122 0.0153 0.0148 0.9591 福：撰写审阅与编辑，方法论。付松：撰写审阅与编辑。闫志奇：监督， CNN-LSTM 0.0122 0.0153 0.0148 0.9591 Methodology, Formal analysis. Shisheng Zhong: Project administra-
+Transformer 0.0094 0.0122 0.0120 0.9729 项目管理。 Transformer 0.0094 0.0122 0.0120 0.9729 tion, Funding acquisition. Junfu Li: Writing – review & editing, Meth-
+LSTM 0.0139 0.0178 0.0163 0.9503 LSTM 0.0139 0.0178 0.0163 0.9503 odology. Song Fu: Writing – review & editing. Zhiqi Yan: Supervision,
+CS2‑35* BMSFormer 0.0116 0.0208 0.0197 0.9892 CS2-35* BMSFormer 0.0116 0.0208 0.0197 0.9892 Project administration.
+CNN‑Transformer 0.0198 0.0262 0.0324 0.9808 CNN-Transformer 0.0198 0.0262 0.0324 0.9808
+CNN‑LSTM 0.0191 0.0416 0.0289 0.9767 CNN-LSTM 0.0191 0.0416 0.0289 0.9767
+Transformer 0.0140 0.0259 0.0227 0.9856 Transformer 0.0140 0.0259 0.0227 0.9856
+LSTM 0.0193 0.0439 0.0304 0.9742 利益冲突声明 LSTM 0.0193 0.0439 0.0304 0.9742 Declaration of competing interest
+CS2‑36 BMSFormer 0.0144 0.0242 0.0188 0.9936 CS2-36 BMSFormer 0.0144 0.0242 0.0188 0.9936
+CNN‑Transformer 0.0169 0.0306 0.0233 0.9902 CNN-Transformer 0.0169 0.0306 0.0233 0.9902
+CNN‑LSTM 0.0197 0.0536 0.0306 0.9831 作者声明，不存在任何可能影响本论文所报告工作的已知竞争性经 CNN-LSTM 0.0197 0.0536 0.0306 0.9831 The authors declare that they have no known competing financial
+Transformer 0.0138 0.0278 0.0209 0.9921 济利益或个人关系。 Transformer 0.0138 0.0278 0.0209 0.9921 interests or personal relationships that could have appeared to influence
+LSTM 0.0204 0.0582 0.0320 0.9815 LSTM 0.0204 0.0582 0.0320 0.9815 the work reported in this paper.
+CS2‑37 BMSFormer 0.0125 0.0221 0.0184 0.9904 CS2-37 BMSFormer 0.0125 0.0221 0.0184 0.9904
+CNN‑Transformer 0.0196 0.0245 0.0304 0.9831 CNN-Transformer 0.0196 0.0245 0.0304 0.9831
+CNN‑LSTM 0.0185 0.0386 0.0286 0.9770 致谢 CNN-LSTM 0.0185 0.0386 0.0286 0.9770 Acknowledgments
+Transformer 0.0117 0.0202 0.0168 0.9920 Transformer 0.0117 0.0202 0.0168 0.9920
+LSTM 0.0179 0.0402 0.0299 0.9749 本研究得到国家重点研发计划（2023YFB4302400）的支持。 LSTM 0.0179 0.0402 0.0299 0.9749 This work is supported by National Key R&D Program of China
+CS2‑38 BMSFormer 0.0214 0.0356 0.0276 0.9778 CS2-38 BMSFormer 0.0214 0.0356 0.0276 0.9778
+(2023YFB4302400).
+CNN‑Transformer 0.0391 0.0615 0.0441 0.9432 CNN-Transformer 0.0391 0.0615 0.0441 0.9432
+CNN‑LSTM 0.0385 0.0696 0.0487 0.9309 CNN-LSTM 0.0385 0.0696 0.0487 0.9309
+Transformer 0.0296 0.0473 0.0338 0.9667 数据可用性 Transformer 0.0296 0.0473 0.0338 0.9667 Data availability
+LSTM 0.0377 0.0708 0.0500 0.9271 LSTM 0.0377 0.0708 0.0500 0.9271
+平均值 BMSFormer 0.0102 0.0169 0.0143 0.9884 数据将根据请求提供。 Average BMSFormer 0.0102 0.0169 0.0143 0.9884 Data will be made available on request.
+CNN‑Transformer 0.0163 0.0233 0.0219 0.9791 CNN-Transformer 0.0163 0.0233 0.0219 0.9791
+CNN‑LSTM 0.0179 0.0327 0.0242 0.9706 CNN-LSTM 0.0179 0.0327 0.0242 0.9706
+Transformer 0.0134 0.0213 0.0177 0.9830 参考文献 Transformer 0.0134 0.0213 0.0177 0.9830 References
+LSTM 0.0197 0.0365 0.0268 0.9625 LSTM 0.0197 0.0365 0.0268 0.9625
+B0005*(cid:1)和(cid:1)CS2‑35*(cid:1)表示它们是包含(cid:1)30%(cid:1)早期数据的训练集。最佳结果以粗体和下划线 [1] Krause(cid:1)FC,(cid:1)Ruiz(cid:1)JP,(cid:1)Jones(cid:1)SC,(cid:1)Brandon(cid:1)EJ,(cid:1)Darcy(cid:1)EC,(cid:1)Iannello(cid:1)CJ,(cid:1)Bugga(cid:1) B0005* and CS2-35* denote that they are the training sets with 30 % of the early [1] Krause FC, Ruiz JP, Jones SC, Brandon EJ, Darcy EC, Iannello CJ, Bugga RV.
+标出。 RV.(cid:1)商用锂离子电池在未来NASA任务和航空航天应用中的性能。电化学学会杂志(cid:1) data. The best results are marked in bold and underlined. Performance of commercial Li-ion cells for future NASA missions and aerospace
+2021;168:040504.(cid:1)https://doi.org/10.1149/1945‑(cid:1)7111/abf05f.[2] Barr´e(cid:1)A,(cid:1) applications. J Electrochem Soc 2021;168:040504. https://doi.org/10.1149/1945-
+或许能提升性能，但也会增加计算成本。
+Deguilhem(cid:1)B,(cid:1)Grolleau(cid:1)S,(cid:1)G´erard(cid:1)M,(cid:1)Suard(cid:1)F,(cid:1)Riu(cid:1)D.(cid:1)锂离子电池老化机制及其在汽车
+might improve performance but would also increase the computational [2]
+7
+B
+1
+ar
+1
+r
+1
+´e
+/
+A
+ab
+,
+f
+D
+0
+e
+5
+g
+f.
+uilhem B, Grolleau S, G´erard M, Suard F, Riu D. A review on lithium-
+应用中的估计综述。电源杂志(cid:1)2013;241:680–9.(cid:1)https://doi.org/10.1016/j.(cid:1) ion battery ageing mechanisms and estimations for automotive applications.
+jpowsour.2013.05.040.(cid:1)[3] Ma(cid:1)S,(cid:1)Jiang(cid:1)M,(cid:1)Tao(cid:1)P,(cid:1)Song(cid:1)C,(cid:1)Wu(cid:1)J,(cid:1)Wang(cid:1)J,(cid:1)Deng(cid:1)T,(cid:1) cost. J Power Sources 2013;241:680–9. https://doi.org/10.1016/j.
+Shang(cid:1)W.(cid:1)锂离子电池中的温度效应与热影响：综述。自然科学进展：材料国际版(cid:1)2018;(cid:1) jpowsour.2013.05.040.
+5.(cid:1)结论 28:653–66.(cid:1)https://doi.org/10.1016/j.pnsc.2018.11.002.(cid:1)[4] Xia(cid:1)Y,(cid:1)Chen(cid:1)G,(cid:1)Zhou(cid:1)Q,(cid:1) 5. Conclusion [3] Ma S, Jiang M, Tao P, Song C, Wu J, Wang J, Deng T, Shang W. Temperature effect
+and thermal impact in lithium-ion batteries: a review. Prog Nat Sci: Mater Int 2018;
+Shi(cid:1)X,(cid:1)Shi(cid:1)F.(cid:1)100%(cid:1)SOC锂离子电池模组在不同冲击载荷条件下的失效行为。工程失效分 28:653–66. https://doi.org/10.1016/j.pnsc.2018.11.002.
+本文提出了BMSFormer，这是一种创新的高效深度学习模型，用 析(cid:1)2017;82.(cid:1)https://doi.org/10.1016/j.engfailanal.2017.09.003.(cid:1)[5] Plett(cid:1)GL.(cid:1)基于 This paper presents BMSFormer, an innovative and efficient deep [4] Xia Y, Chen G, Zhou Q, Shi X, Shi F. Failure behaviours of 100% SOC lithium-ion
+于锂离子电池的在线健康状态估计，缓解了传统方法在准确性与效率之 LiPB的混合动力汽车电池包电池管理系统的Sigma点卡尔曼滤波：第二部分：状态与参数 learning model for online state-of-health (SOH) estimation of lithium- battery modules under different impact loading conditions. Eng Fail Anal 2017;82.
+联合估计。电源杂志(cid:1)2006;161:1369–84.(cid:1)https://doi.org/10.1016/j.(cid:1) https://doi.org/10.1016/j.engfailanal.2017.09.003.
+间难以取得良好平衡的局限性。通过引入所构建的局部‑全局融合注意力 jpowsour.2006.06.004.(cid:1)[6] Plett(cid:1)GL.(cid:1)基于LiPB的混合动力汽车电池包电池管理系统的扩 ion batteries, alleviating the limitations of traditional approaches that [5] Plett GL. Sigma-point Kalman filtering for battery management systems of LiPB-
+模块，BMSFormer不仅能捕获短期和长期特征，而且与传统基于 展卡尔曼滤波：第一部分。背景。电源杂志(cid:1)2004;134:252–61.(cid:1) c p a o n ra n t o in t g k ee th p e w e c l o l n b s a tr la u n ct c e e d be L t o w c e a e l n -G a lo c b cu al r ac F y u s a i n o d n ef A fi t c te ie n n ti c o y n . B m y o in d c u o le r- , b J a P s o e w d e H r E S V o u b r a c t e te s r 2 y 0 p 0 a 6 c ;1 ks 6 : 1 P :1 a 3 rt 6 9 2 – : 8 s 4 im . u h l t t t a p n s: e / o / u d s o i s . t o a r t g e / a 1 n 0 d .1 p 0 a 1 r 6 a / m j. e ter estimation.
+Softmax的注意力方法相比，还能降低计算复杂度。同时，多尺度深度 https://doi.org/10.1016/j.jpowsour.2004.02.031.(cid:1)[7] Peng(cid:1)S,(cid:1)Zhang(cid:1)D,(cid:1)Dai(cid:1)G,(cid:1) jpowsour.2006.06.004.
+BMSFormer can not only capture both short-term and long-term fea-
+可分离卷积的集成增强了跨多个尺度和通道的特征提取，有助于更全面 Wang(cid:1)L,(cid:1)Jiang(cid:1)Y,(cid:1)Zhou(cid:1)F.(cid:1)磷酸铁锂电池在各种开路电压范围内联合PID观测器和改进的 [6] Plett GL. Extended Kalman filtering for battery management systems of LiPB-based
+扩展卡尔曼滤波的荷电状态估计。应用能源(cid:1)2024;377:124435.(cid:1) tures, but also reduce computational complexity compared to traditional HEV battery packs: Part 1. Background. J Power Sources 2004;134:252–61.
+地表征电池退化特性。这些进步共同为应对电池行为相关的挑战（如随 https://doi.org/10.1016/j.apenergy.2024.124435.(cid:1)[8] Chaturvedi(cid:1)NA,(cid:1)Klein(cid:1)R,(cid:1) Softmax-based attention methods. Meanwhile, the integration of multi- https://doi.org/10.1016/j.jpowsour.2004.02.031.
+机容量增量和渐进性能退化）提供了技术优势。 Christensen(cid:1)J,(cid:1)Ahmed(cid:1)J,(cid:1)Kojic(cid:1)A.(cid:1)先进电池管理系统算法。IEEE控制系统杂志(cid:1) scale Depthwise Separable Convolutions enhances feature extraction [7] Peng S, Zhang D, Dai G, Wang L, Jiang Y, Zhou F. State of charge estimation for
+LiFePO4 batteries joint by PID observer and improved EKF in various OCV ranges.
+2010;30:49–68.(cid:1)https://doi.(cid:1)org/10.1109/MCS.2010.936293.(cid:1)[9] Zhang(cid:1)C,(cid:1)Allafi(cid:1)W,(cid:1) across multiple scales and channels, contributing to a more diverse Appl Energy 2024;377:124435. https://doi.org/10.1016/j.apenergy.2024.124435.
+Dinh(cid:1)Q,(cid:1)Ascencio(cid:1)P,(cid:1)Marco(cid:1)J.(cid:1)基于解耦最小二乘技术的电池等效电路模型参数和荷电状 representation of battery degradation characteristics. These advance- [8] Chaturvedi NA, Klein R, Christensen J, Ahmed J, Kojic A. Algorithms for advanced
+态在线估计。能源(cid:1)2018;142:678–88.(cid:1)https://doi.org/10.1016/j.(cid:1)energy.2017.10.043.(cid:1) ments collectively provide technical advantages in tackling challenges battery-management systems. IEEE Control Syst Mag 2010;30:49–68. https://doi.
+[10]Hearst(cid:1)MA,(cid:1)Dumais(cid:1)ST,(cid:1)Osuna(cid:1)E,(cid:1)Platt(cid:1)J,(cid:1)Scholkopf(cid:1)B.(cid:1)支持向量机。IEEE智能系 related to battery behaviors, such as random capacity increments and [9] o Z r h g a / n 1 g 0 . C 1 , 1 A 0 l 9 la /M fi C W S , . 2 D 0 i 1 n 0 h . 9 Q 3 , 6 A 2 s 9 c 3 e . ncio P, Marco J. Online estimation of battery
+统及其应用(cid:1)1998;13:18–28.(cid:1)https://doi.org/10.1109/5254.708428.
+gradual performance degradation. equivalent circuit model parameters and state of charge using decoupled least
+在三种不同类型的公开电池数据集上进行的综合实验表明， The comprehensive experiments on the three different kinds of squares technique. Energy 2018;142:678–88. https://doi.org/10.1016/j.
+energy.2017.10.043.
+BMSFormer在估计精度、效率和泛化能力方面具有优势。验证 public battery datasets have shown the advantages of BMSFormer in
+[10] Hearst MA, Dumais ST, Osuna E, Platt J, Scholkopf B. Support vector machines.
+estimation accuracy, efficiency, and generalization. The validation IEEE Intell Syst Their Appl 1998;13:18–28. https://doi.org/10.1109/5254.708428.
+14 14
+==== PAGE 15 ====
+X.(cid:3)Li(cid:3)等人 《能源》 313 (2024年) 134030 X. Li et al. E n e r g y 313 (2024) 134030
+[11] Zhang(cid:1)Q‑J,(cid:1)Gupta(cid:1)KC,(cid:1)Devabhaktuni(cid:1)VK.(cid:1)用于射频与微波设计的人工神经网络—— [37] 郑勇，胡杰，陈健，邓华，胡伟。基于CNN‑GRU方法的锂离子电池随机充电过程健 [11] Zhang Q-J, Gupta KC, Devabhaktuni VK. Artificial neural networks for RF and [37] Zheng Y, Hu J, Chen J, Deng H, Hu W. State of health estimation for lithium battery
+从理论到实践。IEEE微波理论与技术汇刊(cid:1)2003;(cid:1)51:1339–50.(cid:1) 康状态估计。《能源报告》2023年；9：1–10。 microwave design - from theory to practice. IEEE Trans Microw Theor Tech 2003; random charging process based on CNN-GRU method. Energy Rep 2023;9:1–10.
+https://doi.org/10.1109/TMTT.2003.809179.(cid:1)[12] Kim(cid:1)J,(cid:1)Oh(cid:1)J,(cid:1)Lee(cid:1)H.(cid:1)电动汽车电池热 https://doi.org/10.1016/j.egyr.2022.12.093。[38] Vaswani(cid:1)A,(cid:1)Shazeer(cid:1)N,(cid:1)Parmar(cid:1) 51:1339–50. https://doi.org/10.1109/TMTT.2003.809179. https://doi.org/10.1016/j.egyr.2022.12.093.
+[12] Kim J, Oh J, Lee H. Review on battery thermal management system for electric [38] Vaswani A, Shazeer N, Parmar N, Uszkoreit J, Jones L, Gomez AN, Kaiser L,
+管理系统综述。应用热力工程(cid:1)2019;149:192–212.(cid:1)https://doi.org/10.1016/j.(cid:1) N,(cid:1)Uszkoreit(cid:1)J,(cid:1)Jones(cid:1)L,(cid:1)Gomez(cid:1)AN,(cid:1)Kaiser(cid:1)L,(cid:1)Polosukhin(cid:1)I.(cid:1)注意力机制就是全部所需。 vehicles. Appl Therm Eng 2019;149:192–212. https://doi.org/10.1016/j. Polosukhin I. Attention is all you need. http://arxiv.org/abs/1706.03762.
+applthermaleng.2018.12.020.(cid:1)[13] Sista(cid:1)S,(cid:1)Sista(cid:1)A.(cid:1)利用人工智能和预测性单粒子分析 http://arxiv.org/abs/1706.03762。[访问于2024]年8月22日。[39] 董亮，徐升，徐波。 applthermaleng.2018.12.020. [Accessed 22 August 2024].
+的智能电池管理系统解决方案。见：FISITA(cid:1)2012世界汽车大会论文集。柏林,(cid:1)海德堡:(cid:1)施 语音Transformer：一种用于语音识别的无递归序列到序列模型。收录于：2018年IEEE声 [13] Sista S, Sista A. Intelligent BMS solution using AI and prognostic SPA. In: [39] Dong L, Xu S, Xu B. Speech-Transformer: a No-recurrence sequence-to-sequence
+普林格;(cid:1)2013.(cid:1)p.(cid:1)755–64.(cid:1)https://doi.org/10.1007/978‑3‑642‑33741‑3_4.(cid:1)[14] 学、语音与信号处理国际会议（ICASSP）。卡尔加里，AB：IEEE；2018年。第5884–8页。 Proceedings of the FISITA 2012 world automotive congress. Berlin, Heidelberg: model for speech recognition. In: 2018 IEEE International Conference on Acoustics,
+Krizhevsky(cid:1)A,(cid:1)Sutskever(cid:1)I,(cid:1)Hinton(cid:1)GE.(cid:1)使用深度卷积神经网络的ImageNet分类。 https://doi.org/10.1109/ICASSP.2018.8462506。[40] Devlin(cid:1)J,(cid:1)Chang(cid:1)M‑W,(cid:1)Lee(cid:1)K,(cid:1) Springer; 2013. p. 755–64. https://doi.org/10.1007/978-3-642-33741-3_4. Speech and signal processing (ICASSP). Calgary, AB: IEEE; 2018. p. 5884–8.
+[14] Krizhevsky A, Sutskever I, Hinton GE. ImageNet classification with deep https://doi.org/10.1109/ICASSP.2018.8462506.
+ACM通讯(cid:1)2017;60:84–90.(cid:1)https://doi.org/(cid:1)10.1145/3065386.[15] Howard(cid:1)AG,(cid:1)Zhu(cid:1) Toutanova(cid:1)K.(cid:1)BERT：用于语言理解的深度双向Transformer模型预训练。 convolutional neural networks. Commun ACM 2017;60:84–90. https://doi.org/ [40] Devlin J, Chang M-W, Lee K, Toutanova K. BERT: pre-training of deep bidirectional
+M,(cid:1)Chen(cid:1)B,(cid:1)Kalenichenko(cid:1)D,(cid:1)Wang(cid:1)W,(cid:1)Weyand(cid:1)T,(cid:1)Andreetto(cid:1)M,(cid:1)Adam(cid:1)H.(cid:1) https://doi.org/10.48550/arXiv.1810.04805；2019年。[41] Dosovitskiy(cid:1)A,(cid:1)Beyer(cid:1)L,(cid:1) 10.1145/3065386. Transformers for language understanding. https://doi.org/10.48550/arXiv.1810.
+MobileNets：用于移动视觉应用的高效卷积神经网络。 Kolesnikov(cid:1)A,(cid:1)Weissenborn(cid:1)D,(cid:1)Zhai(cid:1)X,(cid:1)Unterthiner(cid:1)T,(cid:1)Dehghani(cid:1)M,(cid:1)Minderer(cid:1)M,(cid:1) [15] Howard AG, Zhu M, Chen B, Kalenichenko D, Wang W, Weyand T, Andreetto M, 04805; 2019.
+http://arxiv.org/abs/1704.04861.(cid:1)[访问于(cid:1)2024]年8月22日。[16] Duan(cid:1)W,(cid:1)Song(cid:1)S,(cid:1) Heigold(cid:1)G,(cid:1)Gelly(cid:1)S,(cid:1)Uszkoreit(cid:1)J,(cid:1)Houlsby(cid:1)N.(cid:1)一张图像价值16x16个词：大规模图像识别 Adam H. MobileNets: efficient convolutional neural networks for mobile vision [41] Dosovitskiy A, Beyer L, Kolesnikov A, Weissenborn D, Zhai X, Unterthiner T,
+Xiao(cid:1)F,(cid:1)Chen(cid:1)Y,(cid:1)Peng(cid:1)S,(cid:1)Song(cid:1)C.(cid:1)基于可变遗忘因子在线序贯极限学习机和粒子滤波器的 的Transformer模型。http://arxiv.org/abs/2010.11929。[访问于2024]年6月16日。 applications. http://arxiv.org/abs/1704.04861. [Accessed 22 August 2024]. Dehghani M, Minderer M, Heigold G, Gelly S, Uszkoreit J, Houlsby N. An image is
+[16] Duan W, Song S, Xiao F, Chen Y, Peng S, Song C. Battery SOH estimation and RUL worth 16x16 words: Transformers for image recognition at scale. http://arxiv.
+电池健康状态估计与剩余使用寿命预测框架。储能杂志(cid:1)2023;65:107322.(cid:1)https://(cid:1) [42] Hannan(cid:1)MA,(cid:1)How(cid:1)DNT,(cid:1)Lipu(cid:1)MSH,(cid:1)Mansor(cid:1)M,(cid:1)Ker(cid:1)PJ,(cid:1)Dong(cid:1)ZY,(cid:1)Sahari(cid:1)
+prediction framework based on variable forgetting factor online sequential extreme org/abs/2010.11929. [Accessed 16 June 2024].
+doi.org/10.1016/j.est.2023.107322.(cid:1)[17] Yang(cid:1)P,(cid:1)Yang(cid:1)HD,(cid:1)Meng(cid:1)XB,(cid:1)Song(cid:1)CR,(cid:1)He(cid:1) KSM,(cid:1)Tiong(cid:1)SK,(cid:1)Muttaqi(cid:1)KM,(cid:1)Mahlia(cid:1)TMI,(cid:1)Blaabjerg(cid:1)F.(cid:1)基于自监督Transformer模 learning machine and particle filter. J Energy Storage 2023;65:107322. https:// [42] Hannan MA, How DNT, Lipu MSH, Mansor M, Ker PJ, Dong ZY, Sahari KSM,
+TL,(cid:1)Cai(cid:1)JY,(cid:1)Xie(cid:1)YY,(cid:1)Xu(cid:1)KK.(cid:1)基于GBLS助推器多任务模型的锂电池健康状态和剩余使用寿 型的锂离子电池精确荷电状态估计的深度学习方法。《科学报告》2021年；11：19541。 doi.org/10.1016/j.est.2023.107322. Tiong SK, Muttaqi KM, Mahlia TMI, Blaabjerg F. Deep learning approach towards
+命联合评估与预测。储能杂志(cid:1)2024;75:109741.(cid:1)https://doi.org/(cid:1) https://doi.org/10.1038/s41598‑021‑98915‑8。[43] Gomez(cid:1)W,(cid:1)Wang(cid:1)F‑K,(cid:1)Chou(cid:1)J‑ [17] Yang P, Yang HD, Meng XB, Song CR, He TL, Cai JY, Xie YY, Xu KK. Joint accurate state of charge estimation for lithium-ion batteries using self-supervised
+10.1016/j.est.2023.109741.(cid:1)[18] Guo(cid:1)F,(cid:1)Wu(cid:1)X,(cid:1)Liu(cid:1)L,(cid:1)Ye(cid:1)J,(cid:1)Wang(cid:1)T,(cid:1)Fu(cid:1)L,(cid:1)Wu(cid:1)Y.(cid:1)基于 H.(cid:1)使用改进的时序融合Transformer模型预测锂离子电池容量。《能源》2024年；296： evaluation and prediction of SOH and RUL for lithium batteries based on a GBLS transformer model. Sci Rep 2021;11:19541. https://doi.org/10.1038/s41598-021-
+booster multi-task model. J Energy Storage 2024;75:109741. https://doi.org/ 98915-8.
+时间序列特征和Savitzky‑Golay滤波器结合门控循环单元神经网络的锂电池剩余使用寿命 131114。https://doi.org/10.1016/j.energy.2024.131114。[44] 贾超，田阳，石勇，贾健，
+10.1016/j.est.2023.109741. [43] Gomez W, Wang F-K, Chou J-H. Li-ion battery capacity prediction using improved
+和健康状态预测。能源(cid:1)2023;270:(cid:1)126880.(cid:1) 文杰，曾杰。基于双向门控循环单元和Transformer的锂离子电池健康状态预测。《能源》 [18] Guo F, Wu X, Liu L, Ye J, Wang T, Fu L, Wu Y. Prediction of remaining useful life temporal fusion transformer model. Energy 2024;296:131114. https://doi.org/
+https://doi.org/10.1016/j.energy.2023.126880.(cid:1)[19] Ge(cid:1)M‑F,(cid:1)Liu(cid:1)Y,(cid:1)Jiang(cid:1)X,(cid:1)Liu(cid:1)J.(cid:1)锂 2023年；285：129401。https://doi.org/10.1016/j.energy.2023.129401。[45] 顾翔， and state of health of lithium batteries based on time series feature and Savitzky- 10.1016/j.energy.2024.131114.
+离子电池健康状态估计和剩余使用寿命预测综述。测量(cid:1)2021;174:109057.(cid:1) See(cid:1)KW，李鹏，单凯，王洋，赵亮，Lim(cid:1)KC，张宁。一种使用卷积神经网络和 Golay filter combined with gated recurrent unit neural network. Energy 2023;270: [44] Jia C, Tian Y, Shi Y, Jia J, Wen J, Zeng J. State of health prediction of lithium-ion
+https://doi.org/10.1016/j.measurement.2021.109057.(cid:1)[20] 锂离子电池的退化诊断。电 Transformer模型的锂离子电池健康状态估计新方法。《能源》2023年；262：125501。 126880. https://doi.org/10.1016/j.energy.2023.126880. batteries based on bidirectional gated recurrent unit and transformer. Energy 2023;
+[19] Ge M-F, Liu Y, Jiang X, Liu J. A review on state of health estimations and remaining 285:129401. https://doi.org/10.1016/j.energy.2023.129401.
+源杂志(cid:1)2017;341:373–86.(cid:1)https://doi.org/10.1016/j.jpowsour.2016.12.011.(cid:1)[21] https://doi.org/10.1016/j.energy.2022.125501。[46] 白涛，王浩。基于卷积
+useful life prognostics of lithium-ion batteries. Measurement 2021;174:109057. [45] Gu X, See KW, Li P, Shan K, Wang Y, Zhao L, Lim KC, Zhang N. A novel state-of-
+Zhang(cid:1)L,(cid:1)Sun(cid:1)C,(cid:1)He(cid:1)T,(cid:1)Jiang(cid:1)Y,(cid:1)Wei(cid:1)J,(cid:1)Huang(cid:1)Y,(cid:1)Yuan(cid:1)M.(cid:1)高性能准二维钙钛矿发光二 Transformer的多视图信息感知框架用于锂离子电池健康状态估计。《IEEE仪器与测量汇 https://doi.org/10.1016/j.measurement.2021.109057. health estimation for the lithium-ion battery using a convolutional neural network
+极管：从材料到器件。光：科学与应用(cid:1)2021;(cid:1)10:61.(cid:1) 刊》2023年；72：1–12。https://doi.org/10.1109/TIM.2023.3300451。[47] 陈亮，谢升， [20] Degradation diagnostics for lithium ion cells. J Power Sources 2017;341:373–86. and transformer model. Energy 2023;262:125501. https://doi.org/10.1016/j.
+https://doi.org/10.1038/s41377‑021‑00501‑0.(cid:1)[22] Rechkemmer(cid:1)SK,(cid:1)Zang(cid:1)X,(cid:1)Zhang(cid:1) Lopes(cid:1)AM，包翔。一种基于视觉Transformer的深度神经网络用于锂离子电池健康状态 https://doi.org/10.1016/j.jpowsour.2016.12.011. energy.2022.125501.
+W,(cid:1)Sawodny(cid:1)O.(cid:1)源自单粒子模型的经验锂离子老化模型。储能杂志(cid:1)2019;21:773–86.(cid:1) 估计。《国际电力与能源系统杂志》2023年；152：109233。 [21] Zhang L, Sun C, He T, Jiang Y, Wei J, Huang Y, Yuan M. High-performance quasi- [46] Bai T, Wang H. Convolutional transformer-based multiview information perception
+2D perovskite light-emitting diodes: from materials to devices. Light Sci Appl 2021; framework for lithium-ion battery state-of-health estimation. IEEE Trans Instrum
+https://doi.(cid:1)org/10.1016/j.est.2019.01.005.(cid:1)[23] Luo(cid:1)K,(cid:1)Chen(cid:1)X,(cid:1)Zheng(cid:1)H,(cid:1)Shi(cid:1)Z.(cid:1)预测 https://doi.org/10.1016/j.ijepes.2023.109233。[48] Birkl(cid:1)CR,(cid:1)Roberts(cid:1)MR,(cid:1) 10:61. https://doi.org/10.1038/s41377-021-00501-0. Meas 2023;72:1–12. https://doi.org/10.1109/TIM.2023.3300451.
+锂离子电池健康状态和荷电状态的深度学习方法综述。能源化学杂志(cid:1)2022;74:159–73.(cid:1) McTurk(cid:1)E,(cid:1)Bruce(cid:1)PG,(cid:1)Howey(cid:1)DA.(cid:1)锂离子电池退化诊断。《电源杂志》2017年；341： [22] Rechkemmer SK, Zang X, Zhang W, Sawodny O. Empirical Li-ion aging model [47] Chen L, Xie S, Lopes AM, Bao X. A vision transformer-based deep neural network
+https://doi.org/10.1016/j.jechem.2022.06.049.(cid:1)[24] Fei(cid:1)Z,(cid:1)Yang(cid:1)F,(cid:1)Tsui(cid:1)K‑L,(cid:1)Li(cid:1)L,(cid:1) 373–86。https://doi.org/10.1016/j.jpowsour.2016.12.011。[49] Obisakin(cid:1)I,(cid:1) derived from single particle model. J Energy Storage 2019;21:773–86. https://doi. for state of health estimation of lithium-ion batteries. Int J Electr Power Energy
+Zhang(cid:1)Z.(cid:1)通过基于机器学习的框架早期预测电池寿命。能源(cid:1)2021;225:120205.(cid:1) Ekeanyanwu(cid:1)CV.(cid:1)使用支持向量回归和长短期记忆的锂离子电池健康状态估计。《应用科 org/10.1016/j.est.2019.01.005. Syst 2023;152:109233. https://doi.org/10.1016/j.ijepes.2023.109233.
+https://doi.org/(cid:1)10.1016/j.energy.2021.120205.(cid:1)[25] Richardson(cid:1)RR,(cid:1)Osborne(cid:1)MA,(cid:1) 学开放杂志》2022年；12：1366–82。https://doi.org/10.4236/ojapps.2022.128094。 [23] Luo K, Chen X, Zheng H, Shi Z. A review of deep learning approach to predicting [48] Birkl CR, Roberts MR, McTurk E, Bruce PG, Howey DA. Degradation diagnostics for
+the state of health and state of charge of lithium-ion batteries. J Energy Chem lithium ion cells. J Power Sources 2017;341:373–86. https://doi.org/10.1016/j.
+Howey(cid:1)DA.(cid:1)用于预测电池健康状态的高斯过程回归。电源杂志(cid:1)2017;357:209–19.(cid:1) [50] 何伟，Williard(cid:1)N,(cid:1)Osterman(cid:1)M,(cid:1)Pecht(cid:1)M.(cid:1)基于Dempster–Shafer理论和贝叶斯蒙 2022;74:159–73. https://doi.org/10.1016/j.jechem.2022.06.049. jpowsour.2016.12.011.
+https://doi.(cid:1)org/10.1016/j.jpowsour.2017.05.004.(cid:1)[26] Li(cid:1)Y,(cid:1)Zou(cid:1)C,(cid:1)Berecibar(cid:1)M,(cid:1) 特卡洛方法的锂离子电池寿命预测。《电源杂志》2011年；196：10314–21。 [24] Fei Z, Yang F, Tsui K-L, Li L, Zhang Z. Early prediction of battery lifetime via a [49] Obisakin I, Ekeanyanwu CV. State of health estimation of lithium-ion batteries
+Nanini‑Maury(cid:1)E,(cid:1)Chan(cid:1)JC‑W,(cid:1)van(cid:1)den(cid:1)Bossche(cid:1)P,(cid:1)Van(cid:1)Mierlo(cid:1)J,(cid:1)Omar(cid:1)N.(cid:1)用于锂离 https://doi.org/10.1016/j.jpowsour.2011.08.040。[51] 陈健，胡阳，朱强，Rashid(cid:1) machine learning based framework. Energy 2021;225:120205. https://doi.org/ using support vector regression and long short-term memory. Open J Appl Sci
+子电池在线容量估计的随机森林回归。应用能源(cid:1)2018;232:197–210.(cid:1) H，李浩。一种用于磷酸铁锂电池恒流充电期间健康状态估计的新型电池健康指标和 10.1016/j.energy.2021.120205. 2022;12:1366–82. https://doi.org/10.4236/ojapps.2022.128094.
+https://doi.org/10.1016/j.(cid:1)apenergy.2018.09.182.(cid:1)[27] Shi(cid:1)Y,(cid:1)Li(cid:1)J,(cid:1)Li(cid:1)Z.(cid:1)使用分段线性 PSO‑LSSVR方法。《能源》2023年；282：128782。 [25] Richardson RR, Osborne MA, Howey DA. Gaussian process regression for [50] He W, Williard N, Osterman M, Pecht M. Prognostics of lithium-ion batteries based
+forecasting battery state of health. J Power Sources 2017;357:209–19. https://doi. on Dempster–Shafer theory and the Bayesian Monte Carlo method. J Power
+回归树的梯度提升。htt(cid:1)ps://doi.org/10.48550/arXiv.1802.05640;(cid:1)2019.(cid:1)[28] Ye(cid:1)Z,(cid:1) https://doi.org/10.1016/j.energy.2023.128782。[52] 王峰，翟震，赵震，狄阳，陈翔。 org/10.1016/j.jpowsour.2017.05.004. Sources 2011;196:10314–21. https://doi.org/10.1016/j.jpowsour.2011.08.040.
+Kim(cid:1)MK.(cid:1)使用优化的反向传播和Levenberg–Marquardt反向传播神经网络预测建筑用电 用于锂离子电池退化稳定建模与预测的物理信息神经网络。《自然通讯》2024年；15： [26] Li Y, Zou C, Berecibar M, Nanini-Maury E, Chan JC-W, van den Bossche P, Van [51] Chen J, Hu Y, Zhu Q, Rashid H, Li H. A novel battery health indicator and PSO-
+量：中国某购物中心案例研究。可持续城市与社会(cid:1)2018;42:176–83.(cid:1)https://(cid:1) 4332。https://doi.org/10.1038/s41467‑024‑48779‑z。[53] 林超，徐健，石明，梅翔。 Mierlo J, Omar N. Random forest regression for online capacity estimation of LSSVR for LiFePO4 battery SOH estimation during constant current charging.
+doi.org/10.1016/j.scs.2018.05.050.(cid:1)[29] Yang(cid:1)N,(cid:1)Song(cid:1)Z,(cid:1)Hofmann(cid:1)H,(cid:1)Sun(cid:1)J.(cid:1)使用卷 基于恒流充电时间的锂离子电池快速健康状态估计。《能源》2022年；247：123556。 lithium-ion batteries. Appl Energy 2018;232:197–210. https://doi.org/10.1016/j. Energy 2023;282:128782. https://doi.org/10.1016/j.energy.2023.128782.
+积神经网络和随机森林的锂离子电池鲁棒健康状态估计。储能杂志(cid:1)2022;48:103857.(cid:1) https://doi.org/10.1016/j.energy.2022.123556。[54] 彭升，朱健，吴涛，唐安，阚健， apenergy.2018.09.182. [52] Wang F, Zhai Z, Zhao Z, Di Y, Chen X. Physics-informed neural network for lithium-
+[27] Shi Y, Li J, Li Z. Gradient boosting with piece-wise linear regression trees. htt ion battery degradation stable modeling and prognosis. Nat Commun 2024;15:
+https://doi.org/10.1016/j.est.2021.103857.(cid:1)[30] Lee(cid:1)G,(cid:1)Kwon(cid:1)D,(cid:1)Lee(cid:1)C.(cid:1)一种具有物理 Pecht(cid:1)M。基于电压区间选择和特征融合的锂离子电池健康状态早期预测。《能源》2024
+ps://doi.org/10.48550/arXiv.1802.05640; 2019. 4332. https://doi.org/10.1038/s41467-024-48779-z.
+可解释性的锂离子电池健康状态估计卷积神经网络模型。机械系统与信号处理(cid:1)2023;188:(cid:1) 年；308：132993。https://doi.org/10.1016/j.energy.2024.132993。[55] 白健，黄健， [28] Ye Z, Kim MK. Predicting electricity consumption in a building using an optimized [53] Lin C, Xu J, Shi M, Mei X. Constant current charging time based fast state-of-health
+110004.(cid:1)https://doi.org/10.1016/j.ymssp.2022.110004.(cid:1)[31] Lu(cid:1)J,(cid:1)Xiong(cid:1)R,(cid:1)Tian(cid:1)J,(cid:1) 罗凯，杨飞，冼阳。一种基于特征复用的多模型融合方法用于锂离子电池健康状态估计。 back-propagation and Levenberg–Marquardt back-propagation neural network: estimation for lithium-ion batteries. Energy 2022;247:123556. https://doi.org/
+Wang(cid:1)C,(cid:1)Sun(cid:1)F.(cid:1)无需额外退化实验即可估计锂离子电池健康状态的深度学习。自然通讯(cid:1) 《储能杂志》2023年；70：107965。https://doi.org/10.1016/j.est.2023.107965。[56] case study of a shopping mall in China. Sustain Cities Soc 2018;42:176–83. https:// 10.1016/j.energy.2022.123556.
+2023;14:(cid:1)2760.(cid:1)https://doi.org/10.1038/s41467‑023‑38458‑w.(cid:1)[32] Luo(cid:1)T,(cid:1)Liu(cid:1)M,(cid:1)Shi(cid:1) 戴浩，王健，黄阳，赖阳，朱亮。基于统计特征优化的锂离子电池轻量级健康状态估计。 doi.org/10.1016/j.scs.2018.05.050. [54] Peng S, Zhu J, Wu T, Tang A, Kan J, Pecht M. SOH early prediction of lithium-ion
+[29] Yang N, Song Z, Hofmann H, Sun J. Robust State of Health estimation of lithium- batteries based on voltage interval selection and features fusion. Energy 2024;308:
+P,(cid:1)Duan(cid:1)G,(cid:1)Cao(cid:1)X.(cid:1)一种基于混合数据预处理的分层注意力双向长短期记忆网络，用于航天 《可再生能源》2024年；222：119907。
+ion batteries using convolutional neural network and random forest. J Energy 132993. https://doi.org/10.1016/j.energy.2024.132993.
+器锂离子电池剩余使用寿命预测。IEEE神经网络与学习系统汇刊(cid:1)2024:1–14.(cid:1)https://(cid:1) https://doi.org/10.1016/j.renene.2023.119907。[57] 吴健，刘震，张阳，雷东，张波， Storage 2022;48:103857. https://doi.org/10.1016/j.est.2021.103857. [55] Bai J, Huang J, Luo K, Yang F, Xian Y. A feature reuse based multi-model fusion
+doi.org/10.1109/TNNLS.2023.3311443.(cid:1)[33] Peng(cid:1)S,(cid:1)Zhu(cid:1)J,(cid:1)Wu(cid:1)T,(cid:1)Yuan(cid:1)C,(cid:1)Cang(cid:1)J,(cid:1) 曹伟。基于电压变化曲线的数据驱动锂离子电池健康状态估计。《储能杂志》2023年； [30] Lee G, Kwon D, Lee C. A convolutional neural network model for SOH estimation of method for state of health estimation of lithium-ion batteries. J Energy Storage
+Zhang(cid:1)K,(cid:1)Pecht(cid:1)M.(cid:1)通过融合多阶段特征提取和PSO‑BiLSTM模型预测风电和光伏发电。 73：109191。https://doi.org/10.1016/j.est.2023.109191。[58] 冯浩，张亮。一种带有补 Li-ion batteries with physical interpretability. Mech Syst Signal Process 2023;188: 2023;70:107965. https://doi.org/10.1016/j.est.2023.107965.
+能源(cid:1)2024;298:131345.(cid:1)https://doi.org/10.1016/j.energy.2024.131345.(cid:1)[34] Zhang(cid:1)Y,(cid:1) 充特征的异构学习器融合方法用于锂离子电池健康状态估计。《储能杂志》2024年；92： 110004. https://doi.org/10.1016/j.ymssp.2022.110004. [56] Dai H, Wang J, Huang Y, Lai Y, Zhu L. Lightweight state-of-health estimation of
+[31] Lu J, Xiong R, Tian J, Wang C, Sun F. Deep learning to estimate lithium-ion battery lithium-ion batteries based on statistical feature optimization. Renew Energy 2024;
+Wang(cid:1)Y,(cid:1)Zhang(cid:1)C,(cid:1)Qiao(cid:1)X,(cid:1)Ge(cid:1)Y,(cid:1)Li(cid:1)X,(cid:1)Peng(cid:1)T,(cid:1)Nazir(cid:1)MS.(cid:1)基于随机向量函数链接和状 111896。https://doi.org/10.1016/j.est.2024.111896。[59] Roman(cid:1)D,(cid:1)Saxena(cid:1)S,(cid:1)
+state of health without additional degradation experiments. Nat Commun 2023;14: 222:119907. https://doi.org/10.1016/j.renene.2023.119907.
+态跟踪长短期记忆神经网络的进化堆叠集成学习范式的锂离子电池健康状态估计。应用能 Robu(cid:1)V,(cid:1)Pecht(cid:1)M,(cid:1)Flynn(cid:1)D.(cid:1)电池健康状态估计的机器学习流水线。 2760. https://doi.org/10.1038/s41467-023-38458-w. [57] Wu J, Liu Z, Zhang Y, Lei D, Zhang B, Cao W. Data-driven state of health estimation
+源(cid:1)2024;356:122417.(cid:1)https://doi.org/(cid:1)10.1016/j.apenergy.2023.122417.(cid:1)[35] Ma(cid:1)G,(cid:1) http://arxiv.org/abs/2102.00837。[访问于2024]年6月5日。[60] 林明，柯亮，王伟，孟 [32] Luo T, Liu M, Shi P, Duan G, Cao X. A hybrid data preprocessing-based hierarchical for lithium-ion battery based on voltage variation curves. J Energy Storage 2023;
+Zhang(cid:1)Y,(cid:1)Cheng(cid:1)C,(cid:1)Zhou(cid:1)B,(cid:1)Hu(cid:1)P,(cid:1)Yuan(cid:1)Y.(cid:1)基于虚假最近邻和混合神经网络的锂离子电 健，管阳，吴健。通过特征优化和卷积神经网络进行锂离子电池健康预测。《工程人工智 attention BiLSTM network for remaining useful life prediction of spacecraft 73:109191. https://doi.org/10.1016/j.est.2023.109191.
+池剩余使用寿命预测。应用能源(cid:1)2019;253:113626.(cid:1) 能应用》2024年；133：108666。https://doi.org/10.1016/j.engappai.2024.108666。 lithium-ion batteries. IEEE Trans. Neural Netw. Learning Syst 2024:1–14. https:// [58] Feng H, Zhang L. A heterogeneous learner fusion method with supplementary
+doi.org/10.1109/TNNLS.2023.3311443. feature for lithium-ion batteries state of health estimation. J Energy Storage 2024;
+https://doi.org/10.1016/j.apenergy.2019.113626.(cid:1)[36] Xu(cid:1)H,(cid:1)Wu(cid:1)L,(cid:1)Xiong(cid:1)S,(cid:1)Li(cid:1)W,(cid:1) [61] 谭阳，赵刚。使用长短期记忆网络进行迁移学习以预测锂离子电池健康状态。《
+[33] Peng S, Zhu J, Wu T, Yuan C, Cang J, Zhang K, Pecht M. Prediction of wind and PV 92:111896. https://doi.org/10.1016/j.est.2024.111896.
+Garg(cid:1)A,(cid:1)Gao(cid:1)L.(cid:1)一种基于改进的CNN‑LSTM模型的锂离子电池健康状态估计方法。能源(cid:1) IEEE工业电子汇刊》2020年；67：8723–31。 power by fusing the multi-stage feature extraction and a PSO-BiLSTM model. [59] Roman D, Saxena S, Robu V, Pecht M, Flynn D. Machine learning pipeline for
+2023;276:(cid:1)127585.(cid:1)https://doi.org/10.1016/j.energy.2023.127585. https://doi.org/10.1109/TIE.2019.2946551。[62] 金浩，崔宁，蔡亮，孟健，李健，彭 Energy 2024;298:131345. https://doi.org/10.1016/j.energy.2024.131345. battery state of health estimation. http://arxiv.org/abs/2102.00837. [Accessed 5
+健，赵翔。基于分层特征构建和自配置高斯过程回归的锂离子电池健康状态估计。《能源》 [34] Zhang Y, Wang Y, Zhang C, Qiao X, Ge Y, Li X, Peng T, Nazir MS. State-of-health June 2024].
+2023年；262：125503。https://doi.org/10.1016/j.energy.2022.125503。[63] 黄凯， estimation for lithium-ion battery via an evolutionary Stacking ensemble learning [60] Lin M, Ke L, Wang W, Meng J, Guan Y, Wu J. Health prognosis via feature
+paradigm of random vector functional link and active-state-tracking long–short- optimization and convolutional neural network for lithium-ion batteries. Eng Appl
+姚凯，郭阳，吕震。基于微调或重构迁移学习策略结合新
+term memory neural network. Appl Energy 2024;356:122417. https://doi.org/ Artif Intell 2024;133:108666. https://doi.org/10.1016/j.engappai.2024.108666.
+10.1016/j.apenergy.2023.122417. [61] Tan Y, Zhao G. Transfer learning with long short-term memory network for state-
+[35] Ma G, Zhang Y, Cheng C, Zhou B, Hu P, Yuan Y. Remaining useful life prediction of of-health prediction of lithium-ion batteries. IEEE Trans Ind Electron 2020;67:
+lithium-ion batteries based on false nearest neighbors and a hybrid neural network. 8723–31. https://doi.org/10.1109/TIE.2019.2946551.
+Appl Energy 2019;253:113626. https://doi.org/10.1016/j.apenergy.2019.113626. [62] Jin H, Cui N, Cai L, Meng J, Li J, Peng J, Zhao X. State-of-health estimation for
+[36] Xu H, Wu L, Xiong S, Li W, Garg A, Gao L. An improved CNN-LSTM model-based lithium-ion batteries with hierarchical feature construction and auto-configurable
+state-of-health estimation approach for lithium-ion batteries. Energy 2023;276: Gaussian process regression. Energy 2023;262:125503. https://doi.org/10.1016/j.
+127585. https://doi.org/10.1016/j.energy.2023.127585. energy.2022.125503.
+[63] Huang K, Yao K, Guo Y, Lv Z. State of health estimation of lithium-ion batteries
+based on fine-tuning or rebuilding transfer learning strategies combined with new
+15 15
+==== PAGE 16 ====
+X.(cid:3)Li(cid:3)等人 《能源》 313 (2024年) 134030 X. Li et al. E n e r g y 313 (2024) 134030
+特征挖掘的锂离子电池健康状态估计。《能源》2023年；282：128739。 计算机视觉– eccv(cid:1)2018.(cid:1)查姆：施普林格国际出版；2018.(cid:1)第122–38页。(cid:1) features mining. Energy 2023;282:128739. https://doi.org/10.1016/j. Computer vision – eccv 2018. Cham: Springer International Publishing; 2018.
+https://doi.org/10.1016/j. energy.2023.128739。[64] Kiranyaz(cid:1)S,(cid:1)Avci(cid:1)O,(cid:1) https://doi.org/10.1007/978-3-030-01264-9_8。(cid:1)[69] 韩东，(cid:1)潘翔，(cid:1)韩宇，(cid:1)宋松，(cid:1)黄高。 energy.2023.128739. p. 122–38. https://doi.org/10.1007/978-3-030-01264-9_8.
+Abdeljaber(cid:1)O,(cid:1)Ince(cid:1)T,(cid:1)Gabbouj(cid:1)M,(cid:1)Inman(cid:1)DJ.(cid:1)一维卷积神经网络及其应用：综述。 FLatten(cid:1)Transformer：使用聚焦线性注意力的视觉Transformer。(cid:1)收录于：2023(cid:1) [64] Kiranyaz S, Avci O, Abdeljaber O, Ince T, Gabbouj M, Inman DJ. 1D convolutional [69] Han D, Pan X, Han Y, Song S, Huang G. FLatten transformer: vision transformer
+neural networks and applications: a survey. Mech Syst Signal Process 2021;151: using focused linear attention. In: 2023 IEEE/CVF International Conference on
+《机械系统与信号处理》2021年；151：107398。 IEEE/CVF国际计算机视觉大会（ICCV）。(cid:1)法国巴黎：IEEE；2023.(cid:1)第5938–48页。(cid:1) 107398. https://doi.org/10.1016/j.ymssp.2020.107398. computer vision (ICCV). Paris, France: IEEE; 2023. p. 5938–48. https://doi.org/
+https://doi.org/10.1016/j.ymssp.2020.107398。[65] Chollet(cid:1)F.(cid:1)Xception：使用深度可 https://doi.org/ 10.1109/ICCV51070.2023.00548。[70] 蔡浩，(cid:1)李健，(cid:1)胡明，(cid:1)甘晨，(cid:1) [65] Chollet F. Xception: deep learning with depthwise separable convolutions. In: 2017 10.1109/ICCV51070.2023.00548.
+分离卷积的深度学习。收录于：2017年IEEE计算机视觉与模式识别会议（CVPR）； 韩松。(cid:1)EfficientViT：用于高分辨率密集预测的轻量级多尺度注意力。(cid:1)收录于：2023(cid:1) IEEE Conference on computer vision and pattern recognition (CVPR); 2017. [70] Cai H, Li J, Hu M, Gan C, Han S. EfficientViT: lightweight multi-scale attention for
+2017年。第1800–7页。https://doi.org/10.1109/CVPR.2017.195。[66] Sandler(cid:1)M,(cid:1) IEEE/CVF国际计算机视觉大会（ICCV）。(cid:1)法国巴黎：IEEE；2023.(cid:1)第17256–67页。(cid:1) p. 1800–7. https://doi.org/10.1109/CVPR.2017.195. high-Resolution dense prediction. In: 2023 IEEE/CVF International conference on
+Howard(cid:1)A,(cid:1)Zhu(cid:1)M,(cid:1)Zhmoginov(cid:1)A,(cid:1)陈立成。MobileNetV2：倒置残差与线性瓶颈。收录 https://doi.org/ 10.1109/ICCV51070.2023.01587。[71] Chicco(cid:1)D，(cid:1)Warrens(cid:1)M，(cid:1) [66] Sandler M, Howard A, Zhu M, Zhmoginov A, Chen L-C. MobileNetV2: Inverted computer vision (ICCV). Paris, France: IEEE; 2023. p. 17256–67. https://doi.org/
+residuals and linear bottlenecks. In: 2018 IEEE/CVF Conference on computer 10.1109/ICCV51070.2023.01587.
+于：2018年IEEE/CVF计算机视觉与模式识别会议；2018年。第4510–20页。 Jurman(cid:1)G。(cid:1)在回归分析评估中，决定系数R方比SMAPE、MAE、MAPE、MSE和 vision and pattern recognition; 2018. p. 4510–20. https://doi.org/10.1109/ [71] Chicco D, Warrens M, Jurman G. The coefficient of determination R-squared is
+https://doi.org/10.1109/ CVPR.2018.00474。[67] 张祥，周星，林明，孙剑。 RMSE提供更多信息。《PeerJ计算机科学》2021；7:e623。(cid:1) CVPR.2018.00474. more informative than SMAPE, MAE, MAPE, MSE and RMSE in regression analysis
+ShuffleNet：一种用于移动设备的极其高效的卷积神经网络。 https://doi.org/10.7717/peerj- cs.623。[72] 李鹏，(cid:1)张哲，(cid:1)Grosu(cid:1)R，(cid:1)邓哲，(cid:1)侯杰，(cid:1) [67] Zhang X, Zhou X, Lin M, Sun J. ShuffleNet: an extremely efficient convolutional evaluation. PeerJ Computer Science 2021;7:e623. https://doi.org/10.7717/peerj-
+https://doi.org/10.48550/arXiv.1707.01083；2017年。[68] 马宁，张祥，郑海涛，孙剑。 容毅，(cid:1)吴睿。(cid:1)一种用于电动汽车锂电池健康状态估计和剩余使用寿命预测的端到端神经网 neural network for mobile devices. https://doi.org/10.48550/arXiv.1707.01083; cs.623.
+ShuffleNet(cid:1)V2：高效CNN架构设计的实用指南。收录于：Ferrari(cid:1)V,(cid:1)Hebert(cid:1)M,(cid:1) 络框架。《可再生与可持续能源评论》2022；156:111843。(cid:1) 2017. [72] Li P, Zhang Z, Grosu R, Deng Z, Hou J, Rong Y, Wu R. An end-to-end neural
+[68] Ma N, Zhang X, Zheng H-T, Sun J. ShuffleNet V2: practical guidelines for efficient network framework for state-of-health estimation and remaining useful life
+Sminchisescu(cid:1)C,(cid:1)Weiss(cid:1)Y，编辑。 https://doi.org/10.1016/j.rser.2021.111843。
+CNN architecture design. In: Ferrari V, Hebert M, Sminchisescu C, Weiss Y, editors. prediction of electric vehicle lithium batteries. Renew Sustain Energy Rev 2022;
+156:111843. https://doi.org/10.1016/j.rser.2021.111843.
+16 16
