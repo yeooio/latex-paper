@@ -1,16 +1,8 @@
-\begin{table}[!htbp]
+\begin{table}
+\TableStyle
 \caption{Initialization strategy comparison on the Oxford dataset.}
 \label{tab:4-3-initialization}
-\raggedright
-\zihao{-5}
-\setlength{\tabcolsep}{3pt}
-\renewcommand{\arraystretch}{1.10}
-\begin{ThreePartTable}
-\begin{tabularx}{\linewidth}{@{}
-  >{\raggedright\arraybackslash}p{0.16\linewidth}
-  >{\centering\arraybackslash}p{0.15\linewidth}
-  *{2}{>{\centering\arraybackslash}p{0.12\linewidth}}
-  *{3}{>{\centering\arraybackslash}X}@{}}
+\begin{tabularx}{\linewidth}{@{\extracolsep{\fill}}L{1.15}C{1.05}C{1.05}C{1.05}C{0.90}C{0.90}C{0.90}@{}}
 \toprule
 Initialization
 & \makecell{Threshold epoch\\median (range)}
@@ -24,28 +16,24 @@ Initialization
 & 18 (14--22)
 & $9.5535\times10^{-4}$
 & $2.6246\times10^{-4}$
-& $0.98606\pm0.00411$
-& $0.00784\pm0.00116$
-& $0.00490\pm0.00054$ \\
+& \makecell[c]{$0.98606$\\$\pm0.00411$}
+& \makecell[c]{$0.00784$\\$\pm0.00116$}
+& \makecell[c]{$0.00490$\\$\pm0.00054$} \\
 \makecell[tl]{Truncated normal\\($\pm2\sigma$)}
 & 18 (13--22)
 & $9.4815\times10^{-4}$
 & $2.6516\times10^{-4}$
-& $0.98645\pm0.00371$
-& $0.00774\pm0.00103$
-& $0.00485\pm0.00048$ \\
+& \makecell[c]{$0.98645$\\$\pm0.00371$}
+& \makecell[c]{$0.00774$\\$\pm0.00103$}
+& \makecell[c]{$0.00485$\\$\pm0.00048$} \\
 Xavier uniform
 & 18 (14--22)
 & $9.5526\times10^{-4}$
 & $2.6340\times10^{-4}$
-& $0.98527\pm0.00462$
-& $0.00805\pm0.00126$
-& $0.00499\pm0.00058$ \\
+& \makecell[c]{$0.98527$\\$\pm0.00462$}
+& \makecell[c]{$0.00805$\\$\pm0.00126$}
+& \makecell[c]{$0.00499$\\$\pm0.00058$} \\
 \bottomrule
 \end{tabularx}
-\begin{tablenotes}[flushleft]
-\footnotesize
-\item[] \parbox[t]{0.98\linewidth}{Note: The three strategies are evaluated under five matched random seeds. Standard deviations are population standard deviations.}
-\end{tablenotes}
-\end{ThreePartTable}
+\TableNote{Note: The three strategies are evaluated under five matched random seeds. Standard deviations are population standard deviations.}
 \end{table}

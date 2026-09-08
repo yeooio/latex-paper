@@ -1,29 +1,26 @@
-\begin{table}[!htbp]
+\begin{table}
+\centering
+\begin{minipage}{0.90\linewidth}
+\TableStyle
+\captionsetup{width=\linewidth}
 \caption{Transfer results under different adaptation ratios.}
 \label{tab:4-9}
-\centering
-\zihao{-5}
-\setlength{\tabcolsep}{2.4pt}
-\renewcommand{\arraystretch}{1.04}
-\begin{ThreePartTable}
-\begin{tabularx}{0.90\linewidth}{>{\raggedright\arraybackslash}p{0.25\linewidth}>{\centering\arraybackslash}p{0.13\linewidth}>{\centering\arraybackslash}p{0.10\linewidth}>{\centering\arraybackslash}p{0.10\linewidth}>{\centering\arraybackslash}p{0.10\linewidth}>{\centering\arraybackslash}p{0.10\linewidth}}
+\begin{tabularx}{\linewidth}{@{\extracolsep{\fill}}L{1.50}C{0.90}R{0.90}R{0.90}R{0.90}R{0.90}@{}}
 \toprule
-\makecell[l]{Source domain\\(training cell)} & Metric & 10\% & 30\% & 50\% & 70\% \\
+\makecell[l]{Source domain\\(training cell)} & Metric & \multicolumn{1}{c}{10\%} & \multicolumn{1}{c}{30\%} & \multicolumn{1}{c}{50\%} & \multicolumn{1}{c}{70\%} \\
 \midrule
 \makecell[l]{CALCE CS2\\(CS2\_36)} & $R^2$      & -1.3934 & -0.2679 & 0.5094 & 0.7650 \\
                       & MAE        & 0.0831  & 0.0590  & 0.0366 & 0.0252 \\
                       & MAPE       & 0.1015  & 0.0722  & 0.0445 & 0.0305 \\
                       & RMSE       & 0.0942  & 0.0685  & 0.0426 & 0.0293 \\
-\addlinespace[1pt]
+\TableGroupSpace
 \makecell[l]{CALCE CX2\\(CX2\_36)} & $R^2$      & -3.2217 & -1.6085 & -0.3836 & -0.1268 \\
                       & MAE        & 0.1095  & 0.0835  & 0.0614  & 0.0559 \\
                       & MAPE       & 0.1339  & 0.1024  & 0.0747  & 0.0677 \\
                       & RMSE       & 0.1251  & 0.0982  & 0.0716  & 0.0646 \\
 \bottomrule
 \end{tabularx}
-\begin{tablenotes}[flushleft]
-\footnotesize
-\item[] \parbox[t]{0.98\linewidth}{Note: Results are averaged over three independent runs.}
-\end{tablenotes}
-\end{ThreePartTable}
+\vspace{-2pt}
+\TableNote{Note: Results are averaged over three independent runs.}
+\end{minipage}
 \end{table}

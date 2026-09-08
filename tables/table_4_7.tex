@@ -1,12 +1,8 @@
-\begin{table}[!htbp]
+\begin{table}
+\TableStyle
 \caption{Direct cross-dataset transfer results.}
 \label{tab:4-7}
-\centering
-\zihao{-5}
-\setlength{\tabcolsep}{3.0pt}
-\renewcommand{\arraystretch}{1.05}
-\begin{ThreePartTable}
-\begin{tabularx}{0.90\linewidth}{>{\raggedright\arraybackslash}p{0.25\linewidth}>{\centering\arraybackslash}p{0.13\linewidth}>{\centering\arraybackslash}p{0.12\linewidth}>{\centering\arraybackslash}p{0.12\linewidth}>{\centering\arraybackslash}p{0.12\linewidth}}
+\begin{tabularx}{\linewidth}{@{\extracolsep{\fill}}L{1.35}C{0.80}C{0.95}C{0.95}C{0.95}@{}}
 \toprule
 \makecell[l]{Source domain\\(training cell)} & Metric & CS2 & CX2 & Oxford \\
 \midrule
@@ -14,21 +10,17 @@
                       & MAE        & ---    & 0.0697   & 0.4761    \\
                       & MAPE       & ---    & 0.3974   & 0.5573    \\
                       & RMSE       & ---    & 0.1051   & 0.4778    \\
-\addlinespace[1pt]
+\TableGroupSpace
 \makecell[l]{CALCE CX2\\(CX2\_36)} & $R^2$      & 0.7847 & ---      & -108.6169 \\
                       & MAE        & 0.0388 & ---      & 0.6346    \\
                       & MAPE       & 0.0557 & ---      & 0.7423    \\
                       & RMSE       & 0.0568 & ---      & 0.6375    \\
-\addlinespace[1pt]
+\TableGroupSpace
 \makecell[l]{Oxford\\(Cell1)} & $R^2$     & -1.5309 & -1.4786 & ---       \\
                      & MAE       & 0.1530  & 0.3528  & ---       \\
                      & MAPE      & 0.2196  & 1.5040  & ---       \\
                      & RMSE      & 0.1950  & 0.4164  & ---       \\
 \bottomrule
 \end{tabularx}
-\begin{tablenotes}[flushleft]
-\footnotesize
-\item[] \parbox[t]{0.98\linewidth}{Note: Results are averaged over three independent runs.}
-\end{tablenotes}
-\end{ThreePartTable}
+\TableNote{Note: Results are averaged over three independent runs.}
 \end{table}

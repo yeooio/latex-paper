@@ -1,37 +1,29 @@
-\begin{table}[!htbp]
+\begin{table}
+\TableStyle
 \caption{Description of the four battery datasets.}
 \label{tab:2-1}
-\centering
-\fontsize{9.5pt}{12pt}\selectfont
-\setlength{\tabcolsep}{4pt}
-\renewcommand{\arraystretch}{1.12}
-\begin{tabularx}{\linewidth}{@{}
->{\raggedright\arraybackslash}p{0.205\linewidth}
->{\hsize=0.86\hsize\linewidth=\hsize\raggedright\arraybackslash}X
->{\hsize=0.97\hsize\linewidth=\hsize\raggedright\arraybackslash}X
->{\hsize=0.97\hsize\linewidth=\hsize\raggedright\arraybackslash}X
->{\hsize=1.20\hsize\linewidth=\hsize\raggedright\arraybackslash}X@{}}
+\begin{tabularx}{\linewidth}{@{\extracolsep{\fill}}L{1.05}L{0.95}L{0.95}L{0.95}L{1.10}@{}}
 \toprule
 Data Sources & Oxford \cite{ref60} & CALCE CS2 \cite{ref18,ref61} & CALCE CX2 \cite{ref18,ref61} & MIT/Severson \cite{ref62} \\
 \midrule
 Manufacturer & Kokam & LG Chem & LG Chem & A123 Systems \\
-\addlinespace[2pt]
+\TableRowSpace
 Cell types & Pouch & Prismatic & Prismatic & 18650 cylindrical \\
-\addlinespace[2pt]
+\TableRowSpace
 Cathode material & NCO-LCO & LCO & LCO & LFP \\
-\addlinespace[2pt]
+\TableRowSpace
 Rated capacity (Ah) & 0.74 & 1.10 & 1.35 & 1.10 \\
-\addlinespace[2pt]
+\TableRowSpace
 Capacity failure\newline threshold & 70\% & 0.84 Ah (76.4\%) & 1.08 Ah (80\%) & 80\% \\
-\addlinespace[4pt]
+\TableRowSpace
 Charge protocol\newline (rate) & CC (2C) & CC-CV\newline (0.5C, 4.2 V) & CC-CV\newline (0.5C, 4.2 V) & Two-step fast charge\newline + CC-CV (1C, 3.6 V) \\
-\addlinespace[3pt]
+\TableRowSpace
 Discharge protocol\newline (rate) & variance & CC (1C) & CC (1C) & CC (4C) \\
-\addlinespace[3pt]
+\TableRowSpace
 Cut-off voltage (V) & charge to 4.2\newline discharge to 2.7 & charge to 4.2\newline discharge to 2.7 & charge to 4.2\newline discharge to 2.7 & charge to 3.6\newline discharge to 2.0 \\
-\addlinespace[3pt]
+\TableRowSpace
 Cut-off current (A) & --- & charge to 0.05 & charge to 0.05 & charge to 0.022\newline (C/50) \\
-\addlinespace[3pt]
+\TableRowSpace
 Experiment\newline temperature ($^\circ$C) & 40 & 24 & 24 & 30 \\
 \bottomrule
 \end{tabularx}

@@ -1,33 +1,29 @@
-\begin{table}[!htbp]
-\caption{SOH estimation errors of different models on the CALCE and MIT/Severson datasets.}
+\begin{table}
+\TableStyle
+\caption{SOH estimation errors of different models on CALCE CS2\_38, CALCE CX2\_38, and MIT/Severson b3c29.}
 \label{tab:4-6}
-\centering
-\zihao{-5}
-\setlength{\tabcolsep}{2.2pt}
-\renewcommand{\arraystretch}{1.02}
-\begin{ThreePartTable}
-\begin{tabularx}{0.98\linewidth}{>{\raggedright\arraybackslash}p{0.21\linewidth}>{\raggedright\arraybackslash}p{0.24\linewidth}>{\centering\arraybackslash}p{0.10\linewidth}>{\centering\arraybackslash}p{0.10\linewidth}>{\centering\arraybackslash}p{0.14\linewidth}>{\centering\arraybackslash}p{0.10\linewidth}}
+\begin{tabularx}{\linewidth}{@{\extracolsep{\fill}}L{0.85}L{1.55}R{0.90}R{0.90}R{0.90}R{0.90}@{}}
 \toprule
-Dataset & Method & $R^2$ & MAE & MAPE & RMSE \\
+Dataset & Method & \multicolumn{1}{c}{$R^2$} & \multicolumn{1}{c}{MAE} & \multicolumn{1}{c}{MAPE} & \multicolumn{1}{c}{RMSE} \\
 \midrule
 \makecell[l]{CALCE CS2\\(CS2\_38)} & MS-AgentNet       & \textbf{0.9798} & \textbf{0.0120} & \textbf{0.015984} & \textbf{0.0174} \\
                                   & CNN-Transformer   & 0.9779          & 0.0126          & 0.016928          & 0.0182          \\
                                   & CNN-LSTM          & 0.9778          & 0.0125          & 0.016680          & 0.0183          \\
                                   & Transformer       & 0.9787          & 0.0122          & 0.016434          & 0.0179          \\
                                   & LSTM              & 0.9776          & 0.0128          & 0.017085          & 0.0184          \\
-\addlinespace[0.5pt]
+\TableGroupSpace
 \makecell[l]{CALCE CX2\\(CX2\_38)} & MS-AgentNet       & \textbf{0.9947} & \textbf{0.0106} & \textbf{0.037673} & \textbf{0.0193} \\
                                   & CNN-Transformer   & 0.9895          & 0.0154          & 0.093595          & 0.0269          \\
                                   & CNN-LSTM          & 0.9785          & 0.0207          & 0.152435         & 0.0387          \\
                                   & Transformer       & 0.9916          & 0.0138          & 0.078160          & 0.0243          \\
                                   & LSTM              & 0.9804          & 0.0201          & 0.145055         & 0.0370          \\
-\addlinespace[0.5pt]
+\TableGroupSpace
 \makecell[l]{MIT/Severson\\(b3c29)} & MS-AgentNet      & \textbf{0.9972} & \textbf{0.0018} & \textbf{0.001960} & \textbf{0.0022} \\
                                    & CNN-Transformer  & 0.9960          & 0.0021          & 0.002302          & 0.0025          \\
                                    & CNN-LSTM         & 0.9879          & 0.0035          & 0.003808          & 0.0044          \\
                                    & Transformer      & 0.9971          & 0.0018          & 0.001976          & 0.0022          \\
                                    & LSTM             & 0.9952          & 0.0025          & 0.002667          & 0.0028          \\
-\addlinespace[1pt]
+\midrule
 Average                           & MS-AgentNet       & \textbf{0.9906} & \textbf{0.0081} & \textbf{0.018539} & \textbf{0.0129} \\
                                   & CNN-Transformer   & 0.9878          & 0.0100          & 0.037608          & 0.0159          \\
                                   & CNN-LSTM          & 0.9814          & 0.0122          & 0.057641          & 0.0204          \\
@@ -35,9 +31,4 @@ Average                           & MS-AgentNet       & \textbf{0.9906} & \textb
                                   & LSTM              & 0.9844          & 0.0118          & 0.054936          & 0.0194          \\
 \bottomrule
 \end{tabularx}
-\begin{tablenotes}[flushleft]
-\footnotesize
-\item[] \parbox[t]{0.98\linewidth}{Note: Results are averaged over five independent runs. Average denotes the macro-average over the three independent evaluation cells. The best results are determined using unrounded values and are shown in bold.}
-\end{tablenotes}
-\end{ThreePartTable}
 \end{table}

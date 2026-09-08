@@ -1,13 +1,8 @@
-\begin{table}[!htbp]
+\begin{table}
+\TableStyle
 \caption{Final configurations of MS-AgentNet.}
 \label{tab:4-2}
-\raggedright
-\zihao{-5}
-\setlength{\tabcolsep}{2.8pt}
-\renewcommand{\arraystretch}{1.05}
-\begin{ThreePartTable}
-\begin{adjustbox}{max width=\linewidth}
-\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{0.22\linewidth}>{\centering\arraybackslash}p{0.13\linewidth}>{\centering\arraybackslash}p{0.15\linewidth}>{\centering\arraybackslash}p{0.18\linewidth}>{\centering\arraybackslash}p{0.12\linewidth}}
+\begin{tabularx}{\linewidth}{@{\extracolsep{\fill}}L{1.25}C{0.85}C{0.95}C{1.10}C{0.85}@{}}
 \toprule
 数据集 & 网络深度 $L$ & 嵌入维度 $d$ & 全连接层维度 & 学习率 \\
 \midrule
@@ -17,6 +12,4 @@ MIT/Severson & 1 & 16 & 16 & 0.001 \\
 Oxford & 1 & 16 & 64 & 0.001 \\
 \bottomrule
 \end{tabularx}
-\end{adjustbox}
-\end{ThreePartTable}
 \end{table}

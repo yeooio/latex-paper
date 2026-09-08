@@ -1,0 +1,49 @@
+% Shared style for all manuscript tables. Dimensions are TeX points.
+% Change typography here; allocate column widths in each table.
+\usepackage{placeins}
+\floatplacement{table}{!htb}
+\newcolumntype{L}[1]{>{\hsize=#1\hsize\linewidth=\hsize\raggedright\arraybackslash}X}
+\newcolumntype{C}[1]{>{\hsize=#1\hsize\linewidth=\hsize\centering\arraybackslash}X}
+\newcolumntype{R}[1]{>{\hsize=#1\hsize\linewidth=\hsize\raggedleft\arraybackslash}X}
+\newcommand{\TableStyle}{%
+  \centering
+  \setstretch{1}%
+  \fontsize{9pt}{11.5pt}\selectfont
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{0pt}%
+  \setlength{\tabcolsep}{4pt}%
+  \renewcommand{\arraystretch}{1.12}%
+  \setlength{\heavyrulewidth}{0.75pt}%
+  \setlength{\lightrulewidth}{0.45pt}%
+  \setlength{\cmidrulewidth}{0.45pt}%
+  \setlength{\aboverulesep}{0.6ex}%
+  \setlength{\belowrulesep}{0.6ex}%
+}
+\newcommand{\TableGroupSpace}{\addlinespace[3pt]}
+\newcommand{\TableRowSpace}{\addlinespace[2pt]}
+\newcommand{\TableLayerSep}{\par\vspace{2pt}}
+\newcommand{\TableNote}[1]{%
+  \par\vspace{3.5pt}%
+  \begingroup
+    \setstretch{1}%
+    \fontsize{8.5pt}{11pt}\selectfont
+    \raggedright\noindent #1\par
+  \endgroup
+}
+\DeclareCaptionFont{tablefont}{\fontsize{9pt}{11.5pt}\selectfont}
+\captionsetup[table]{%
+  font=tablefont,labelfont=bf,textfont=normalfont,
+  justification=raggedright,singlelinecheck=false,
+  width=\linewidth,skip=5pt,
+  labelformat=tablelabel,labelsep=none,format=tabletwoline
+}
+\captionsetup[algorithm]{%
+  font=tablefont,labelfont=bf,textfont=normalfont,
+  justification=raggedright,singlelinecheck=false,skip=5pt
+}
+% Float-only pages start at the top; remaining space stays below the floats.
+\makeatletter
+\setlength{\@fptop}{0pt}
+\setlength{\@fpsep}{14pt plus 2pt minus 2pt}
+\setlength{\@fpbot}{0pt plus 1fil}
+\makeatother

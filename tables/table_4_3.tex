@@ -1,24 +1,14 @@
-\begin{table}[!htbp]
+\begin{table}
+\TableStyle
 \caption{Convergence characteristics of MS-AgentNet.}
 \label{tab:4-3}
-\raggedright
-\zihao{-5}
-\setlength{\tabcolsep}{2.4pt}
-\renewcommand{\arraystretch}{1.04}
-\begin{ThreePartTable}
-\begin{adjustbox}{max width=\linewidth}
-\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{0.14\linewidth}>{\centering\arraybackslash}p{0.17\linewidth}>{\centering\arraybackslash}p{0.17\linewidth}>{\centering\arraybackslash}p{0.20\linewidth}>{\centering\arraybackslash}p{0.20\linewidth}}
+\begin{tabularx}{\linewidth}{@{\extracolsep{\fill}}L{0.80}C{1.10}C{0.90}C{1.10}C{1.10}@{}}
 \toprule
-数据集 & 10\%阈值轮次中位数 & 阈值轮次范围 & 后期平均损失中位数 & 后期损失标准差中位数 \\
+数据集 & \makecell[c]{10\%阈值轮次\\中位数} & 阈值轮次范围 & \makecell[c]{后期平均损失\\中位数} & \makecell[c]{后期损失标准差\\中位数} \\
 \midrule
 Oxford & 26 & 18–35 & $8.14\times10^{-4}$ & $2.38\times10^{-4}$ \\
 MIT & 7 & 6–8 & $5.84\times10^{-5}$ & $4.84\times10^{-6}$ \\
 \bottomrule
 \end{tabularx}
-\end{adjustbox}
-\begin{tablenotes}[flushleft]
-\footnotesize
-\item[] \parbox[t]{0.98\linewidth}{Note: Statistics are calculated from runs using five different random seeds. The threshold-epoch range is reported as the minimum--maximum.}
-\end{tablenotes}
-\end{ThreePartTable}
+\TableNote{Note: Statistics are calculated from runs using five different random seeds. The threshold-epoch range is reported as the minimum--maximum.}
 \end{table}

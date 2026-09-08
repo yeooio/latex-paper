@@ -1,34 +1,31 @@
-\begin{table}[!htbp]
+\begin{table}
+\centering
+\begin{minipage}{0.90\linewidth}
+\TableStyle
+\captionsetup{width=\linewidth}
 \caption{Transfer results after 30\% target-domain adaptation.}
 \label{tab:4-8}
-\centering
-\zihao{-5}
-\setlength{\tabcolsep}{3.0pt}
-\renewcommand{\arraystretch}{1.05}
-\begin{ThreePartTable}
-\begin{tabularx}{0.90\linewidth}{>{\raggedright\arraybackslash}p{0.25\linewidth}>{\centering\arraybackslash}p{0.13\linewidth}>{\centering\arraybackslash}p{0.12\linewidth}>{\centering\arraybackslash}p{0.12\linewidth}>{\centering\arraybackslash}p{0.12\linewidth}}
+\begin{tabularx}{\linewidth}{@{\extracolsep{\fill}}L{1.35}C{0.80}R{0.95}R{0.95}R{0.95}@{}}
 \toprule
-\makecell[l]{Source domain\\(training cell)} & Metric & CS2 & CX2 & Oxford \\
+\makecell[l]{Source domain\\(training cell)} & Metric & \multicolumn{1}{c}{CS2} & \multicolumn{1}{c}{CX2} & \multicolumn{1}{c}{Oxford} \\
 \midrule
-\makecell[l]{CALCE CS2\\(CS2\_36)} & $R^2$      & ---    & 0.9566   & -0.2679 \\
-                      & MAE        & ---    & 0.0377   & 0.0590  \\
-                      & MAPE       & ---    & 0.1830   & 0.0722  \\
-                      & RMSE       & ---    & 0.0533   & 0.0685  \\
-\addlinespace[1pt]
-\makecell[l]{CALCE CX2\\(CX2\_36)} & $R^2$      & 0.8806 & ---      & -1.6085 \\
-                      & MAE        & 0.0303 & ---      & 0.0835  \\
-                      & MAPE       & 0.0406 & ---      & 0.1024  \\
-                      & RMSE       & 0.0422 & ---      & 0.0982  \\
-\addlinespace[1pt]
-\makecell[l]{Oxford\\(Cell1)} & $R^2$     & -1.1030 & -0.4809 & ---     \\
-                     & MAE       & 0.1327  & 0.2427  & ---     \\
-                     & MAPE      & 0.1935  & 1.2100  & ---     \\
-                     & RMSE      & 0.1777  & 0.3218  & ---     \\
+\makecell[l]{CALCE CS2\\(CS2\_36)} & $R^2$      & \multicolumn{1}{c}{---} & 0.9566   & -0.2679 \\
+                      & MAE        & \multicolumn{1}{c}{---} & 0.0377   & 0.0590  \\
+                      & MAPE       & \multicolumn{1}{c}{---} & 0.1830   & 0.0722  \\
+                      & RMSE       & \multicolumn{1}{c}{---} & 0.0533   & 0.0685  \\
+\TableGroupSpace
+\makecell[l]{CALCE CX2\\(CX2\_36)} & $R^2$      & 0.8806 & \multicolumn{1}{c}{---} & -1.6085 \\
+                      & MAE        & 0.0303 & \multicolumn{1}{c}{---} & 0.0835  \\
+                      & MAPE       & 0.0406 & \multicolumn{1}{c}{---} & 0.1024  \\
+                      & RMSE       & 0.0422 & \multicolumn{1}{c}{---} & 0.0982  \\
+\TableGroupSpace
+\makecell[l]{Oxford\\(Cell1)} & $R^2$     & -1.1030 & -0.4809 & \multicolumn{1}{c}{---} \\
+                     & MAE       & 0.1327  & 0.2427  & \multicolumn{1}{c}{---} \\
+                     & MAPE      & 0.1935  & 1.2100  & \multicolumn{1}{c}{---} \\
+                     & RMSE      & 0.1777  & 0.3218  & \multicolumn{1}{c}{---} \\
 \bottomrule
 \end{tabularx}
-\begin{tablenotes}[flushleft]
-\footnotesize
-\item[] \parbox[t]{0.98\linewidth}{Note: Results are averaged over three independent runs.}
-\end{tablenotes}
-\end{ThreePartTable}
+\vspace{-2pt}
+\TableNote{Note: Results are averaged over three independent runs.}
+\end{minipage}
 \end{table}

@@ -1,13 +1,10 @@
-\begin{table}[!htbp]
+\begin{table}
+\TableStyle
 \caption{Comparison between different existing SOH estimation methods.}
 \label{tab:soh-method-comparison}
-\centering
-\fontsize{8.8pt}{11.3pt}\selectfont
-\setlength{\tabcolsep}{4pt}
-\renewcommand{\arraystretch}{1.16}
-\begin{tabularx}{\linewidth}{@{}lccc>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{0.285\linewidth}c@{}}
+\begin{tabularx}{\linewidth}{@{\extracolsep{\fill}}lcccL{1.10}L{0.90}c@{}}
 \toprule
-参考 & \multicolumn{3}{c}{考虑的源数据} & {\fontsize{8pt}{10pt}\selectfont 健康指标选择方法（作者设计）} & {\fontsize{8pt}{10pt}\selectfont 评估模型（是否原创）} & 效率考量 \\
+参考 & \multicolumn{3}{c}{考虑的源数据} & \makecell[l]{健康指标选择方法\\（作者设计）} & \makecell[l]{评估模型\\（是否原创）} & 效率考量 \\
 \cmidrule(lr){2-4}
  & 电流 & 电压 & 温度 & & & \\
 \midrule

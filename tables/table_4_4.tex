@@ -1,72 +1,61 @@
-\begin{table}[!htbp]
+\begin{table}
+\TableStyle
 \caption{Layer configurations of different deep learning models.}
 \label{tab:4-4}
-\raggedright
-\zihao{-5}
-\setlength{\tabcolsep}{2.7pt}
-\renewcommand{\arraystretch}{1.10}
-\newcommand{\cfgsep}{\par\vspace{0.58\baselineskip}}
-\begin{ThreePartTable}
-\begin{tabularx}{\linewidth}{@{}
-  >{\hsize=.96\hsize\raggedright\arraybackslash}X
-  >{\hsize=1.10\hsize\raggedright\arraybackslash}X
-  >{\hsize=1.03\hsize\raggedright\arraybackslash}X
-  >{\hsize=1.18\hsize\raggedright\arraybackslash}X
-  >{\hsize=.73\hsize\raggedright\arraybackslash}X@{}}
+\begin{tabularx}{\linewidth}{@{\extracolsep{\fill}}L{0.96}L{1.10}L{1.03}L{1.18}L{0.73}@{}}
 \toprule
 MS-AgentNet & CNN-\newline Transformer & Transformer & CNN-LSTM & LSTM \\
 \midrule
 \begin{minipage}[t]{\hsize}\vspace{0pt}\raggedright\setlength{\parskip}{0pt}
-Input\cfgsep
-Embedding layer\newline(16)\cfgsep
-SLFA module\cfgsep
-DSConv-L module\cfgsep
-Add \& Norm\cfgsep
-FFN\cfgsep
-Add \& Norm\cfgsep
+Input\TableLayerSep
+Embedding layer\newline(16)\TableLayerSep
+SLFA module\TableLayerSep
+DSConv-L module\TableLayerSep
+Add \& Norm\TableLayerSep
+FFN\TableLayerSep
+Add \& Norm\TableLayerSep
 Linear layer
 \end{minipage}
 &
 \begin{minipage}[t]{\hsize}\vspace{0pt}\raggedright\setlength{\parskip}{0pt}
-Input\cfgsep
-Embedding layer\newline(16)\cfgsep
-Positional encoder\cfgsep
-Softmax attention\cfgsep
-$2\times$ Conv1D + ReLU\cfgsep
-MLP\cfgsep
-Transformer decoder\cfgsep
+Input\TableLayerSep
+Embedding layer\newline(16)\TableLayerSep
+Positional encoder\TableLayerSep
+Softmax attention\TableLayerSep
+$2\times$ Conv1D + ReLU\TableLayerSep
+MLP\TableLayerSep
+Transformer decoder\TableLayerSep
 Linear layer
 \end{minipage}
 &
 \begin{minipage}[t]{\hsize}\vspace{0pt}\raggedright\setlength{\parskip}{0pt}
-Input\cfgsep
-Embedding layer\newline(16)\cfgsep
-Positional encoder\cfgsep
-Softmax attention\cfgsep
-Add \& Norm\cfgsep
-MLP\cfgsep
-Add \& Norm\cfgsep
-Transformer decoder\cfgsep
+Input\TableLayerSep
+Embedding layer\newline(16)\TableLayerSep
+Positional encoder\TableLayerSep
+Softmax attention\TableLayerSep
+Add \& Norm\TableLayerSep
+MLP\TableLayerSep
+Add \& Norm\TableLayerSep
+Transformer decoder\TableLayerSep
 Linear layer
 \end{minipage}
 &
 \begin{minipage}[t]{\hsize}\vspace{0pt}\raggedright\setlength{\parskip}{0pt}
-Input\cfgsep
-Conv1D + ReLU\cfgsep
-MaxPooling1D\cfgsep
-$3\times$ Conv1D + ReLU\cfgsep
-$3\times$ LSTM layer (16)\cfgsep
+Input\TableLayerSep
+Conv1D + ReLU\TableLayerSep
+MaxPooling1D\TableLayerSep
+$3\times$ Conv1D + ReLU\TableLayerSep
+$3\times$ LSTM layer (16)\TableLayerSep
 Linear layer
 \end{minipage}
 &
 \begin{minipage}[t]{\hsize}\vspace{0pt}\raggedright\setlength{\parskip}{0pt}
-Input\cfgsep
-Linear layer (16)\cfgsep
-$5\times$ LSTM layer (16)\cfgsep
+Input\TableLayerSep
+Linear layer (16)\TableLayerSep
+$5\times$ LSTM layer (16)\TableLayerSep
 Linear layer
 \end{minipage}
 \\
 \bottomrule
 \end{tabularx}
-\end{ThreePartTable}
 \end{table}

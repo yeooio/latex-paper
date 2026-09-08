@@ -4,9 +4,7 @@
 
 针对现有SOH估计模型在估计精度与计算效率之间难以兼顾的问题，本文提出一种轻量级多尺度智能体网络（Multi-Scale Agent Network，MS-AgentNet）。该模型采用小核与大核深度可分离卷积提取不同时间尺度的退化特征，并结合ReLU²智能体注意力（ReLU² Agent Attention，RAA）进行跨位置全局信息交互。其中，“MS”表示由小核DSConv-S与大核DSConv-L构成的多尺度卷积设计。
 
-MS-AgentNet的整体架构如图3-1所示。健康指标（Health Indicators，HIs）序列经滑动窗口分割后，首先通过线性嵌入层映射至$d$维特征空间；随后，嵌入特征进入MS-AgentNet Block，并在Block内依次完成局部—全局特征融合、长尺度特征细化与非线性映射。最后，模型对输出特征进行层归一化、展平和线性读出，得到SOH估计值。
-
-\input{figures/figure_3_1}
+MS-AgentNet的整体架构如\cref{fig:3-1}所示。健康指标（Health Indicators，HIs）序列经滑动窗口分割后，首先通过线性嵌入层映射至$d$维特征空间；随后，嵌入特征进入MS-AgentNet Block，并在Block内依次完成局部—全局特征融合、长尺度特征细化与非线性映射。最后，模型对输出特征进行层归一化、展平和线性读出，得到SOH估计值。
 
 训练过程中，每个输入窗口以窗口后紧邻循环的真实SOH值作为监督标签。
 
@@ -18,7 +16,7 @@ MS-AgentNet的整体架构如图3-1所示。健康指标（Health Indicators，H
 \mathbf X_l'
 =
 \operatorname{SLFA}(\mathbf X_l).
-\tag{3-1}
+\label{eq:block_slfa}
 \end{equation}
 
 步骤2：长尺度特征细化。为提取较长时间尺度的退化特征，中间特征$\mathbf X_l'$先经层归一化，再通过DSConv-L模块，所得特征经可学习系数$W_l$缩放后，以残差形式与$\mathbf X_l'$相加：
@@ -33,7 +31,7 @@ W_l
 \left(
 \operatorname{LN}(\mathbf X_l')
 \right).
-\tag{3-2}
+\label{eq:block_dsconv_l}
 \end{equation}
 
 步骤3：非线性映射。细化后的特征$\mathbf X_l''$经层归一化后输入FFN，并通过残差连接得到输出$\mathbf Y_l$：
@@ -46,10 +44,12 @@ W_l
 \left(
 \operatorname{LN}_0(\mathbf X_l'')
 \right).
-\tag{3-3}
+\label{eq:block_ffn}
 \end{equation}
 
 并令该Block的输出为$\mathbf X_{l+1}=\mathbf Y_l$。其中，$\operatorname{SLFA}(\cdot)$、$\operatorname{DSConv\text{-}L}(\cdot)$和$\operatorname{FFN}(\cdot)$分别表示轻量级局部—全局融合注意力模块、大核深度可分离卷积模块和前馈神经网络；$W_l$为可学习缩放系数，$\operatorname{LN}(\cdot)$表示层归一化，$\operatorname{LN}_0(\cdot)$表示不含可学习仿射参数的层归一化。
+
+\input{figures/figure_3_1}
 
 \subsection{所设计的多尺度深度可分离卷积模块}
 
@@ -65,7 +65,7 @@ W_l
 C_{\mathrm{Conv}}
 =
 k\times k\times C_{\mathrm{in}}\times C_{\mathrm{out}}\times D_F\times D_F.
-\tag{3-4}
+\label{eq:conv_cost}
 \end{equation}
 
 其中，$k$、$C_{\mathrm{in}}$、$C_{\mathrm{out}}$和$D_F$分别表示卷积核大小、输入通道数、输出通道数和特征图尺寸。
@@ -78,7 +78,7 @@ C_{\mathrm{DSConv}}
 k\times k\times C_{\mathrm{in}}\times D_F\times D_F
 +
 C_{\mathrm{in}}\times C_{\mathrm{out}}\times D_F\times D_F.
-\tag{3-5}
+\label{eq:dsconv_cost}
 \end{equation}
 
 进一步比较两类卷积的计算量，可得二者之比为：
@@ -99,10 +99,10 @@ k\times k\times C_{\mathrm{in}}\times C_{\mathrm{out}}\times D_F\times D_F
 +
 \frac{1}{k^2}.
 \end{aligned}
-\tag{3-6}
+\label{eq:dsconv_cost_ratio}
 \end{equation}
 
-由式（3-6）可知，在输入、输出通道配置一致的情况下，DSConv的计算成本低于标准卷积，为后续小核与大核卷积模块的构建提供了基础。
+由式\eqref{eq:dsconv_cost_ratio}可知，在输入、输出通道配置一致的情况下，DSConv的计算成本低于标准卷积，为后续小核与大核卷积模块的构建提供了基础。
 
 \subsubsection{DSConv-S：双重作用的局部增强}
 
@@ -135,7 +135,7 @@ DSConv-S采用两倍通道扩展。输入首先经转置使特征维度对应卷
 )
 )
 )].
-\tag{3-7}
+\label{eq:dsconv_s}
 \end{equation}
 
 其中，$\operatorname{PW}_{\uparrow}$和$\operatorname{PW}_{\downarrow}$分别表示通道扩展和通道恢复的逐点卷积，$\operatorname{DW}_{5}$表示尺寸为$1\times5$的深度卷积，$\mathcal T(\cdot)$与$\mathcal T^{-1}(\cdot)$分别表示转置和逆转置操作。为便于后文表述，将上述过程简记为
@@ -179,7 +179,7 @@ DSConv-L同样按照“通道扩展—卷积特征提取—通道恢复”的顺
 )
 )
 )].
-\tag{3-8}
+\label{eq:dsconv_l}
 \end{equation}
 
 其中，$\operatorname{PW}_{L,\uparrow}$和$\operatorname{PW}_{L,\mathrm{out}}$分别表示通道扩展和通道恢复的逐点卷积，$\operatorname{DW}_{31}$表示尺寸为$1\times31$的大核深度卷积。
@@ -208,7 +208,7 @@ C_{\mathrm{in}}\times3C_{\mathrm{out}}\times D_F\times D_F
 \mathbf Q_i=\mathbf X\mathbf W_i^Q,\qquad
 \mathbf K_i=\mathbf X\mathbf W_i^K,\qquad
 \mathbf V_i=\mathbf X\mathbf W_i^V.
-\tag{3-9}
+\label{eq:qkv_projection}
 \end{equation}
 
 其中，$N$为序列长度，$d$为输入特征维度，$\mathbf W_i^Q,\mathbf W_i^K,\mathbf W_i^V\in\mathbb R^{d\times d_h}$为可学习投影矩阵，$i=1,2,\ldots,h$，$h$为注意力头数，$d_h=d/h$为单个注意力头的特征维度。
@@ -226,7 +226,7 @@ C_{\mathrm{in}}\times3C_{\mathrm{out}}\times D_F\times D_F
 \operatorname{Sim}\left(\mathbf Q_{i,p},\mathbf K_{i,j}\right)
 },
 \qquad p=1,2,\ldots,N.
-\tag{3-10}
+\label{eq:general_attention}
 \end{equation}
 
 其中，$\mathbf Q_{i,p}$表示第$i$个注意力头中第$p$个位置的查询，$\mathbf K_{i,j}$和$\mathbf V_{i,j}$分别表示第$j$个位置的键和值，$\operatorname{Sim}(\cdot,\cdot)$表示非负相似度函数\cite{ref40}。
@@ -245,7 +245,7 @@ C_{\mathrm{in}}\times3C_{\mathrm{out}}\times D_F\times D_F
 \frac{\mathbf Q_i\mathbf K_i^{\mathrm T}}{\sqrt{d_h}}
 \right)
 \mathbf V_i.
-\tag{3-11}
+\label{eq:softmax_attention}
 \end{equation}
 
 Softmax中的指数映射与归一化使相关性较高的查询—键对获得更大的注意力权重\cite{ref34}。然而，$\mathbf Q_i\mathbf K_i^{\mathrm T}$需要计算所有查询与键之间的两两关系，并形成尺寸为$N\times N$的注意力矩阵。因此，单个注意力头的计算复杂度为$O(N^2d_h)$，相关性矩阵的存储复杂度为$O(N^2)$；随着序列长度增加，其计算与存储开销会显著增大\cite{ref34,ref39}。
@@ -266,7 +266,7 @@ Softmax中的指数映射与归一化使相关性较高的查询—键对获得�
 \phi(\mathbf K_i)^{\mathrm T}\mathbf 1
 \right]
 }.
-\tag{3-12}
+\label{eq:linear_attention}
 \end{equation}
 
 其中，$\phi(\cdot)$表示非负特征映射，例如$\phi(\mathbf x)=\operatorname{ELU}(\mathbf x)+1$；$\mathbf 1$表示全1向量，用于计算对应的归一化项\cite{ref40}。
@@ -277,7 +277,7 @@ Softmax中的指数映射与归一化使相关性较高的查询—键对获得�
 
 \subsubsection{所提出的SLFA模块}
 
-为同时捕获局部邻域特征与跨位置交互，本文将DSConv-S与所构建的ReLU²智能体注意力（ReLU² Agent Attention，RAA）相结合，提出SLFA模块，其结构如图3-3（d）所示。该模块采用局部分支与RAA分支的融合形式：DSConv-S首先提取局部表示，RAA随后以该表示为输入完成跨位置特征交互，两个分支的输出经加法融合。
+为同时捕获局部邻域特征与跨位置交互，本文将DSConv-S与所构建的ReLU²智能体注意力（ReLU² Agent Attention，RAA）相结合，提出SLFA模块，其结构如\cref{fig:3-3}(d)所示。该模块采用局部分支与RAA分支的融合形式：DSConv-S首先提取局部表示，RAA随后以该表示为输入完成跨位置特征交互，两个分支的输出经加法融合。
 
 \textbf{（1）ReLU²智能体注意力。}
 
@@ -289,7 +289,7 @@ Agent Attention以少量智能体作为信息中介，将序列位置之间的�
 \mathbf Q_i=\operatorname{Split}_i(\mathbf X\odot\mathbf s_q),\quad
 \mathbf K_i=\operatorname{Split}_i(\mathbf X\odot\mathbf s_k),\quad
 \mathbf V_i=\operatorname{Split}_i(\mathbf X\odot\mathbf s_v).
-\tag{3-13}
+\label{eq:raa_qkv_scaling}
 \end{equation}
 
 其中，$\mathbf s_q,\mathbf s_k,\mathbf s_v\in\mathbb R^d$为可学习通道缩放向量，$\odot$表示逐元素相乘，$\operatorname{Split}_i(\cdot)$表示沿特征维度划分为$h$个$d_h$维子空间并取第$i$个子空间。
@@ -314,7 +314,7 @@ RAA设置$n_a=2$个可学习智能体，以矩阵$\mathbf A\in\mathbb R^{n_a\tim
 &
 \sum_{j=1}^{M}\operatorname{ReLU}(\mathbf Z_{r,j})^2=0.
 \end{cases}
-\tag{3-14}
+\label{eq:relu2_normalization}
 \end{equation}
 
 其中，$M$表示每一行参与归一化的元素数量：在智能体聚合阶段，$M=N$；在信息广播阶段，$M=n_a$。ReLU截断非正相关性得分。对于含有正得分的行，共同正尺度的平方在分子与分母中相互抵消，因此整体得分按共同正比例变化时，权重分配保持不变。平方操作进一步增大较大与较小正得分的权重比，使归一化权重更加突出较高的正相关性得分。当某一行不存在正相关性得分时，$\mathcal R_2(\cdot)$返回均匀分布，以保持归一化结果的有效性。
@@ -332,7 +332,7 @@ RAA设置$n_a=2$个可学习智能体，以矩阵$\mathbf A\in\mathbb R^{n_a\tim
 \mathbf V_{A,i}
 =
 \boldsymbol{\Phi}_{k,i}\mathbf V_i.
-\tag{3-15}
+\label{eq:agent_aggregation}
 \end{equation}
 
 其中，$\boldsymbol{\Phi}_{k,i}\in\mathbb R^{n_a\times N}$表示智能体对各序列位置的聚合权重，$\mathbf V_{A,i}\in\mathbb R^{n_a\times d_h}$表示聚合得到的智能体上下文。
@@ -350,12 +350,12 @@ RAA设置$n_a=2$个可学习智能体，以矩阵$\mathbf A\in\mathbb R^{n_a\tim
 \mathbf O_i
 =
 \boldsymbol{\Phi}_{q,i}\mathbf V_{A,i}.
-\tag{3-16}
+\label{eq:agent_broadcast}
 \end{equation}
 
 其中，$\boldsymbol{\Phi}_{q,i}\in\mathbb R^{N\times n_a}$表示各查询位置对智能体的广播权重，$\mathbf O_i\in\mathbb R^{N\times d_h}$为第$i$个注意力头的输出。各查询与智能体的匹配得分经ReLU²行归一化得到广播权重，用于对两个智能体上下文进行加权组合，形成相应的全局交互表示。
 
-由式（3-15）和式（3-16）可知，从等效映射角度看，第$i$个注意力头中智能体介导的序列交互可表示为$\boldsymbol{\Phi}_{q,i}\boldsymbol{\Phi}_{k,i}\in\mathbb R^{N\times N}$，其秩不超过智能体数量$n_a$。
+由式\eqref{eq:agent_aggregation}和式\eqref{eq:agent_broadcast}可知，从等效映射角度看，第$i$个注意力头中智能体介导的序列交互可表示为$\boldsymbol{\Phi}_{q,i}\boldsymbol{\Phi}_{k,i}\in\mathbb R^{N\times N}$，其秩不超过智能体数量$n_a$。
 
 各注意力头的输出沿特征维度拼接，并通过可学习输出缩放向量$\mathbf s_o$调节通道响应，随后与输入特征进行残差相加：
 
@@ -364,7 +364,7 @@ RAA设置$n_a=2$个可学习智能体，以矩阵$\mathbf A\in\mathbb R^{n_a\tim
 =
 \mathbf X+
 \operatorname{Concat}(\mathbf O_1,\ldots,\mathbf O_h)\odot\mathbf s_o.
-\tag{3-17}
+\label{eq:raa_output}
 \end{equation}
 
 其中，$\operatorname{Concat}(\cdot)$表示沿特征维度拼接各注意力头的输出，$\mathbf s_o\in\mathbb R^d$为可学习输出缩放向量。
@@ -385,7 +385,7 @@ W_a
 \left(
 \operatorname{RAA}(\mathbf X_S)
 \right).
-\tag{3-18}
+\label{eq:slfa_fusion}
 \end{equation}
 
 其中，$\mathbf X_F$表示SLFA的融合输出，$\operatorname{LN}(\mathbf X_S)$为局部分支的归一化表示，$\operatorname{RAA}(\mathbf X_S)$为RAA分支输出；$\operatorname{Dropout}(\cdot)$用于训练阶段的正则化\cite{ref75}，$W_a$为调节RAA分支贡献的可学习缩放系数。
