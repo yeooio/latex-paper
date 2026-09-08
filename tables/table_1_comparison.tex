@@ -1,0 +1,33 @@
+\begin{table}[!htbp]
+\caption{Comparison between different existing SOH estimation methods.}
+\label{tab:soh-method-comparison}
+\centering
+\fontsize{8.8pt}{11.3pt}\selectfont
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.16}
+\begin{tabularx}{\linewidth}{@{}lccc>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{0.285\linewidth}c@{}}
+\toprule
+参考 & \multicolumn{3}{c}{考虑的源数据} & {\fontsize{8pt}{10pt}\selectfont 健康指标选择方法（作者设计）} & {\fontsize{8pt}{10pt}\selectfont 评估模型（是否原创）} & 效率考量 \\
+\cmidrule(lr){2-4}
+ & 电流 & 电压 & 温度 & & & \\
+\midrule
+\cite{ref78} & \ding{51} & \ding{51} & \ding{55} & PCC（\ding{55}） & PINN（\ding{51}） & \ding{55} \\
+\cite{ref31} & \ding{55} & \ding{51} & \ding{55} & PCC（\ding{51}） & BMSFormer（\ding{51}） & \ding{51} \\
+\cite{ref32} & \ding{55} & \ding{51} & \ding{51} & PCC + SCC（\ding{55}） & BiGRU-Transformer（\ding{55}） & \ding{55} \\
+\cite{ref37} & \ding{51} & \ding{51} & \ding{55} & PCC（\ding{55}） & Transformer（\ding{55}） & \ding{55} \\
+\cite{ref79} & \ding{51} & \ding{51} & \ding{55} & LC（\ding{55}） & Gaussian filter（\ding{55}） & \ding{55} \\
+\cite{ref27} & \ding{55} & \ding{51} & \ding{55} & LC（\ding{55}） & Random Forest Regression（\ding{55}） & \ding{55} \\
+\cite{ref35} & \ding{51} & \ding{51} & \ding{51} & PCC（\ding{55}） & CNN-Transformer（\ding{55}） & \ding{51} \\
+\cite{ref55} & \ding{51} & \ding{51} & \ding{51} & SA–PCA（\ding{51}） & CNN（\ding{55}） & \ding{51} \\
+\cite{ref80} & \ding{55} & \ding{51} & \ding{55} & PCC（\ding{55}） & Bi-LSTM（\ding{55}） & \ding{55} \\
+\cite{ref81} & \ding{55} & \ding{51} & \ding{55} & PCC + SCC（\ding{55}） & LSSVM-AdaBoost（\ding{55}） & \ding{55} \\
+\cite{ref82} & \ding{55} & \ding{51} & \ding{55} & PCC（\ding{55}） & LSTM（\ding{55}） & \ding{55} \\
+\cite{ref83} & \ding{51} & \ding{51} & \ding{51} & PCC（\ding{55}） & LSTM（\ding{55}） & \ding{55} \\
+\cite{ref84} & \ding{51} & \ding{51} & \ding{51} & PCC + SCC（\ding{51}） & Extreme Learning Machine（\ding{55}） & \ding{55} \\
+\cite{ref63} & \ding{55} & \ding{51} & \ding{55} & CCCT窗口搜索（\ding{51}） & Random Forest Regression（\ding{55}） & \ding{51} \\
+\cite{ref48} & \ding{51} & \ding{51} & \ding{51} & 统计特征组合优化（\ding{51}） & NGO-Dualkernel-GPR（\ding{51}） & \ding{55} \\
+\cite{ref51} & \ding{51} & \ding{51} & \ding{55} & QPSO区间优化（\ding{51}） & LSTM-BP（\ding{55}） & \ding{55} \\
+本文 & \ding{51} & \ding{51} & \ding{51} & 组级健康指标选择算法（\ding{51}） & MS-AgentNet（\ding{51}） & \ding{51} \\
+\bottomrule
+\end{tabularx}
+\end{table}
