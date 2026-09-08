@@ -2,9 +2,9 @@
 \TableStyle
 \caption{SOH estimation errors of different models on CALCE CS2\_38, CALCE CX2\_38, and MIT/Severson b3c29.}
 \label{tab:4-6}
-\begin{tabularx}{\linewidth}{@{\extracolsep{\fill}}L{0.85}L{1.55}R{0.90}R{0.90}R{0.90}R{0.90}@{}}
+\begin{tabularx}{\linewidth}{@{\extracolsep{\fill}}L{0.85}L{1.55}C{0.90}C{0.90}C{0.90}C{0.90}@{}}
 \toprule
-Dataset & Method & \multicolumn{1}{c}{$R^2$} & \multicolumn{1}{c}{MAE} & \multicolumn{1}{c}{MAPE} & \multicolumn{1}{c}{RMSE} \\
+Dataset & Method & $R^2$ & MAE & MAPE & RMSE \\
 \midrule
 \makecell[l]{CALCE CS2\\(CS2\_38)} & MS-AgentNet       & \textbf{0.9798} & \textbf{0.0120} & \textbf{0.015984} & \textbf{0.0174} \\
                                   & CNN-Transformer   & 0.9779          & 0.0126          & 0.016928          & 0.0182          \\
@@ -23,7 +23,7 @@ Dataset & Method & \multicolumn{1}{c}{$R^2$} & \multicolumn{1}{c}{MAE} & \multic
                                    & CNN-LSTM         & 0.9879          & 0.0035          & 0.003808          & 0.0044          \\
                                    & Transformer      & 0.9971          & 0.0018          & 0.001976          & 0.0022          \\
                                    & LSTM             & 0.9952          & 0.0025          & 0.002667          & 0.0028          \\
-\midrule
+\TableGroupSpace
 Average                           & MS-AgentNet       & \textbf{0.9906} & \textbf{0.0081} & \textbf{0.018539} & \textbf{0.0129} \\
                                   & CNN-Transformer   & 0.9878          & 0.0100          & 0.037608          & 0.0159          \\
                                   & CNN-LSTM          & 0.9814          & 0.0122          & 0.057641          & 0.0204          \\

@@ -1,13 +1,10 @@
 \begin{table}
-\centering
-\begin{minipage}{0.90\linewidth}
 \TableStyle
-\captionsetup{width=\linewidth}
 \caption{Transfer results under different adaptation ratios.}
 \label{tab:4-9}
-\begin{tabularx}{\linewidth}{@{\extracolsep{\fill}}L{1.50}C{0.90}R{0.90}R{0.90}R{0.90}R{0.90}@{}}
+\begin{tabularx}{\linewidth}{@{\extracolsep{\fill}}L{1.50}C{0.90}C{0.90}C{0.90}C{0.90}C{0.90}@{}}
 \toprule
-\makecell[l]{Source domain\\(training cell)} & Metric & \multicolumn{1}{c}{10\%} & \multicolumn{1}{c}{30\%} & \multicolumn{1}{c}{50\%} & \multicolumn{1}{c}{70\%} \\
+\makecell[l]{Source domain\\(training cell)} & Metric & 10\% & 30\% & 50\% & 70\% \\
 \midrule
 \makecell[l]{CALCE CS2\\(CS2\_36)} & $R^2$      & -1.3934 & -0.2679 & 0.5094 & 0.7650 \\
                       & MAE        & 0.0831  & 0.0590  & 0.0366 & 0.0252 \\
@@ -20,7 +17,5 @@
                       & RMSE       & 0.1251  & 0.0982  & 0.0716  & 0.0646 \\
 \bottomrule
 \end{tabularx}
-\vspace{-2pt}
 \TableNote{Note: Results are averaged over three independent runs.}
-\end{minipage}
 \end{table}
