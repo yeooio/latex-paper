@@ -1,11 +1,17 @@
 \begin{table}
 \TableStyle
-\caption{SOH estimation errors of different models on Oxford Cell3--Cell8.}
+\caption{SOH estimation errors of different models on the Oxford dataset.}
 \label{tab:4-5}
 \begin{tabularx}{\linewidth}{@{\extracolsep{\fill}}L{0.85}L{1.55}C{0.90}C{0.90}C{0.90}C{0.90}@{}}
 \toprule
 Cell & Method & $R^2$ & MAE & MAPE & RMSE \\
 \midrule
+Cell2$^{*}$ & MS-AgentNet       & \textbf{0.98928} & \textbf{0.00429} & \textbf{0.00524} & \textbf{0.00694} \\
+             & CNN-Transformer  & 0.98532          & 0.00497          & 0.00609          & 0.00812          \\
+             & CNN-LSTM         & 0.98341          & 0.00521          & 0.00635          & 0.00863          \\
+             & Transformer      & 0.98571          & 0.00512          & 0.00622          & 0.00800          \\
+             & LSTM             & 0.97880          & 0.00590          & 0.00725          & 0.00977          \\
+\TableGroupSpace
 Cell3   & MS-AgentNet       & \textbf{0.99668} & \textbf{0.00280} & \textbf{0.00333} & \textbf{0.00351} \\
         & CNN-Transformer   & 0.99523          & 0.00335          & 0.00396          & 0.00420          \\
         & CNN-LSTM          & 0.99501          & 0.00343          & 0.00404          & 0.00429          \\
@@ -42,11 +48,12 @@ Cell8   & MS-AgentNet       & 0.99407          & 0.00389          & 0.00444     
         & Transformer       & \textbf{0.99528} & \textbf{0.00326} & \textbf{0.00377} & \textbf{0.00422} \\
         & LSTM              & 0.99115          & 0.00474          & 0.00539          & 0.00579          \\
 \TableGroupSpace
-Average & MS-AgentNet       & \textbf{0.98327} & \textbf{0.00530} & \textbf{0.00618} & \textbf{0.00620} \\
-        & CNN-Transformer   & 0.98187          & 0.00543          & 0.00633          & 0.00649          \\
-        & CNN-LSTM          & 0.97940          & 0.00584          & 0.00678          & 0.00696          \\
-        & Transformer       & 0.98135          & 0.00552          & 0.00641          & 0.00655          \\
-        & LSTM              & 0.97764          & 0.00601          & 0.00699          & 0.00722          \\
+Average & MS-AgentNet       & \textbf{0.98413} & \textbf{0.00516} & \textbf{0.00605} & \textbf{0.00631} \\
+        & CNN-Transformer   & 0.98237          & 0.00537          & 0.00630          & 0.00672          \\
+        & CNN-LSTM          & 0.97997          & 0.00575          & 0.00672          & 0.00720          \\
+        & Transformer       & 0.98197          & 0.00547          & 0.00639          & 0.00676          \\
+        & LSTM              & 0.97780          & 0.00599          & 0.00703          & 0.00758          \\
 \bottomrule
 \end{tabularx}
+\TableNote{Note: Cell2$^{*}$ denotes the cell used for configuration analysis. Average values are equally weighted over all cells listed.}
 \end{table}

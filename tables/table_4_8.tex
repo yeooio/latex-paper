@@ -2,25 +2,16 @@
 \TableStyle
 \caption{Transfer results after 30\% target-domain adaptation.}
 \label{tab:4-8}
-\begin{tabularx}{\linewidth}{@{\extracolsep{\fill}}L{1.35}C{0.80}C{0.95}C{0.95}C{0.95}@{}}
+\begin{tabularx}{\linewidth}{@{\extracolsep{\fill}}L{0.90}L{0.90}C{1.20}C{1.00}C{1.00}C{1.00}@{}}
 \toprule
-\makecell[l]{Source domain\\(training cell)} & Metric & CS2 & CX2 & Oxford \\
+Source & Target & $R^2$ & MAE & MAPE & RMSE \\
 \midrule
-\makecell[l]{CALCE CS2\\(CS2\_36)} & $R^2$      & ---    & 0.9566   & -0.2679 \\
-                      & MAE        & ---    & 0.0377   & 0.0590  \\
-                      & MAPE       & ---    & 0.1830   & 0.0722  \\
-                      & RMSE       & ---    & 0.0533   & 0.0685  \\
-\TableGroupSpace
-\makecell[l]{CALCE CX2\\(CX2\_36)} & $R^2$      & 0.8806 & ---      & -1.6085 \\
-                      & MAE        & 0.0303 & ---      & 0.0835  \\
-                      & MAPE       & 0.0406 & ---      & 0.1024  \\
-                      & RMSE       & 0.0422 & ---      & 0.0982  \\
-\TableGroupSpace
-\makecell[l]{Oxford\\(Cell1)} & $R^2$     & -1.1030 & -0.4809 & ---     \\
-                     & MAE       & 0.1327  & 0.2427  & ---     \\
-                     & MAPE      & 0.1935  & 1.2100  & ---     \\
-                     & RMSE      & 0.1777  & 0.3218  & ---     \\
+CS2 & CX2 & $0.9566$ & $0.0377$ & $0.1830$ & $0.0533$ \\
+CS2 & Oxford & $-0.2679$ & $0.0590$ & $0.0722$ & $0.0685$ \\
+CX2 & CS2 & $0.8806$ & $0.0303$ & $0.0406$ & $0.0422$ \\
+CX2 & Oxford & $-1.6085$ & $0.0835$ & $0.1024$ & $0.0982$ \\
+Oxford & CS2 & $-1.1030$ & $0.1327$ & $0.1935$ & $0.1777$ \\
+Oxford & CX2 & $-0.4809$ & $0.2427$ & $1.2100$ & $0.3218$ \\
 \bottomrule
 \end{tabularx}
-\TableNote{Note: Results are averaged over three independent runs.}
 \end{table}

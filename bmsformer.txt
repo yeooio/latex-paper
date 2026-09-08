@@ -1,0 +1,1059 @@
+                                                                             Energy 313 (2024) 134030
+
+
+                                                                   Contents lists available at ScienceDirect
+
+
+                                                                                     Energy
+                                                         journal homepage: www.elsevier.com/locate/energy
+
+
+
+
+BMSFormer: An efficient deep learning model for online state-of-health
+estimation of lithium-ion batteries under high-frequency early SOC data
+with strong correlated single health indicator
+Xiaopeng Li a , Minghang Zhao a,c,*, Shisheng Zhong a,b,c , Junfu Li d, Song Fu b, Zhiqi Yan e
+a
+  Department of Mechanical Engineering, Harbin Institute of Technology, Weihai, Shandong, 264209, China
+b
+  School of Mechatronics Engineering, Harbin Institute of Technology, Harbin, Heilongjiang, 150000, China
+c
+  Weihai Key Laboratory of Intelligent Operation and Maintenance, Harbin Institute of Technology, Weihai, Shandong, 264209, China
+d
+  School of Automotive Engineering, Harbin Institute of Technology, Weihai, Shandong, 264209, China
+e
+  College of Aeronautical Engineering, Civil Aviation University of China, Tianjin, 300300, China
+
+
+
+
+A R T I C L E I N F O                                     A B S T R A C T
+
+Handling editor: Prof X Ou                                The efficient and accurate state-of-health (SOH) estimation is crucial for reducing risks and ensuring effective
+                                                          application in battery management systems (BMS) of resource-limited devices. However, many recent state-of-
+Keywords:                                                 the-art SOH estimation approaches rely on resource-consuming structures to obtain good performance. In this
+State of health                                           paper, an efficient deep learning model for SOH estimation, namely BMSFormer, is constructed. BMSFormer
+Lithium-ion batteries
+                                                          mainly integrates a Local-Global Fusion Attention module to capture both long-term and short-term de­
+Efficiency estimation
+                                                          pendencies while reducing computational complexity compared to traditional Softmax-based attention. Addi­
+Local-global fusion attention
+Depthwise feature fusion                                  tionally, two kinds of depthwise separable convolution are embedded to fuse multi-scale and multi-channel
+                                                          features, enhancing feature diversity with fewer parameters than standard convolution. Three widely used
+                                                          battery datasets, each with different chemistries and operating conditions, are employed to evaluate the per­
+                                                          formance of BMSFormer. The experiments results illustrate that the proposed model achieves higher accuracy,
+                                                          lower computational consumption, and stabler performance across various hyperparameter combinations
+                                                          compared to alternative models.
+
+
+
+
+1. Introduction                                                                                directly. At the same time, due to the limited storage space of embedded
+                                                                                               devices, they often rely on online estimations using simple approaches,
+    Nowadays, with the advantages of high energy density, low self-                            such as Kalman filter (KF) and its variants [5–7], classical physical
+discharge rate and long service life, lithium-ion batteries have become                        models [8], equivalent circuit models (ECM) [9] and traditional ma­
+one of the main energy storage devices in civil airlines, electric vehicles,                   chine learning (ML) algorithms like support vector machines (SVM) [10]
+mobile devices, aerospace and other domains [1]. Although, lithium-ion                         and random forest (RF) [11]. However, on one hand, when faced with
+batteries bring convenience to people’s lives, they also pose latent safety                    nonlinear and unstable data from online monitoring and historical cy­
+hazards. These hazards primarily arise from the complicated degrada­                           cles, traditional models struggle to provide high performance due to
+tion processes brought by complex internal chemical structure, different                       their structural constraints [12,13]; On the other hand,
+working conditions and environment. Therefore, precise monitoring and                          high-performance deep models are generally not feasible enough for
+state estimation are essential to enhance battery safety, reliability, and                     convenient deployment on BMS due to their computationally expensive
+performance.                                                                                   structures. Actually, since the emergence of AlexNet [14], the predom­
+    As an essential guard of battery safe and efficient operation, battery                     inant trend in model architecture has been towards increasing depth and
+management system (BMS) can record real-time data, manage cell bal­                            size, but many real-world applications need to be performed in real-time
+ance, estimate internal status and provide emergency protection [2–4].                         and/or on limited resource mobile devices [15]. Thereby, the
+The internal states, such as state-of-health (SOH), cannot be measured                         high-performance deep models have a certain demand to be compact
+
+
+
+    * Corresponding author. Department of Mechanical Engineering, Harbin Institute of Technology, Weihai, Shandong, 264209, China.
+      E-mail address: zhaomh@hit.edu.cn (M. Zhao).
+
+https://doi.org/10.1016/j.energy.2024.134030
+Received 27 September 2024; Received in revised form 15 November 2024; Accepted 27 November 2024
+Available online 30 November 2024
+0360-5442/© 2024 Elsevier Ltd. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+X. Li et al.                                                                                                                         Energy 313 (2024) 134030
+
+
+and exhibit low computational cost for practical applications in the              a self-attention mechanism to capture global dependencies between
+future.                                                                           input and output. Due to its significant advantage in parallel computing
+   The recent SOH estimation approaches could be divided into two                 and global modeling, Transformer has already achieved immense suc­
+main categories: (1) model-based approaches, including electrochemical            cess across multiple domains [39–41]. Since Hannan et al. [42] applied
+models and empirical models, (2) data-driven approaches, including                the Transformer to estimate SOH of batteries in 2021, subsequent
+machine learning and deep learning methods [16–19].                               models have tended to increase in complexity. For instance, Gomez et al.
+                                                                                  [43] introduced an improved temporal fusion Transformer, integrating a
+    (1) Model-based approaches simulate the electrochemical principles            Bi-LSTM encoder-decoder layer to enhance performance. Jia et al. [44]
+        in batteries using mathematical equations or circuit components           proposed a hybrid prediction model by combining bidirectional gated
+        [20]. Electrochemical models (e.g., single-particle model and             recurrent unit and Transformer. In another study, Gu et al. [45] sug­
+        pseudo-two-dimensional model) utilize a series of differential            gested a novel approach using data pre-processing methods and a
+        equations to represent the electrochemical reaction processes in          CNN-Transformer framework. Bai et al. [46] introduced a
+        the battery. While these models may offer high accuracy, they             2D-CNN-Transformer model using matrixing data, while Chen et al. [47]
+        often require extensive computational resources, making online            applied a vision-Transformer network (VIT) for SOH estimation,
+        estimation challenging; and many parameters, such as particle             involving extra data flattening operations. Most existing methods do not
+        radius and diffusion coefficients, are difficult to obtain [21,22].       attempt to simplify the structures of the Transformer-based networks,
+        In contrast, as a widely employed empirical model, equivalent             instead, they integrated it directly with other modules or models,
+        circuit model (ECM), simulates battery internal behavior with             resulting in computationally complicated approaches.
+        circuit components such as resistors and capacitors [9,23]. ECMs              Three main problems faced by many recent approaches for battery
+        (e.g., Thevenin, PNGV, GNL and RC models) have relatively low             SOH estimation, can be summarized as follows.
+        computational complexity and easy parameter identification.
+        However, they cannot fully capture battery internal changes,                (1) Computational Complexity Limitations: In the field of battery
+        probably resulting in lower accuracy compared to electro­                       state estimation, many existing deep learning models attempt to
+        chemical models.                                                                achieve higher accuracy by increasing the complexity of model
+    (2) Data-driven approaches can be trained using historical data and                 structures or/and combining different classical models. Those
+        mostly have lower dependencies on the internal degradation                      approaches introduce numerous unnecessary parameter updates,
+        mechanism of batteries compared to model-based approaches                       thereby increasing computational resource demands. Such
+        [23]. They employ various algorithms to establish the relation­                 complexity may hinder future applications in resource-
+        ships between input (health indicators, HIs) and output (state-­                constrained devices, such as BMS.
+        of-health, SOH), then use new data for SOH estimation. Thereby,             (2) Estimation Accuracy Challenges: Many current approaches
+        since a few years ago, many researchers tend to focus on estab­                 face accuracy challenges due to inherent computational con­
+        lishing stronger data-driven models. For instance, Fei et al. [24]              straints within the model itself, insufficient representational ca­
+        crafted 42 HIs from five kinds of main recorded data including                  pabilities of the extracted health indicators, or the input of many
+        voltage, current, temperature, internal resistance and capacity,                weakly correlated health indicators, which together negatively
+        and then fed them into five representative machine learning (ML)                impact the accuracy of SOH estimation results.
+        models including the Gaussian process regression (GPR) [25],                (3) Performance Stability Issues: The training and optimization
+        support vector machine (SVM) [10], random forest (RF) [26],                     process often require extensive hyperparameter tuning to achieve
+        gradient boosting regression tree (GBRT) [27] and neural                        higher performance, which consumes a lot of time and compu­
+        network (NN) [28]. Benefiting from the prosperity of deep                       tational resources before reaching the desired goals. Such con­
+        learning (DL) methods, in recent years, many works employ                       sumption can be effectively reduced if the model is able to
+        convolutional neural networks (CNNs), recurrent neural net­                     maintain stable and high performance across various hyper­
+        works (RNNs), and Transformers to estimate the states of batte­                 parameter configurations. However, most existing methods only
+        ries. For example, depending on the powerful local feature                      present their optimal results without demonstrating the model’s
+        extraction ability of CNNs, Yang et al. [29] utilized 1D-CNN to                 ability to solve this problem.
+        handle capacity degradation datasets, while Lee et al. [30]
+        transformed the data into a two-dimensional format and                        To address these challenges, this article develops an efficient deep
+        employed 2D-CNN. Additionally, dense neural network [31] was              learning model, namely BMSFormer, for SOH estimation of lithium-ion
+        also attempted in similar research.                                       batteries, with the goal of optimizing computational resource usage,
+                                                                                  balancing accuracy and efficiency, and enhancing model stability for
+    However, traditional CNNs are not adept at dealing with long time-            reliable performance. The main contributions are summarized as
+series data, as this requires numerous convolutional layers to fuse local         follows.
+features that are distant from each other. RNNs and their variants such
+as gated recurrent unit (GRU) and long short-term memory (LSTM)                     (1) By progressively shortening the window size and step size, health
+attempt to overcome this challenge with hidden layers, state cells and                  indicators (HIs) with higher correlations to the battery health
+various gates. These components function like a “nerve cell” that can                   state are identified within two high-frequency SOC charge and
+storage information and pass it from one time step to the next for                      discharge segments. This approach successfully achieves Pearson
+computation. Nonetheless, due to the sequential dependence, it is not                   correlation coefficient (PCC) values averaging over 0.99 across
+convenient enough for traditional RNNs to make full use of modern                       three different kinds of battery.
+multi-threaded GPU resources, even though recent works have achieved                (2) A Local-Global Fusion Attention module is constructed to effec­
+some improvements in computational efficiency like bidirectional long                   tively capture both short-term and long-term features while
+short-term memory (Bi-LSTM) [32,33], Attention-based Spa­                               reducing computational complexity compared to traditional
+tial-Temporal LSTM (ASTLSTM) [34], CNN-LSTM [35], CNN-ASTLSTM                           Softmax-based attention mechanisms.
+[36], and CNN-GRU [37], while the fundamental constraint of                         (3) Two kinds of depthwise separable convolution module with small
+limited-sequential computation still remains.                                           kernel size (DSConv-S) and large kernel size (DSConv-L) are
+    To address the above problem, Vaswani [38] proposed the Trans­                      embedded to fuse multi-scale and multi-channel features,
+former, a model architecture avoiding recurrence and instead relying on
+
+                                                                              2
+X. Li et al.                                                                                                                       Energy 313 (2024) 134030
+
+
+         enhancing feature diversity with fewer parameters than standard       2. Preliminaries
+         convolution.
+                                                                               2.1. Overview of the developed SOH estimation approach
+    The remaining sections of this paper are arranged as follows. Sec­
+tion2 describes the major steps of the developed SOH estimation                   The SOH is a critical metric for evaluating health status of batteries.
+approach and the basic information of three different kinds of battery         While there is still no standardized definition for SOH, battery capacity
+datasets. Section 3 introduces the structure and modules of BMSFormer.         remains the most utilized representation [31], as illustrated below:
+Section 4 presents comprehensive validations and compares BMSFormer
+                                                                                       Ccurrent
+with four prevailing deep learning models. Finally, the conclusions are        SOH =            × 100%,                                                (1)
+                                                                                       Crated
+summarized in Section 5.
+                                                                               where Ccurrent and Crated are the current capacity and rated capacity,
+                                                                               respectively.
+                                                                                  As illustrated in Fig. 1, the developed SOH estimation approach
+
+
+
+
+                                                Fig. 1. Flowchart of developed SOH estimation approach.
+
+                                                                           3
+X. Li et al.                                                                                                                                Energy 313 (2024) 134030
+
+
+consists of four steps.                                                            Table 1
+                                                                                   Description of three battery datasets.
+    (1) Data acquisition. Three types of batteries with different chemical          Data Sources          Oxford [48]          NASA [49]             CALCE [50]
+        materials were subjected to full lifecycle aging tests under various
+                                                                                    Manufacturer          Kokam                LG Chem               LG Chem
+        charge/discharge protocols to evaluate the proposed model. The              Cell types            Pouch                18650 Cylindrical     Prismatic
+        high frequency of the intermediate SOC during daily battery                 Cathode material      NCO-LCO              NCA                   LCO
+        operation, charge segment from 3.8 V to 4.2 V and discharge                 Selected battery      Cell (1–8)           B00 (05–07 and        CS2 (35–38)
+        segment from 3.8 V to 3.4 V are selected for HI extraction.                   series                                   18)
+                                                                                    Battery number        8                    4                     4
+    (2) Feature engineering. The constant current charge and discharge              Rated capacity        0.74                 2                     1.1
+        times for each cycle are extracted as health indicators (HIs).                (Ah)
+        Starting from the selected segments, the HI search process is               Capacity failure      70 %                 1.4 (70 %)            0.84 (76.4 %)
+        refined using progressively smaller windows and steps until a                 threshold (Ah)
+                                                                                    Charge protocol       CC (2C)              CC-CV                 CC-CV
+        0.01V window is reached or no higher Pearson correlation coef­
+                                                                                      (rate)                                   (0.75C,4.2V)          (0.5C,4.2V)
+        ficient (PCC) value is found. A sliding window is then used to              Discharge protocol    variance             CC (1C)               CC (1C)
+        divide the time series of HIs into subsets, moving forward one                (rate)
+        step at a time. The true SOH at the next step of each window                Cut-off voltage (V)   charge to 4.2        charge to 4.2         charge to 4.2
+        serves as the label for its corresponding subset.                                                 discharge to 2.7     discharge to 2.7/     discharge to
+                                                                                                                               2.5/2.2/2.5           2.7
+    (3) Model training. For convenience, Cell1, B0005, and CS2-35 are               Cut-off current (A)   –                    charge to 0.02        charge to
+        used as training sets, with the first 30 % of the data employed for                                                                          0.05
+        training across 384 hyperparameter combinations including                   Experiment            40                   24                    24
+        epochs, learning rate, number of blocks and layers, and dimen­                temperature (◦ C)
+                                                                                    Cycle numbers         8200/7700/8100/      168/168/168/          881/935/
+        sion of dense and embedding layer. The remaining 70 % data is
+                                                                                                          5100/5000/5000/      132                   971/995
+        used for validation and comparison to select the best-performing                                  8100/8100
+        model. Then the best perform model is tested directly on the
+        entire data of other batteries in the corresponding dataset to
+        evaluate the model generalization and compare the performance              of Excellence Data Set Repository-NASA. Four Lithium-ion 18650 cy­
+        of BMSFormer with four different deep learning models.                     lindrical batteries (#5, 6, 7, and 18) from LG Chem, each with 2Ah
+    (4) Model evaluation. The accuracy, efficiency, and stability of               nominal capacity, undergo three operational profiles at room tempera­
+        different models are evaluated. Four typical evaluation metrics            ture: charging at 1.5A (0.75C) in CC mode to 4.2V, followed by CV mode
+        are used to measure the accuracy, four common computational                until the current fell to 20 mA; discharging at 2A in CC mode down to
+        complexity metrics are used to evaluate the training efficiency,           2.7V, 2.5V, 2.2V and 2.5V, respectively. The aging process is accelerated
+        and the R2 results of 384 hyperparameter combinations are used             through repeated cycles, with EOL defined as a 30 % capacity loss to
+        to assess the stability of training results.                               1.4Ahr. The positive electrode material is lithium nickel cobalt
+                                                                                   aluminum oxide (NCA).
+2.2. Typical battery datasets acquisition
+                                                                                   2.2.3. CALCE lithium battery dataset
+    Three kinds of prevailing battery datasets from Oxford, NASA and                   The CALCE lithium-ion battery dataset originates from the Center for
+CALCE are used in this paper, which are widely recognized and originate            Advanced Life Cycle Engineering (CALCE) at the University of Mary­
+from leading battery research institutions, ensuring standardized                  land. These batteries have a rated capacity of 1.1 Ah and utilize lithium
+experimental protocols and reliable data. They encompass various bat­              cobalt oxide (LiCoO2) as the cathode material. The aging tests for bat­
+tery materials, specifications, and work conditions. Hence, the applica­           tery life are performed at room temperature. The charge strategy is to
+bility and precision of the proposed approach can be evaluated through             charge at a constant-current rate of 0.5 C (0.55A) until the voltage
+evaluation on a diverse range of batteries with different materials and            reaches 4.2 V and then hold at 4.2 V until the charging current drops
+subjected to various operating conditions. The main characteristics of             below 0.02 A, then the batteries are discharged with a constant current
+battery datasets used in this work are summarized in Table 1; Fig. 2(a)-           of 2 A until the voltage decreases to 2.7 V.
+(c) illustrates the capacity degradation and increment phenomenon of
+three different batteries under various work conditions, while Fig. 2(d)–          2.3. Health indicators extraction
+(f) displays the constant-current charge voltage curves in several cycle of
+the first battery from each dataset. Similar trends are observed within                The selected health indicators (HIs) are inspired by a range of ref­
+each battery type and distinct differences are noticeable between                  erences [51–58] serving various research purposes. Considering the high
+different types of batteries.                                                      frequency of the intermediate SOC during daily battery operation,
+                                                                                   charge segment from 3.8 V to 4.2 V and discharge segment from 3.8 V to
+2.2.1. Oxford lithium battery dataset                                              3.4 V are selected for HI extraction.
+    The Oxford lithium-ion battery dataset is provided by the Battery                  As shown in Fig. 3, in the first step of our HIs extraction procedures, a
+Intelligence Laboratory at the University of Oxford including degrada­             0.2V window size with a 0.2V moving step size is utilized to divide the
+tion data from eight Kokam SLPB533459H4 lithium-ion pouch cells,                   selected charge or discharge segment into shorter segments: 3.8–4.0V,
+each with a 0.74 Ah nominal capacity and test at 40 ◦ C. The negative              3.9–4.1V, and 4.0–4.2V in charge segment (3.8–3.6V, 3.7–3.5V,
+electrode material of the Kokam pouch cells is graphite, the positive              3.6–3.4V in discharge segment). Then the minimum Pearson correlation
+electrode material is a blend of lithium cobalt oxide (LCO) and lithium            coefficient (PCC) value across all batteries of each dataset is taken as the
+nickel cobalt oxide (NCO). The eight batteries are subjected to a                  baseline, and the segment with the highest baseline value is selected as
+constant-current and then constant-voltage charging profile up to 4.2 V,           the search segment for the next step. In the 2nd, 3rd, and 4th steps, the
+followed by a variance discharge current rate from the urban Artemis-              search procedures are repeated with progressively smaller windows and
+derived profile process down to 2.7 V.                                             steps until a 0.01V window is reached or no higher baseline is identified
+                                                                                   than in the previous step. Finally, the constant current charge time
+2.2.2. NASA lithium battery dataset                                                (CCCT) series from 4.16V to 4.17V and the constant current discharge
+   The NASA lithium battery dataset is provided by Prognostics Center              time (CCDT) series from 3.8V to 3.4V are respectively confirmed as the
+
+                                                                               4
+X. Li et al.                                                                                                                                             Energy 313 (2024) 134030
+
+
+
+
+Fig. 2. Three different kinds of battery datasets: (a)–(c) capacity degradation and temporary increment curves of the Oxford, NASA and CALCE cells, respectively.
+(d)–(f) constant current charge voltage curves of Oxford Cell1, NASA B0005 and CALCE CS2-35, respectively.
+
+
+                                                                                    indicating a stronger relationship. The PCC formula is shown as follows:
+                                                                                                    n
+                                                                                                    ∑
+                                                                                                     (xk − x)(yk − y)
+                                                                                               k
+                                                                                    PCC = √̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅                                    (2)
+                                                                                           ∑ n                      ∑ n
+                                                                                                 (xk − x)2 (yk − y)2
+                                                                                                    k                    k
+
+
+                                                                                    where x, y, x, y and n represent the value of the selected HI sequence and
+                                                                                    the battery SOH sequence, the average value of x and y, the number of
+                                                                                    samples, respectively.
+                                                                                       As shown in Table 2, the selected HI, which is the constant current
+                                                                                    charging time from 4.16 to 4.17V, has the highest PCC compared to
+                                                                                    others of recent methods. Similarly, as shown in Table 3, the selected HI,
+                                                                                    which is the constant current discharge time from 3.8 to 3.4V, has the
+                                                                                    highest PCC compared to others.
+
+                                                                                    3. The developed BMSFormer
+
+                                                                                        In this section, the overall architecture and workflow of BMSFormer
+                                                                                    are first introduced. Then, the designed Multi-scale Depthwise Separable
+Fig. 3. The extraction procedures of the selected HI in the selected
+                                                                                    Convolution modules, including DSConv-L and DSConv-S, are described.
+charge segment.
+                                                                                    Following that, the proposed Local-Global Fusion Attention (LGFA)
+                                                                                    module is detailed. Finally, several foundational modules are briefly
+selected HIs.
+                                                                                    introduced.
+    The PCC is a widely utilized statistical metric for evaluating the
+strength of linear association between HIs and true SOH [59,60]. The
+value of the PCC ranges from − 1 to 1, with the absolute value closer to 1
+
+
+Table 2
+PCC comparison of different HIs on Oxford datasets.
+  Battery       selected     CCCT from ICA       CCCT from DTA        CCCQ          CCDQ                 IC peak               sample entropy   Discharge voltage curve slope
+  series        HI           [55]                [56]                 [57]          [55]                 [58]                  [55]             [58]
+
+  Cell1         0.99996      0.9999              0.9989               0.99947       0.9998               0.9444                − 0.9853         0.9999
+  Cell2         0.99999      0.9999              0.9959               0.98677       0.9999               –                     − 0.9839         –
+  Cell3         0.99996      0.9999              0.9993               0.99948       0.9989               0.9375                − 0.9876         0.9998
+  Cell4         0.99998      0.9104              –                    0.99981       0.9999               –                     − 0.9885         –
+  Cell5         0.99992      0.9999              –                    0.99960       0.9999               –                     − 0.9133         –
+  Cell6         0.99998      0.9999              –                    0.99961       0.9991               –                     − 0.9848         –
+  Cell7         0.99999      0.9999              –                    0.99973       0.9999               0.9296                − 0.9896         0.9998
+  Cell8         0.99999      0.9999              –                    0.99970       0.9999               0.9378                − 0.9908         0.9998
+
+
+                                                                                5
+X. Li et al.                                                                                                                                  Energy 313 (2024) 134030
+
+
+Table 3
+PCC comparison of different HIs on NASA and CALCE datasets.
+     Battery        selected     CCCT         CCCQ      Max projection distance of start and end charge     IC peak      Relax time between charge and discharge cycle
+     series         HI           [61]         [57]      voltage [62]                                        [58]         [63]
+
+     B0005          0.9934       0.9703       0.94268   0.95                                                0.9910       − 0.8941
+     B0006          0.9858       0.9366       0.94518   0.97                                                0.9800       − 0.9373
+     B0007          0.9983       0.9745       0.92037   0.99                                                0.9251       − 0.9049
+     B0018          0.9987       –            0.81248   –                                                   –            –
+     CS2-35         0.9960       0.9799       0.90290   0.95                                                –            − 0.9843
+     CS2-36         0.9968       0.9827       0.93370   0.99                                                –            − 0.9829
+     CS2-37         0.9943       0.9789       0.93920   0.98                                                –            –
+     CS2-38         0.9952       0.9748       –         0.96                                                –            –
+
+
+
+3.1. Architecture overview                                                              convolution with large kernel size, and multilayer perceptron. Turn and
+                                                                                        Back refer to the transposing operation of tensor, and Wa is a learnable
+    In this research, to solve the problem that the accuracy and efficiency             weight parameter.
+of the current models often cannot be optimal together, a lightweight
+network termed BMSFormer with both global features and local infor­
+                                                                                        3.2. The designed multi-scale depthwise separable convolutional modules
+mation capturing capabilities is proposed.
+    The entire framwork is illustrated in Fig. 4 and described as follows:
+                                                                                           In this section, the fundamental structure of DSConv is introduced
+HIs are taken as input, segmented into fragments via window splitting,
+                                                                                        and compared to standard convolution, then the multi-scale properties
+embedded in a high-dimensional space, and then fed into a BMSFormer
+                                                                                        of DSConv-S and DSConv-L are elaborated subsequently.
+block, which includes the LGFA module and DSConv-L module. The
+output from LGFA module is transposed, passed through a DSConv-L
+                                                                                        3.2.1. Fundamental structure of DSConv-S and DSConv-L modules
+module, and transposed back. Finally, the output from all BMSFormer
+                                                                                            Convolutions operations are adept in extracting local information
+blocks is fed into a Multilayer Perceptron (MLP) layer before outputting
+                                                                                        through sliding filters [30,46,64]. Standard convolution operates across
+the result. During the training process, the true SOH value right
+                                                                                        all input channels, with each convolutional kernel generating a feature
+following each window segment is utilized as a label, which guides the
+                                                                                        map as one output channel. Therefore, the consumption of computa­
+model to adjust the gradient descent optimization.
+                                                                                        tional resources and training time will significantly increase when
+    Mathematically, this means, for the input xi of BMSFormer block i,
+                                                                                        dealing with large time-series datasets. The standard convolutions have
+the corresponding output yi of the block is calculated using
+                                                                                        the computational cost of:
+xiʹ = Wa ⋅ LGFA(xi ) + LN(xi ),                                               (3)
+                                                                                        k × k × Nin × Nout × NF × NF                                                (6)
+
+x = Back(DSConv-L(LN(Turn(xi ) ) ) ) + xi ,
+ ’’                                       ’       ’
+                                                                              (4)       where the k, Nin , Nout , NF represent the kernel size, input channels,
+                                                                                        output channels, and the feature map size, respectively.
+y = MLP(LN(x ʹʹ)) + x ʹ,                                                      (5)
+ i              i            i
+                                                                                           Compared to standard convolution, firstly, in general, depthwise
+                                                                                        separable convolution utilizes smaller filter than standard convolution
+where LGFA, LN, DSConv-L, MLP respectively represent the Local-
+                                                                                        [15,65–68], as illustrated in the upper left area of Fig. 5. Secondly,
+Global Fusion Attention, layer normalization, depthwise separable
+                                                                                        depthwise convolution separates the features map into multiple
+
+
+
+
+                Fig. 4. Framework of BMSFormer. (a) LGFA module, (b) BMSFormer block, (c) DSConv-L module, (d) BMSFormer core structure.
+
+                                                                                    6
+X. Li et al.                                                                                                                          Energy 313 (2024) 134030
+
+
+
+
+   Fig. 5. The fundamental structure of: (a) Standard convolution; (b) Standard Depthwise separable convolution; (c) DSConv-S module; (d) DSConv-L module.
+
+
+channels, and each channel is convolved with its own set of filters. These        module applies a 1 × 31 depthwise convolutional kernel size to extract
+two operations not only allow for the extraction of a variety of features         long-term features, aiming to further enhance the feature diversity and
+but also significantly decreases the computational load. Thirdly, the             model generalization. This module also incorporates two layers of 1 × 1
+outputs from the depthwise step are then combined using 1× 1 filter of            pointwise convolutions. Therefore, the computational cost of DSConv-L
+pointwise convolution. This step mixes the features across all channels,          can be expressed as:
+allowing for learning interactions between them. Finally, the residual
+                                                                                  Nin × 3Nin × NF × NF + 1 × 31 × 3Nin × NF × NF + 3Nin × Nout × NF
+connection helps in mitigating the vanishing gradient problem and al­
+lows the network to learn more complex functions.                                   × NF
+    DSConv separates the spatial and channel-wise operations, reducing                                                                                   (10)
+computational complexity by first applying a depthwise convolution
+across spatial dimensions, followed by a pointwise convolution to adjust          where 3Nin and NF × NF represents the input channels after expanding
+the number of output channels:                                                    and the feature map size, respectively.
+
+k × k × Nin × NF × NF + Nin × Nout × NF × NF                            (7)       3.3. The proposed Local-Global Fusion Attention module
+where k, Nin , Nout , NF represent the kernel size, input channels, output
+                                                                                      In this section, the general form of self-attention mechanism in
+channels, and the feature map size, respectively.
+                                                                                  Transformers is described, the advantages and disadvantages of tradi­
+   By breaking convolution operation into a two-step process of
+                                                                                  tional Softmax and linear attention are briefly analyzed, and two main
+depthwise filtering followed by pointwise combination, a reduction is
+                                                                                  superiorities of proposed Local-Global Fusion Attention (LGFA) module,
+achieved in computation of:
+                                                                                  including global receptive field and local information sensitivity are
+k × k × Nin × NF × NF + Nin × Nout × NF × NF                                      introduced subsequently.
+        k × k × Nin × Nout × NF × NF                                                  Most existing SOH estimation methods still rely on traditional Soft­
+                                                                        (8)
+                     1     1                                                      max attention [45–47], suffering from excessive computational
+                 =      +
+                    Nout k2                                                       complexity. Meanwhile, although the linear attention reduces the
+                                                                                  complexity, it continues to struggle with insufficient model expressive­
+3.2.2. Computational analysis of DSConv-S and DSConv-L modules                    ness. Therefore, the Local-Global Fusion Attention (LGFA) module is
+    The depthwise separable convolution with small kernel size                    proposed to integrate linear complexity and high expressiveness, which
+(DSConv-S) and large kernel size (DSConv-L) are designed to extract               are potentially beneficial for efficient and accurate SOH estimation.
+multi-scale and multi-channel feature, aiming to addresses the expres­
+siveness limitations of ReLU attention, which is constrained by its linear        3.3.1. General form of multi-head self-attention
+attention mechanism, while maintaining high computational efficiency.                 To improve the model’s representational capacity, multi-head self-
+    As illustrated in Fig. 5, with a double expansion factor for input            attention processes the input through several parallel “heads”, each
+channels, the DSConv-S module applies a 1 × 3 depthwise convolutional             representing an independent self-attention mechanism. Each head cal­
+kernel size to enhance the quality of input information and the sensi­            culates its own attention weights and generates a unique attention
+tivity of attention for local variety. This module further incorporates two       representation. The self-attention mechanism computes the relation­
+layers of 1 × 1 pointwise convolutions to integrate multi-channel fea­            ships (attention weights) between each element in the input and all
+tures, further improving feature representation. The computational cost           other elements. It then produces a weighted sum of these relationships to
+of DSConv-S can be expressed as:                                                  create new representations. This allows the model to focus on important
+                                                                                  information in the sequence, especially long-range dependencies.
+Nin × 2Nin × NF × NF + 1 × 3 × 2Nin × NF × NF + 2Nin × Nout × NF × NF
+                                                                                      In i − th head, given an input X ∈ RN×C , the general form of self-
+                                                                   (9)
+                                                                                  attention can be formulated as follows:
+where 2Nin and NF × NF represents the input channels after expanding              Q = XWQ ,                                                              (11)
+and the feature map size, respectively.
+   With a triple expansion factor for input channels, the DSConv-L                K = XWK ,                                                              (12)
+
+
+                                                                              7
+X. Li et al.                                                                                                                              Energy 313 (2024) 134030
+
+
+V = XWV ,                                                             (13)        attention mechanism is defined as:
+                                                                                                           (           )
+               (        )                                                         Sim(Q, K) = ReLU(Q)ReLU DSConv-S(K)T                                       (15)
+       ∑N
+            Sim Qi , Kj
+Oi =                       V,                                         (14)
+           N
+           ∑     (        ) j                                                     where the self-attention module can be rewritten as:
+       j=1   Sim Qi , Kj
+               j=1
+                                                                                         N [
+                                                                                         ∑                  (        ( )T ) ]         ( )
+                                                                                               ReLU(Qi )ReLU DSConv-S Kj      DSConv-S Vj
+where WQ , WK , and WV ∈ RC×d are the learnable linear projection                 Oi =
+                                                                                         j=1
+                                                                                                                                                             (16)
+                                                                                                              N         (        ( )T )
+matrices, C and d are the channel dimensions of module and each head.                             ReLU(Qi )
+                                                                                                              ∑
+                                                                                                                    ReLU DSConv-S Kj
+Sim(⋅, ⋅) is the similarity function of self-attention mechanism.                                             j=1
+
+
+                                                                                     Then, by using the associative property of matrix multiplication, the
+3.3.2. Softmax attention mechanism and linear attention mechanism
+                                                                                  computational complexity can be reduced from quadratic to linear while
+   Transformers mainly utilize Softmax Attention [38] with the
+               (       √̅̅̅ )                                                     maintaining the same functionality:
+Sim(Q, K) = exp QKT / d in Eq. (14). However, the attention map is
+                                                                                         N {
+                                                                                         ∑                  [        ( )T ] }         ( )
+obtained by computing the similarity between all query-key pairs,                              ReLU(Qi )ReLU DSConv-S Kj      DSConv-S Vj
+                                               ( )                                       j=1
+leading to the computation complexity of O N2 as illustrated in Fig. 6            Oi =                         [
+                                                                                                          ∑N            ( )T ]
+(a). In contrast, linear attention [69], as shown in Fig. 6(b), efficiently                      ReLU(Qi ) ReLU DSConv-S Kj
+                                                                                                          j=1
+reduces the computation complexity by carefully designed similarity                             {                                  }                         (17)
+                                                                                                  N       [      ( )T ]
+functions with Sim (Q, K) = ϕ(Q)ϕ(K)T , which changes the computa­                                ∑                            ( )
+                 (           )           (       )                                     ReLU(Qi )    ReLU DSConv-S Kj   DSConv-S Vj
+tion order from ϕ(Q)ϕ(K)T V to ϕ(Q) ϕ(K)T V base on the associative                =
+                                                                                                    j=1
+                                                                                                              N         [        ( )T ]
+property of matrix multiplication. The computation complexity with                                ReLU(Qi )
+                                                                                                              ∑
+                                                                                                                    ReLU DSConv-S Kj
+respect to the number of tokens in the sequence is reduced to O (N),                                          j=1
+
+where N represents the sequence length. This linear complexity allows                                                          ∑          ( )T
+the model to efficiently handle long sequences, which is particularly                As shown in Eq. (17), the computation of Nj=1 ReLU Kj Vj ∈ Rd×d
+                                                                                      ∑          ( )T
+beneficial for time series analysis.                                              and Nj=1 ReLU Kj ∈ Rd×1 are performed only once, after which these
+    Traditional Softmax attention amplifies the differences between all           results can be reused for each query. This approach thereby requires
+query-key pairs using the exponential function, significantly enhancing           only O (N) computational cost and O (N) storage memory.
+larger similarity values when calculating attention weights. Although                Another key advantage of ReLU-based global attention is that it
+Softmax attention provides stronger expressive power, its computational           prevents the vanishing gradient problem and involves simple operation
+cost is a bit unbeneficial to its application in large-scale sequences. In        max(0, x), making it faster to compute than Softmax, which requires
+contrast, linear attention uses different kernel functions ϕ( ⋅) to map Q         exponentiation and normalization. For instance, some previous latency
+and K into a new space, thereby enhancing the differences. While this             comparisons [70] show that, with similar computational demands,
+may result in some loss of expressiveness, the new calculation order of           ReLU-based linear attention outperforms Softmax attention, particularly
+the weight matrix in linear attention reduces computational complexity,           on mobile devices.
+which offers an advantage in processing long time-series sequences like
+battery SOH estimation.                                                           4. Experiments and analysis
+
+3.3.3. The proposed attention module                                                  This section presents a comprehensive evaluation of five models
+    As illustrated in Fig. 6(c), the proposed Local-Global Fusion Atten­          (BMSFormer, CNN-Transformer, CNN-LSTM, Transformer and LSTM)
+tion (LGFA) module utilizes the Rectified Linear Unit attention mecha­            across three public battery datasets. The Cell1, B0005, and CS2-35 are
+nism and enhances feature diversity through the DSConv-S module                   employed as training sets, with the first 30 % of the data utilized for
+introduced in Section 3.2.1. The similarity function Eq. (14) of this             training across 384 hyperparameter combinations, including variations
+
+
+
+
+Fig. 6. Difference between (a) traditional Softmax attention mechanism, (b) traditional Linear Attention mechanism, and (3) the proposed Local-Global Fusion
+attention module.
+
+                                                                              8
+X. Li et al.                                                                                                                               Energy 313 (2024) 134030
+
+
+in epochs, learning rate, number of blocks and layers, and the di­                  Table 4
+mensions of the dense and embedding layers. The remaining 70 % of the               The layer configurations of different deep learning models.
+data is reserved for validation and comparison to identify the best-                 BMSFormer      CNN-               Transformer     CNN-LSTM          LSTM
+performing model parameters. The selected model is then directly                                    Transformer
+tested on the entire datasets of other batteries to assess its generalization        Input          Input              Input           Input             Input
+capability and to compare the performance of BMSFormer against the                   Embed layer    Embed layer        Embed layer     Conv1D (1 × 3,    Linear
+alternative models. Moreover, the robustness of the five models is                     (32)         (32)               (32)            1)
+compared through a detailed analysis of the 384 training results,                                                                      ReLU
+                                                                                     LGFA           Positional         Positional      MaxPooling1D      LSTM
+without any further hyperparameter refinement.                                         module       Encoder            Encoder         (2 × 2, 2)        layer
+    The training process is conducted on an ASUS TUF A15 computer,                                                                                       (32)
+which is equipped with an AMD Ryzen R7-4800H (2.90 GHz), an NVIDA                    DSConv-L       Softmax            Softmax         Conv1D (1 × 3,    LSTM
+GeForce RTX 2060 and 24 GB of RAM. The operation system on this                       module        Attention          Attention       1)                layer
+                                                                                                                                       ReLU              (32)
+machine is Windows 11 Professional. The prediction models are built
+                                                                                     Add&Norm       Conv1D (1 × 3,     Add&Norm        LSTM layer (32)   LSTM
+using PyTorch 2.0.0, utilizing Python 3.9.16 as the programming                                     1) ReLU                                              layer
+language.                                                                                                                                                (32)
+                                                                                     MLP            MaxPooling1D       Softmax         LSTM layer (32)   Linear
+                                                                                                    (2, 2)             Attention
+4.1. The evaluation criteria
+                                                                                     Add&Norm       Conv1D (1 × 3,     Add&Norm        LSTM layer (32)   ​
+                                                                                                    1)
+    Several widely adopted evaluation metrics are selected to assess the                            ReLU,
+models’ performance: Mean Absolute Error (MAE), Mean Absolute                                       Add&Norm
+Percentage Error (MAPE), Root Mean Squared Error (RMSE), the coef­                   Linear         Softmax            MLP             Linear            ​
+                                                                                                    Attention
+ficient of determination R2 , and the Average Root Mean Squared Error                ​              Add&Norm           Add&Norm        ​                 ​
+(ARMSE). MAE measures the average magnitude of the errors in pre­                    ​              MLP                ​               ​                 ​
+dictions without considering their direction, which refers to whether the            ​              Add&Norm           ​               ​                 ​
+predicted values are above or below the actual values, providing a                   ​              Linear             ​               ​                 ​
+straightforward measure of prediction accuracy. MAPE expresses accu­
+racy as a percentage, making it useful for comparing performance across             the Oxford dataset. As shown in the figure, in the validation results for
+different datasets. RMSE is the square root of the average squared dif­             Cell1, CNN-Transformer’s estimation error IQR is close to zero. How­
+ferences between predicted and actual values, giving larger weight to               ever, the asymmetry in the whiskers of the boxplot indicates a greater
+larger errors. The R2 score indicates the proportion of variance in the             number of low outliers in the estimation results. This trend is also
+dependent variable predictable from the independent variables, with                 observed from Cell2 to Cell8, suggesting that the model’s estimation
+larger values showing better performance. ARMSE, the average of RMSE                stability may be insufficient. The boxplot of prediction errors and the
+values over several subsets or folds, provides a stable measure of model            normal distribution plot across the eight batteries clearly show that
+performance across different data partitions. The formulas for these                BMSFormer has smaller and more concentrated prediction errors,
+metrics are as follows:                                                             illustrating superior prediction accuracy and robustness.
+          1∑ n                                                                          Notably, in Cells 2 and 6, where there are several sudden drops, CNN-
+MAE =                 yi|
+                |yi − ̂                                                 (18)        Transformer and BMSFormer were able to track the true values most
+          n i=1
+                                                                                    accurately, with BMSFormer showing the smallest prediction errors in
+                  n ⃒            ⃒                                                  response to sudden changes in Cell6. For the other six batteries with
+               1∑           y i ⃒⃒
+                     ⃒ yi − ̂
+MAPE =               ⃒                                                  (19)        relatively stable SOH changes (excluding Cell3 and Cell8), BMSFormer
+               n i=1 ⃒ yi ⃒
+                                                                                    performed the best and ranked first in the mean prediction results across
+               √̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅                                     all eight batteries, showing improvements in the average MAE of 14.81
+                       n
+                1∑                                                                  %, 59.65 %, 46.51 %, 73.56 %, the average RMSE of 16.21 %, 62.19 %,
+RMSE =                      (yi − ̂     y i )2                          (20)
+                n i=1                                                               44.64 %, and 73.27 %, and the average MAPE of 20.00 %, 63.63 %,
+                                                                                    50.00 %, 76.32 % compared to CNN-Transformer, Transformer, CNN-
+               n
+               ∑                                                                    LSTM, and LSTM, respectively.
+                           y i )2
+                     (yi − ̂
+               i=1
+R =1−
+  2
+                                                                        (21)
+                ∑n                                                                  4.2.2. Efficiency comparison
+                      (yi − y)2
+                i=1                                                                     In practical application, it is important to consider training cost
+                                                                                    (floating-point operations, training time, parameters) and hardware cost
+                             √̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅
+        1 ∑m
+                              1∑     n                                              (storage size) besides the accuracy [72]. To ensure a fair comparison, the
+ARMSE =                                   (yi − ̂     y i )2            (22)        same training and model hyperparameters are set to evaluate the
+        m j=1                 n i=1
+                                                                                    comprehensive performance of different models. The definitions of these
+                                                                                    evaluation metrics and the settings of hyperparameters are described as
+where y, ̂y , y, n and m are the actual SOH, predicted SOH, the average
+                                                                                    follows.
+value of y, the number of testing samples, and the number of batteries,
+respectively [71].
+                                                                                    1. Evaluation Metrics: (1) floating-point operations (FLOPs), which
+                                                                                       are measured using the profile function from the THOP library,
+4.2. Comparison on Oxford dataset
+                                                                                       quantify the numbers of FLOPs required for a single forward pass. (2)
+                                                                                       Training time, measured in seconds using Python’s time module,
+4.2.1. Accuracy and generalization comparison
+                                                                                       represents the duration required to train a model on the training
+   Comparative experiments are conducted between BMSFormer and
+                                                                                       dataset. (3) Parameters, which are counted using the summary
+four alternative models. The layer configurations of these models are
+                                                                                       function from the torchsummary library, typically measured in mil­
+presented in Table 4.
+                                                                                       lions (Million), indicate the total number of trainable parameters in
+   Fig. 7 and Table 5 show the estimation results and errors of
+                                                                                       the model. (4) Storage size, which is counted using the os.path.
+BMSFormer, CNN-Transformer, CNN-LSTM, Transformer and LSTM on
+
+                                                                                9
+X. Li et al.                                                                                                                    Energy 313 (2024) 134030
+
+
+
+
+                                       Fig. 7. The experimental results of different models on the Oxford dataset.
+
+
+   getsize function of Python, measured in kilobytes (KB), indicates the        3. Model Hyperparameters: To compare the computational
+   storage requirements of the model parameters on a device.                       complexity of different model structures under the same input data
+2. Training Hyperparameters: For the experiments, the same training                and training hyperparameters, the model hyperparameters are set as
+   hperparameters are used across all models. Each model is trained                follows: For models based on the Transformer architecture, the pa­
+   with a batch size of 128 for 1000 epochs. The learning rate is uni­             rameters are set uniformly: an embed dimension of 16, a dense
+   formly set to 0.01, and a dropout rate of 0.1 is applied.                       dimension (MLP) of 16, four attention head, and both the encoder
+                                                                                   and decoder comprise one layer each. Four LSTM layers and hidden
+
+                                                                           10
+X. Li et al.                                                                                                                                          Energy 313 (2024) 134030
+
+
+Table 5                                                                                      and the third convolutional layer has a kernel size of 3 and a stride of
+SOH estimation errors of different models on the Oxford dataset.                             1. The activation function used is ReLU.
+  Cells        Methods               MAE            MAPE      RMSE          R2
+                                                                                               Under the almost same configuration and Oxford dataset, as illus­
+  Cell1*       BMSFormer             0.0032         0.0022    0.0018        0.9937
+               CNN-Transformer       0.0022         0.0038    0.0025        0.9913
+                                                                                          trated in Table 6, the LSTM-based networks results in lower training
+               CNN-LSTM              0.0085         0.0154    0.0109        0.8641        time than other three networks due to the inherently sequential struc­
+               Transformer           0.0027         0.0049    0.0037        0.9814        ture; however, this architecture limits their ability to capture complex
+               LSTM                  0.0140         0.0252    0.0160        0.7044        degradation patterns, leading to lower estimaiton accuracy. In contrast,
+  Cell2        BMSFormer             0.0040         0.0074    0.0083        0.9802
+                                                                                          compared to CNN-Transformer and Transformer, BMSFormer achieves
+               CNN-Transformer       0.0058         0.0107    0.0091        0.9752
+               CNN-LSTM              0.0059         0.0105    0.0095        0.9755        the shortest training time. Specifically, despite having 63.04% more
+               Transformer           0.0047         0.0084    0.0082        0.9798        FLOPs and 12.03% more parameters than Transformer, BMSFormer still
+               LSTM                  0.0075         0.0139    0.0124        0.9765        reduces training time and storage capacity by 21.37% and 7.88%,
+  Cell3        BMSFormer             0.0019         0.0031    0.0023        0.9977        respectively.
+               CNN-Transformer       0.0017         0.0028    0.0022        0.9978
+               CNN-LSTM              0.0062         0.0110    0.0087        0.9710
+                                                                                               When adapting to different battery types or tasks, models usually
+               Transformer           0.0040         0.0068    0.0049        0.9898        require adjustments in hyperparameter combinations to match data
+               LSTM                  0.0093         0.0165    0.0126        0.9395        patterns efficiently. Among the five adjustable hyperparameters
+  Cell4        BMSFormer             0.0027         0.0044    0.0032        0.9936        (including e, lr, de , dd and n), the LSTM network lacks embed dimension
+               CNN-Transformer       0.0029         0.0046    0.0041        0.9901
+                                                                                          (de ), and storage size depends only on model hyperparameters
+               CNN-LSTM              0.0045         0.0077    0.0069        0.9765
+               Transformer           0.0052         0.0083    0.0064        0.9753        (including dd and n). Therefore, to comprehensively evaluate storage
+               LSTM                  0.0077         0.0132    0.0102        0.9487        memory consumption across different hyperparameter combinations,
+  Cell5        BMSFormer             0.0020         0.0031    0.0026        0.9940        three hidden layer dimensions (16, 32, 64) and four model layers (1, 2,
+               CNN-Transformer       0.0039         0.0061    0.0043        0.9829        3, 4) are configured, resulting in a total of 12 combinations applied to
+               CNN-LSTM              0.0051         0.0085    0.0069        0.9649
+               Transformer           0.0064         0.0101    0.0068        0.9591
+                                                                                          five models, as shown in Table 7.
+               LSTM                  0.0078         0.0128    0.0098        0.9286             As shown in Fig. 8(a), the bar chart for the 12 combinations indicates
+  Cell6        BMSFormer             0.0026         0.0043    0.0035        0.9905        that BMSFormer consistently exhibits a lower storage size compared to
+               CNN-Transformer       0.0028         0.0045    0.0039        0.9884        CNN-Transformer and Transformer across the G1-G12 configurations,
+               CNN-LSTM              0.0041         0.0069    0.0067        0.9720
+                                                                                          making it more suitable for deployment on resource-constrained de­
+               Transformer           0.0054         0.0087    0.0067        0.9673
+               LSTM                  0.0068         0.0115    0.0095        0.9429        vices. Moreover, LSTM and CNN-LSTM models experience a significant
+  Cell7        BMSFormer             0.0011         0.0018    0.0014        0.9987        increase in memory usage when dimensions are raised to 64 (as shown
+               CNN-Transformer       0.0012         0.0015    0.0019        0.9987        in G3, G6, G9, G12), far exceeding the memory usage of the other three
+               CNN-LSTM              0.0053         0.0091    0.0072        0.9719        models. Although lower dimensions and fewer layers reduce the storage
+               Transformer           0.0029         0.0047    0.0037        0.9917
+               LSTM                  0.0076         0.0132    0.0104        0.9422
+                                                                                          size of LSTM and CNN-LSTM, these models may suffer from a decline in
+  Cell8        BMSFormer             0.0015         0.0026    0.0020        0.9983        estimation accuracy, failing to achieve an optimal balance between
+               CNN-Transformer       0.0012         0.0021    0.0016        0.9989        precision and efficiency.
+               CNN-LSTM              0.0060         0.0106    0.0082        0.9739             As illustrated in Fig. 8(b), the box plot shows that the proposed
+               Transformer           0.0033         0.0057    0.0043        0.9924
+                                                                                          model has the shortest box and whiskers, indicating the lowest average
+               LSTM                  0.0087         0.0156    0.0119        0.9455
+  Average      BMSFormer             0.0023         0.0036    0.0031        0.9934
+               CNN-Transformer       0.0027         0.0045    0.0037        0.9904
+               CNN-LSTM              0.0057         0.0099    0.0082        0.9587        Table 7
+               Transformer           0.0043         0.0072    0.0056        0.9796        Grouping of models hyperparameter.
+               LSTM                  0.0087         0.0152    0.0116        0.9160
+                                                                                           Group number                        Dense dimension                 Layer number
+Cell1* denotes a training set of BMSFormer with 80 % data, and its values are
+averaged among ten experiments. The best results are marked in bold and                    G1                                  16                              1
+                                                                                           G2                                  32                              1
+underlined.
+                                                                                           G3                                  64                              1
+                                                                                           G4                                  16                              2
+    dimension of 16 are also employed for models based on the LSTM                         G5                                  32                              2
+    architecture. Additionally, for the CNN-Transformer models, the                        G6                                  64                              2
+                                                                                           G7                                  16                              3
+    CNN module corresponds to our depthwise separable convolutional                        G8                                  32                              3
+    module and is also placed after the multi-head self-attention module.                  G9                                  64                              3
+    The basic hyperparameters for the two convolutional layers are set as                  G10                                 16                              4
+    follows: the first convolutional layer has a kernel size of 3 and a stride             G11                                 32                              4
+                                                                                           G12                                 64                              4
+    of 1, the second pooling layer has a kernel size of 2 and a stride of 2,
+
+
+Table 6
+The comprehensive performance of models under the same and optimal configurations.
+  Models                 Training hyperparameters            Model hyperparameters             Performance indicator
+
+                         e         lr         b              de        dd        n             FLOPs (Million)         Training time (s)     Parameters      Storage size(KB)
+
+  BMSFormer              1000      0.01       128            16        16        4             0.46                    19.83                 5330            36.37
+  CNN-Transformer        1000      0.01       128            16        16        4             0.27                    26.57                 6257            47.10
+  Transformer            1000      0.01       128            16        16        4             0.17                    25.22                 4689            39.48
+  CNN-LSTM               1000      0.01       128            -         16        4             0.48                    11.84                 12719           53.72
+  LSTM                   1000      0.01       128            -         16        4             0.83                    8.07                  8753            37.85
+
+Here, the e, lr, b, de , dd and n represent the epochs, learning rate, batch size, embedding dimension, dense dimension of MLP or hidden dimension of LSTM, and layer
+number, respectively. The best results are marked in bold and underlined.
+
+
+
+                                                                                     11
+X. Li et al.                                                                                                                           Energy 313 (2024) 134030
+
+
+                                                                                   0.001 and 0.01, resulting in a total of 2 × 2 = 4 basic combinations,
+                                                                                   which correspond to the four segments on the x-axis of Fig. 9. Mean­
+                                                                                   while, various model hyperparameter settings are also considered:
+                                                                                   BMSFormer, CNN-Transformer, and Transformer are based on attention
+                                                                                   mechanism and each have 2 × 3 × 4 × 4 = 96 possible hyperparameter
+                                                                                   groups, in which 2, 3, 4 and 4 represent the “block number”, “head
+                                                                                   number”, “dense dimension” of MLP layer, and “embed dimension” of
+                                                                                   embedding layer, respectively. In contrast, LSTM and CNN-LSTM
+                                                                                   models just have two additional adjustable hyperparameters for the
+                                                                                   “layer number” of LSTM and the “dense dimension” of hidden layer,
+                                                                                   resulting in 3 × 4 = 12 combinations.
+                                                                                       Consequently, the total number of hyperparameter combinations of
+                                                                                   the models represented on the y-axis of the figure is 4 × 12 = 48 for the
+                                                                                   first two models and 4 × 96 = 384 for the latter three models. Each color
+                                                                                   bar corresponds to a fitting score, with redder colors indicating higher
+                                                                                   accuracy and bluer colors indicating worser. The red vertical line on the
+                                                                                   far right represents the number of combinations with a fitting score
+Fig. 8. Storage size of five models across G1-G12 hyperparameter combina­
+                                                                                   greater than 0.98, with a higher number of groups indicating better
+tions: (a) Bar chart comparing storage sizes for each group; (b) Box plot
+                                                                                   performance.
+showing overall distribution.
+                                                                                       Overall, compared to recent mainstream models, BMSFormer shows
+                                                                                   robust performance and accuracy across different hyperparameter
+memory consumption with minimal fluctuation across the 12 hyper­
+                                                                                   combinations. Specifically, BMSFormer has 41 combinations where the
+parameter configurations. This characteristic is helpful when handling
+                                                                                   prediction model’s R2 value exceeds 0.98, representing 10.67 % of the
+more complex data patterns, as the model maintains stable storage size
+                                                                                   total combinations. Additionally, 43.23 % of the combinations have an
+while increasing dimensions or depth to enhance estimation accuracy.
+                                                                                   R2 value greater than 0.9. BMSFormer also achieves the highest R2 of
+   In summary, the experimental results indicate that the proposed
+                                                                                   0.9892 than others.
+model exhibits low and stable memory usage across 384 hyperparameter
+combinations, making it well-suited for usage on resource-limited
+                                                                                   4.3.2. Generalization evaluation
+devices.
+                                                                                       This section presents and compares the testing results obtained
+                                                                                   through the process of directly testing on the unseen test sets using the
+4.3. Comparison on NASA and CALCE datasets                                         five optimal models with highest validation accuracies.
+                                                                                       As illustrated in Fig. 10 (a)-(c), the estimated SOH of BMSFormer is
+    This section discusses the performance of BMSFormer and four                   generally closer to the true SOH compared to other models, and the
+mainstream deep learning models on the NASA and CALCE datasets,                    estimation error is also closer to zero, both indicating higher accuracy.
+which are different from the Oxford dataset in battery materials and               The localized magnifications in the ‘SOH’ plots further illustrate the
+charge/discharge protocols. For both datasets, 30 % of the data from the           better stability of BMSFormer when encountering sudden SOH changes
+first cell (B0005 for NASA and CS2-35 for CALCE) is used as the training           in the degradation process of ten batteries.
+set, while the remaining 70 % is reserved for validation. The full datasets            As detailed in Table 9, BMSFormer achieves improvements of 37.15
+from the remaining six cells (B0006, B0007, B0018 for NASA and CS2-                %, 42.65 %, 23.67 %, and 47.90 % in average MAE, 27.30 %, 48.20 %,
+36, CS2-37, CS2-38 for CALCE) are used as the test set.                            20.42 %, and 53.71 % in average MAPE, and 34.29 %, 40.69 %, 18.84 %,
+    The five models’ evaluation process is described as follows. First, the        and 46.29 % in average RMSE, compared to CNN-Transformer, CNN-
+five models are respectively trained on their training sets using 384              LSTM, Transformer, and LSTM, respectively, across eight battery cells
+distinct hyperparameter combinations and validated. All the validation             from NASA and CALCE datasets. Notably, the zoomed-in prediction
+results are then used to evaluate the stability of each model and the best-
+performance models, with highest validation accuracy, are selected as
+the final trained models. Second, the selected five final models are then
+directly tested on the unseen test sets to further evaluate the model
+generalization.
+
+4.3.1. Stability evaluation across 384 hyperparameter combinations
+    Table 8 presents the comprehensive set of hyperparameter combi­
+nations. Each column represents an adjustable hyperparameter cate­
+gory, including the train epochs, the learning rate, the number of
+attention block, the number of LSTM layer (or attention head), the dense
+layer dimension of MLP (or the hidden dimension of LSTM), and the
+dimension of embedding layer. This can help identify the sets of
+hyperparameter combinations that yield the high validation accuracies
+and reflects the model’s stability across different combinations.
+                                                                                   Fig. 9. The whole validating results when using different models and hyper­
+    To ensure a comprehensive exploration of training hyperparameters,             parameter combinations.
+“epochs” are chosen as 1000 and 200, and “learning rates” are set to
+
+Table 8
+The combination of hyperparameter.
+  Hyperparameter         Epochs              Learning rate        Block number             Layer number         Dense dimension          Embedding dimension
+
+  Values                 [200, 1000]         [0.001, 0.01]        [1, 2]                   [1, 2, 4]            [16, 32, 64, 128]        [16, 32, 64, 128]
+
+
+                                                                              12
+X. Li et al.                                                                                                                                Energy 313 (2024) 134030
+
+
+
+
+Fig. 10. (a) The validation results of five models on B0005 and CS2-35. (b) The test results using five weighted models trained on B0005. (c) The test results using
+five weighted models trained on CS2-35.
+
+
+curves reveal that BMSFormer performs exceptionally well even in                     struggles with local feature recognition, leading to larger fluctuations in
+scenarios with the most severe SOH fluctuations, such as those observed              error curves and particularly noticeable deviations in B0005. CNN-
+in B0018 and CS2-38.                                                                 Transformer and BMSFormer show similar performance, but CNN-
+    LSTM still exhibits the lowest prediction accuracy due to insufficient           Transformer’s small convolution kernel size of 1 × 3 and the lack of
+sensitivity to local features. Although CNN-LSTM partially addresses this            feature diversity constrain its ability to identify complex features
+issue, it still suffers from structural limitations, resulting in the loss of        pattern, resulting in slightly lower prediction accuracy compared to
+important information after convolution processing. Transformer also                 BMSFormer. Increasing the convolution kernel size in CNN-Transformer
+
+
+                                                                                13
+X. Li et al.                                                                                                                                           Energy 313 (2024) 134030
+
+
+Table 9                                                                                 results also illustrate the stability of BMSFormer across 384 hyper­
+Estimation results on the NASA and CALCE datasets.                                      parameter combinations. These advancements make BMSFormer a
+  Cell         Methods             MAE         MAPE        RMSE        R2               potentially robust solution for SOH estimation, particularly in some
+                                                                                        resource-constrained environments.
+  B0005*       BMSFormer           0.0042      0.0053      0.0065      0.9950
+               CNN-Transformer     0.0071      0.0089      0.0089      0.9907
+                                                                                            Finally, there is still room for further optimization of the model ar­
+               CNN-LSTM            0.0104      0.0129      0.0121      0.9830           chitecture, particularly in enhancing computational efficiency and
+               Transformer         0.0091      0.0115      0.0109      0.9861           reducing model complexity. Future research will focus on refining the
+               LSTM                0.0140      0.0181      0.0157      0.9716           structure of BMSFormer, expanding its applicability to a wider range of
+  B0006        BMSFormer           0.0073      0.0117      0.0092      0.9905
+                                                                                        battery types and use cases, and integrating the model into Battery
+               CNN-Transformer     0.0123      0.0151      0.0155      0.9843
+               CNN-LSTM            0.0158      0.0194      0.0197      0.9730           Management Systems (BMS) for real-world deployment and evaluation.
+               Transformer         0.0118      0.0156      0.0148      0.9848           These efforts aim to extend the practical impact of BMSFormer in
+               LSTM                0.0209      0.0274      0.0246      0.9581           advancing the field of battery health management.
+  B0007        BMSFormer           0.0037      0.0045      0.0061      0.9939
+               CNN-Transformer     0.0062      0.0074      0.0081      0.9893
+               CNN-LSTM            0.0086      0.0102      0.0105      0.9821           CRediT authorship contribution statement
+               Transformer         0.0079      0.0095      0.0098      0.9841
+               LSTM                0.0131      0.0159      0.0152      0.9626               Xiaopeng Li: Writing – original draft, Visualization, Validation,
+  B0018        BMSFormer           0.0068      0.0111      0.0087      0.9771
+               CNN-Transformer     0.0093      0.0119      0.0123      0.9713
+                                                                                        Software, Methodology. Minghang Zhao: Writing – review & editing,
+               CNN-LSTM            0.0122      0.0153      0.0148      0.9591           Methodology, Formal analysis. Shisheng Zhong: Project administra­
+               Transformer         0.0094      0.0122      0.0120      0.9729           tion, Funding acquisition. Junfu Li: Writing – review & editing, Meth­
+               LSTM                0.0139      0.0178      0.0163      0.9503           odology. Song Fu: Writing – review & editing. Zhiqi Yan: Supervision,
+  CS2-35*      BMSFormer           0.0116      0.0208      0.0197      0.9892
+                                                                                        Project administration.
+               CNN-Transformer     0.0198      0.0262      0.0324      0.9808
+               CNN-LSTM            0.0191      0.0416      0.0289      0.9767
+               Transformer         0.0140      0.0259      0.0227      0.9856
+               LSTM                0.0193      0.0439      0.0304      0.9742           Declaration of competing interest
+  CS2-36       BMSFormer           0.0144      0.0242      0.0188      0.9936
+               CNN-Transformer     0.0169      0.0306      0.0233      0.9902
+               CNN-LSTM            0.0197      0.0536      0.0306      0.9831               The authors declare that they have no known competing financial
+               Transformer         0.0138      0.0278      0.0209      0.9921           interests or personal relationships that could have appeared to influence
+               LSTM                0.0204      0.0582      0.0320      0.9815           the work reported in this paper.
+  CS2-37       BMSFormer           0.0125      0.0221      0.0184      0.9904
+               CNN-Transformer     0.0196      0.0245      0.0304      0.9831
+               CNN-LSTM            0.0185      0.0386      0.0286      0.9770           Acknowledgments
+               Transformer         0.0117      0.0202      0.0168      0.9920
+               LSTM                0.0179      0.0402      0.0299      0.9749              This work is supported by National Key R&D Program of China
+  CS2-38       BMSFormer           0.0214      0.0356      0.0276      0.9778
+               CNN-Transformer     0.0391      0.0615      0.0441      0.9432
+                                                                                        (2023YFB4302400).
+               CNN-LSTM            0.0385      0.0696      0.0487      0.9309
+               Transformer         0.0296      0.0473      0.0338      0.9667           Data availability
+               LSTM                0.0377      0.0708      0.0500      0.9271
+  Average      BMSFormer           0.0102      0.0169      0.0143      0.9884
+                                                                                            Data will be made available on request.
+               CNN-Transformer     0.0163      0.0233      0.0219      0.9791
+               CNN-LSTM            0.0179      0.0327      0.0242      0.9706
+               Transformer         0.0134      0.0213      0.0177      0.9830           References
+               LSTM                0.0197      0.0365      0.0268      0.9625
+
+B0005* and CS2-35* denote that they are the training sets with 30 % of the early         [1] Krause FC, Ruiz JP, Jones SC, Brandon EJ, Darcy EC, Iannello CJ, Bugga RV.
+                                                                                             Performance of commercial Li-ion cells for future NASA missions and aerospace
+data. The best results are marked in bold and underlined.
+                                                                                             applications. J Electrochem Soc 2021;168:040504. https://doi.org/10.1149/1945-
+                                                                                             7111/abf05f.
+might improve performance but would also increase the computational                      [2] Barré A, Deguilhem B, Grolleau S, Gérard M, Suard F, Riu D. A review on lithium-
+                                                                                             ion battery ageing mechanisms and estimations for automotive applications.
+cost.                                                                                        J Power Sources 2013;241:680–9. https://doi.org/10.1016/j.
+                                                                                             jpowsour.2013.05.040.
+5. Conclusion                                                                            [3] Ma S, Jiang M, Tao P, Song C, Wu J, Wang J, Deng T, Shang W. Temperature effect
+                                                                                             and thermal impact in lithium-ion batteries: a review. Prog Nat Sci: Mater Int 2018;
+                                                                                             28:653–66. https://doi.org/10.1016/j.pnsc.2018.11.002.
+    This paper presents BMSFormer, an innovative and efficient deep                      [4] Xia Y, Chen G, Zhou Q, Shi X, Shi F. Failure behaviours of 100% SOC lithium-ion
+learning model for online state-of-health (SOH) estimation of lithium-                       battery modules under different impact loading conditions. Eng Fail Anal 2017;82.
+                                                                                             https://doi.org/10.1016/j.engfailanal.2017.09.003.
+ion batteries, alleviating the limitations of traditional approaches that                [5] Plett GL. Sigma-point Kalman filtering for battery management systems of LiPB-
+cannot keep well balance between accuracy and efficiency. By incor­                          based HEV battery packs: Part 2: simultaneous state and parameter estimation.
+porating the constructed Local-Global Fusion Attention module,                               J Power Sources 2006;161:1369–84. https://doi.org/10.1016/j.
+                                                                                             jpowsour.2006.06.004.
+BMSFormer can not only capture both short-term and long-term fea­                        [6] Plett GL. Extended Kalman filtering for battery management systems of LiPB-based
+tures, but also reduce computational complexity compared to traditional                      HEV battery packs: Part 1. Background. J Power Sources 2004;134:252–61.
+Softmax-based attention methods. Meanwhile, the integration of multi-                        https://doi.org/10.1016/j.jpowsour.2004.02.031.
+                                                                                         [7] Peng S, Zhang D, Dai G, Wang L, Jiang Y, Zhou F. State of charge estimation for
+scale Depthwise Separable Convolutions enhances feature extraction                           LiFePO4 batteries joint by PID observer and improved EKF in various OCV ranges.
+across multiple scales and channels, contributing to a more diverse                          Appl Energy 2024;377:124435. https://doi.org/10.1016/j.apenergy.2024.124435.
+representation of battery degradation characteristics. These advance­                    [8] Chaturvedi NA, Klein R, Christensen J, Ahmed J, Kojic A. Algorithms for advanced
+                                                                                             battery-management systems. IEEE Control Syst Mag 2010;30:49–68. https://doi.
+ments collectively provide technical advantages in tackling challenges
+                                                                                             org/10.1109/MCS.2010.936293.
+related to battery behaviors, such as random capacity increments and                     [9] Zhang C, Allafi W, Dinh Q, Ascencio P, Marco J. Online estimation of battery
+gradual performance degradation.                                                             equivalent circuit model parameters and state of charge using decoupled least
+    The comprehensive experiments on the three different kinds of                            squares technique. Energy 2018;142:678–88. https://doi.org/10.1016/j.
+                                                                                             energy.2017.10.043.
+public battery datasets have shown the advantages of BMSFormer in                       [10] Hearst MA, Dumais ST, Osuna E, Platt J, Scholkopf B. Support vector machines.
+estimation accuracy, efficiency, and generalization. The validation                          IEEE Intell Syst Their Appl 1998;13:18–28. https://doi.org/10.1109/5254.708428.
+
+
+                                                                                   14
+X. Li et al.                                                                                                                                                    Energy 313 (2024) 134030
+
+[11] Zhang Q-J, Gupta KC, Devabhaktuni VK. Artificial neural networks for RF and                 [37] Zheng Y, Hu J, Chen J, Deng H, Hu W. State of health estimation for lithium battery
+     microwave design - from theory to practice. IEEE Trans Microw Theor Tech 2003;                   random charging process based on CNN-GRU method. Energy Rep 2023;9:1–10.
+     51:1339–50. https://doi.org/10.1109/TMTT.2003.809179.                                            https://doi.org/10.1016/j.egyr.2022.12.093.
+[12] Kim J, Oh J, Lee H. Review on battery thermal management system for electric                [38] Vaswani A, Shazeer N, Parmar N, Uszkoreit J, Jones L, Gomez AN, Kaiser L,
+     vehicles. Appl Therm Eng 2019;149:192–212. https://doi.org/10.1016/j.                            Polosukhin I. Attention is all you need. http://arxiv.org/abs/1706.03762.
+     applthermaleng.2018.12.020.                                                                      [Accessed 22 August 2024].
+[13] Sista S, Sista A. Intelligent BMS solution using AI and prognostic SPA. In:                 [39] Dong L, Xu S, Xu B. Speech-Transformer: a No-recurrence sequence-to-sequence
+     Proceedings of the FISITA 2012 world automotive congress. Berlin, Heidelberg:                    model for speech recognition. In: 2018 IEEE International Conference on Acoustics,
+     Springer; 2013. p. 755–64. https://doi.org/10.1007/978-3-642-33741-3_4.                          Speech and signal processing (ICASSP). Calgary, AB: IEEE; 2018. p. 5884–8.
+[14] Krizhevsky A, Sutskever I, Hinton GE. ImageNet classification with deep                          https://doi.org/10.1109/ICASSP.2018.8462506.
+     convolutional neural networks. Commun ACM 2017;60:84–90. https://doi.org/                   [40] Devlin J, Chang M-W, Lee K, Toutanova K. BERT: pre-training of deep bidirectional
+     10.1145/3065386.                                                                                 Transformers for language understanding. https://doi.org/10.48550/arXiv.1810.
+[15] Howard AG, Zhu M, Chen B, Kalenichenko D, Wang W, Weyand T, Andreetto M,                         04805; 2019.
+     Adam H. MobileNets: efficient convolutional neural networks for mobile vision               [41] Dosovitskiy A, Beyer L, Kolesnikov A, Weissenborn D, Zhai X, Unterthiner T,
+     applications. http://arxiv.org/abs/1704.04861. [Accessed 22 August 2024].                        Dehghani M, Minderer M, Heigold G, Gelly S, Uszkoreit J, Houlsby N. An image is
+[16] Duan W, Song S, Xiao F, Chen Y, Peng S, Song C. Battery SOH estimation and RUL                   worth 16x16 words: Transformers for image recognition at scale. http://arxiv.
+     prediction framework based on variable forgetting factor online sequential extreme               org/abs/2010.11929. [Accessed 16 June 2024].
+     learning machine and particle filter. J Energy Storage 2023;65:107322. https://             [42] Hannan MA, How DNT, Lipu MSH, Mansor M, Ker PJ, Dong ZY, Sahari KSM,
+     doi.org/10.1016/j.est.2023.107322.                                                               Tiong SK, Muttaqi KM, Mahlia TMI, Blaabjerg F. Deep learning approach towards
+[17] Yang P, Yang HD, Meng XB, Song CR, He TL, Cai JY, Xie YY, Xu KK. Joint                           accurate state of charge estimation for lithium-ion batteries using self-supervised
+     evaluation and prediction of SOH and RUL for lithium batteries based on a GBLS                   transformer model. Sci Rep 2021;11:19541. https://doi.org/10.1038/s41598-021-
+     booster multi-task model. J Energy Storage 2024;75:109741. https://doi.org/                      98915-8.
+     10.1016/j.est.2023.109741.                                                                  [43] Gomez W, Wang F-K, Chou J-H. Li-ion battery capacity prediction using improved
+[18] Guo F, Wu X, Liu L, Ye J, Wang T, Fu L, Wu Y. Prediction of remaining useful life                temporal fusion transformer model. Energy 2024;296:131114. https://doi.org/
+     and state of health of lithium batteries based on time series feature and Savitzky-              10.1016/j.energy.2024.131114.
+     Golay filter combined with gated recurrent unit neural network. Energy 2023;270:            [44] Jia C, Tian Y, Shi Y, Jia J, Wen J, Zeng J. State of health prediction of lithium-ion
+     126880. https://doi.org/10.1016/j.energy.2023.126880.                                            batteries based on bidirectional gated recurrent unit and transformer. Energy 2023;
+[19] Ge M-F, Liu Y, Jiang X, Liu J. A review on state of health estimations and remaining             285:129401. https://doi.org/10.1016/j.energy.2023.129401.
+     useful life prognostics of lithium-ion batteries. Measurement 2021;174:109057.              [45] Gu X, See KW, Li P, Shan K, Wang Y, Zhao L, Lim KC, Zhang N. A novel state-of-
+     https://doi.org/10.1016/j.measurement.2021.109057.                                               health estimation for the lithium-ion battery using a convolutional neural network
+[20] Degradation diagnostics for lithium ion cells. J Power Sources 2017;341:373–86.                  and transformer model. Energy 2023;262:125501. https://doi.org/10.1016/j.
+     https://doi.org/10.1016/j.jpowsour.2016.12.011.                                                  energy.2022.125501.
+[21] Zhang L, Sun C, He T, Jiang Y, Wei J, Huang Y, Yuan M. High-performance quasi-              [46] Bai T, Wang H. Convolutional transformer-based multiview information perception
+     2D perovskite light-emitting diodes: from materials to devices. Light Sci Appl 2021;             framework for lithium-ion battery state-of-health estimation. IEEE Trans Instrum
+     10:61. https://doi.org/10.1038/s41377-021-00501-0.                                               Meas 2023;72:1–12. https://doi.org/10.1109/TIM.2023.3300451.
+[22] Rechkemmer SK, Zang X, Zhang W, Sawodny O. Empirical Li-ion aging model                     [47] Chen L, Xie S, Lopes AM, Bao X. A vision transformer-based deep neural network
+     derived from single particle model. J Energy Storage 2019;21:773–86. https://doi.                for state of health estimation of lithium-ion batteries. Int J Electr Power Energy
+     org/10.1016/j.est.2019.01.005.                                                                   Syst 2023;152:109233. https://doi.org/10.1016/j.ijepes.2023.109233.
+[23] Luo K, Chen X, Zheng H, Shi Z. A review of deep learning approach to predicting             [48] Birkl CR, Roberts MR, McTurk E, Bruce PG, Howey DA. Degradation diagnostics for
+     the state of health and state of charge of lithium-ion batteries. J Energy Chem                  lithium ion cells. J Power Sources 2017;341:373–86. https://doi.org/10.1016/j.
+     2022;74:159–73. https://doi.org/10.1016/j.jechem.2022.06.049.                                    jpowsour.2016.12.011.
+[24] Fei Z, Yang F, Tsui K-L, Li L, Zhang Z. Early prediction of battery lifetime via a          [49] Obisakin I, Ekeanyanwu CV. State of health estimation of lithium-ion batteries
+     machine learning based framework. Energy 2021;225:120205. https://doi.org/                       using support vector regression and long short-term memory. Open J Appl Sci
+     10.1016/j.energy.2021.120205.                                                                    2022;12:1366–82. https://doi.org/10.4236/ojapps.2022.128094.
+[25] Richardson RR, Osborne MA, Howey DA. Gaussian process regression for                        [50] He W, Williard N, Osterman M, Pecht M. Prognostics of lithium-ion batteries based
+     forecasting battery state of health. J Power Sources 2017;357:209–19. https://doi.               on Dempster–Shafer theory and the Bayesian Monte Carlo method. J Power
+     org/10.1016/j.jpowsour.2017.05.004.                                                              Sources 2011;196:10314–21. https://doi.org/10.1016/j.jpowsour.2011.08.040.
+[26] Li Y, Zou C, Berecibar M, Nanini-Maury E, Chan JC-W, van den Bossche P, Van                 [51] Chen J, Hu Y, Zhu Q, Rashid H, Li H. A novel battery health indicator and PSO-
+     Mierlo J, Omar N. Random forest regression for online capacity estimation of                     LSSVR for LiFePO4 battery SOH estimation during constant current charging.
+     lithium-ion batteries. Appl Energy 2018;232:197–210. https://doi.org/10.1016/j.                  Energy 2023;282:128782. https://doi.org/10.1016/j.energy.2023.128782.
+     apenergy.2018.09.182.                                                                       [52] Wang F, Zhai Z, Zhao Z, Di Y, Chen X. Physics-informed neural network for lithium-
+[27] Shi Y, Li J, Li Z. Gradient boosting with piece-wise linear regression trees. htt                ion battery degradation stable modeling and prognosis. Nat Commun 2024;15:
+     ps://doi.org/10.48550/arXiv.1802.05640; 2019.                                                    4332. https://doi.org/10.1038/s41467-024-48779-z.
+[28] Ye Z, Kim MK. Predicting electricity consumption in a building using an optimized           [53] Lin C, Xu J, Shi M, Mei X. Constant current charging time based fast state-of-health
+     back-propagation and Levenberg–Marquardt back-propagation neural network:                        estimation for lithium-ion batteries. Energy 2022;247:123556. https://doi.org/
+     case study of a shopping mall in China. Sustain Cities Soc 2018;42:176–83. https://              10.1016/j.energy.2022.123556.
+     doi.org/10.1016/j.scs.2018.05.050.                                                          [54] Peng S, Zhu J, Wu T, Tang A, Kan J, Pecht M. SOH early prediction of lithium-ion
+[29] Yang N, Song Z, Hofmann H, Sun J. Robust State of Health estimation of lithium-                  batteries based on voltage interval selection and features fusion. Energy 2024;308:
+     ion batteries using convolutional neural network and random forest. J Energy                     132993. https://doi.org/10.1016/j.energy.2024.132993.
+     Storage 2022;48:103857. https://doi.org/10.1016/j.est.2021.103857.                          [55] Bai J, Huang J, Luo K, Yang F, Xian Y. A feature reuse based multi-model fusion
+[30] Lee G, Kwon D, Lee C. A convolutional neural network model for SOH estimation of                 method for state of health estimation of lithium-ion batteries. J Energy Storage
+     Li-ion batteries with physical interpretability. Mech Syst Signal Process 2023;188:              2023;70:107965. https://doi.org/10.1016/j.est.2023.107965.
+     110004. https://doi.org/10.1016/j.ymssp.2022.110004.                                        [56] Dai H, Wang J, Huang Y, Lai Y, Zhu L. Lightweight state-of-health estimation of
+[31] Lu J, Xiong R, Tian J, Wang C, Sun F. Deep learning to estimate lithium-ion battery              lithium-ion batteries based on statistical feature optimization. Renew Energy 2024;
+     state of health without additional degradation experiments. Nat Commun 2023;14:                  222:119907. https://doi.org/10.1016/j.renene.2023.119907.
+     2760. https://doi.org/10.1038/s41467-023-38458-w.                                           [57] Wu J, Liu Z, Zhang Y, Lei D, Zhang B, Cao W. Data-driven state of health estimation
+[32] Luo T, Liu M, Shi P, Duan G, Cao X. A hybrid data preprocessing-based hierarchical               for lithium-ion battery based on voltage variation curves. J Energy Storage 2023;
+     attention BiLSTM network for remaining useful life prediction of spacecraft                      73:109191. https://doi.org/10.1016/j.est.2023.109191.
+     lithium-ion batteries. IEEE Trans. Neural Netw. Learning Syst 2024:1–14. https://           [58] Feng H, Zhang L. A heterogeneous learner fusion method with supplementary
+     doi.org/10.1109/TNNLS.2023.3311443.                                                              feature for lithium-ion batteries state of health estimation. J Energy Storage 2024;
+[33] Peng S, Zhu J, Wu T, Yuan C, Cang J, Zhang K, Pecht M. Prediction of wind and PV                 92:111896. https://doi.org/10.1016/j.est.2024.111896.
+     power by fusing the multi-stage feature extraction and a PSO-BiLSTM model.                  [59] Roman D, Saxena S, Robu V, Pecht M, Flynn D. Machine learning pipeline for
+     Energy 2024;298:131345. https://doi.org/10.1016/j.energy.2024.131345.                            battery state of health estimation. http://arxiv.org/abs/2102.00837. [Accessed 5
+[34] Zhang Y, Wang Y, Zhang C, Qiao X, Ge Y, Li X, Peng T, Nazir MS. State-of-health                  June 2024].
+     estimation for lithium-ion battery via an evolutionary Stacking ensemble learning           [60] Lin M, Ke L, Wang W, Meng J, Guan Y, Wu J. Health prognosis via feature
+     paradigm of random vector functional link and active-state-tracking long–short-                  optimization and convolutional neural network for lithium-ion batteries. Eng Appl
+     term memory neural network. Appl Energy 2024;356:122417. https://doi.org/                        Artif Intell 2024;133:108666. https://doi.org/10.1016/j.engappai.2024.108666.
+     10.1016/j.apenergy.2023.122417.                                                             [61] Tan Y, Zhao G. Transfer learning with long short-term memory network for state-
+[35] Ma G, Zhang Y, Cheng C, Zhou B, Hu P, Yuan Y. Remaining useful life prediction of                of-health prediction of lithium-ion batteries. IEEE Trans Ind Electron 2020;67:
+     lithium-ion batteries based on false nearest neighbors and a hybrid neural network.              8723–31. https://doi.org/10.1109/TIE.2019.2946551.
+     Appl Energy 2019;253:113626. https://doi.org/10.1016/j.apenergy.2019.113626.                [62] Jin H, Cui N, Cai L, Meng J, Li J, Peng J, Zhao X. State-of-health estimation for
+[36] Xu H, Wu L, Xiong S, Li W, Garg A, Gao L. An improved CNN-LSTM model-based                       lithium-ion batteries with hierarchical feature construction and auto-configurable
+     state-of-health estimation approach for lithium-ion batteries. Energy 2023;276:                  Gaussian process regression. Energy 2023;262:125503. https://doi.org/10.1016/j.
+     127585. https://doi.org/10.1016/j.energy.2023.127585.                                            energy.2022.125503.
+                                                                                                 [63] Huang K, Yao K, Guo Y, Lv Z. State of health estimation of lithium-ion batteries
+                                                                                                      based on fine-tuning or rebuilding transfer learning strategies combined with new
+
+
+                                                                                            15
+X. Li et al.                                                                                                                                                   Energy 313 (2024) 134030
+
+     features mining. Energy 2023;282:128739. https://doi.org/10.1016/j.                             Computer vision – eccv 2018. Cham: Springer International Publishing; 2018.
+     energy.2023.128739.                                                                             p. 122–38. https://doi.org/10.1007/978-3-030-01264-9_8.
+[64] Kiranyaz S, Avci O, Abdeljaber O, Ince T, Gabbouj M, Inman DJ. 1D convolutional            [69] Han D, Pan X, Han Y, Song S, Huang G. FLatten transformer: vision transformer
+     neural networks and applications: a survey. Mech Syst Signal Process 2021;151:                  using focused linear attention. In: 2023 IEEE/CVF International Conference on
+     107398. https://doi.org/10.1016/j.ymssp.2020.107398.                                            computer vision (ICCV). Paris, France: IEEE; 2023. p. 5938–48. https://doi.org/
+[65] Chollet F. Xception: deep learning with depthwise separable convolutions. In: 2017              10.1109/ICCV51070.2023.00548.
+     IEEE Conference on computer vision and pattern recognition (CVPR); 2017.                   [70] Cai H, Li J, Hu M, Gan C, Han S. EfficientViT: lightweight multi-scale attention for
+     p. 1800–7. https://doi.org/10.1109/CVPR.2017.195.                                               high-Resolution dense prediction. In: 2023 IEEE/CVF International conference on
+[66] Sandler M, Howard A, Zhu M, Zhmoginov A, Chen L-C. MobileNetV2: Inverted                        computer vision (ICCV). Paris, France: IEEE; 2023. p. 17256–67. https://doi.org/
+     residuals and linear bottlenecks. In: 2018 IEEE/CVF Conference on computer                      10.1109/ICCV51070.2023.01587.
+     vision and pattern recognition; 2018. p. 4510–20. https://doi.org/10.1109/                 [71] Chicco D, Warrens M, Jurman G. The coefficient of determination R-squared is
+     CVPR.2018.00474.                                                                                more informative than SMAPE, MAE, MAPE, MSE and RMSE in regression analysis
+[67] Zhang X, Zhou X, Lin M, Sun J. ShuffleNet: an extremely efficient convolutional                 evaluation. PeerJ Computer Science 2021;7:e623. https://doi.org/10.7717/peerj-
+     neural network for mobile devices. https://doi.org/10.48550/arXiv.1707.01083;                   cs.623.
+     2017.                                                                                      [72] Li P, Zhang Z, Grosu R, Deng Z, Hou J, Rong Y, Wu R. An end-to-end neural
+[68] Ma N, Zhang X, Zheng H-T, Sun J. ShuffleNet V2: practical guidelines for efficient              network framework for state-of-health estimation and remaining useful life
+     CNN architecture design. In: Ferrari V, Hebert M, Sminchisescu C, Weiss Y, editors.             prediction of electric vehicle lithium batteries. Renew Sustain Energy Rev 2022;
+                                                                                                     156:111843. https://doi.org/10.1016/j.rser.2021.111843.
+
+
+
+
+                                                                                           16
+

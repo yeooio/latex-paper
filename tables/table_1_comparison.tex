@@ -1,10 +1,10 @@
 \begin{table}
 \TableStyle
-\caption{Comparison between different existing SOH estimation methods.}
+\caption{Comparison of existing SOH estimation methods.}
 \label{tab:soh-method-comparison}
-\begin{tabularx}{\linewidth}{@{\extracolsep{\fill}}lcccL{1.10}L{0.90}c@{}}
+\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}p{30pt}>{\centering\arraybackslash}p{26pt}>{\centering\arraybackslash}p{26pt}>{\centering\arraybackslash}p{26pt}p{130pt}p{128pt}>{\centering\arraybackslash}p{55pt}@{}}
 \toprule
-参考 & \multicolumn{3}{c}{考虑的源数据} & \makecell[l]{健康指标选择方法\\（作者设计）} & \makecell[l]{评估模型\\（是否原创）} & 效率考量 \\
+参考 & \multicolumn{3}{c}{考虑的源数据} & 健康指标选择方法（作者设计） & 评估模型（是否为原创） & 效率考量 \\
 \cmidrule(lr){2-4}
  & 电流 & 电压 & 温度 & & & \\
 \midrule
@@ -26,5 +26,5 @@
 \cite{ref51} & \ding{51} & \ding{51} & \ding{55} & QPSO区间优化（\ding{51}） & LSTM-BP（\ding{55}） & \ding{55} \\
 本文 & \ding{51} & \ding{51} & \ding{51} & 组级健康指标选择算法（\ding{51}） & MS-AgentNet（\ding{51}） & \ding{51} \\
 \bottomrule
-\end{tabularx}
+\end{tabular*}
 \end{table}

@@ -1,14 +1,13 @@
 \begin{table}
 \TableStyle
-\caption{Convergence characteristics of MS-AgentNet.}
+\caption{Convergence characteristics of MS-AgentNet on the Oxford and MIT datasets.}
 \label{tab:4-3}
-\begin{tabularx}{\linewidth}{@{\extracolsep{\fill}}L{0.80}C{1.10}C{0.90}C{1.10}C{1.10}@{}}
+\begin{tabularx}{\linewidth}{@{\extracolsep{\fill}}L{0.85}C{1.35}C{1.15}C{1.10}@{}}
 \toprule
-数据集 & \makecell[c]{10\%阈值轮次\\中位数} & 阈值轮次范围 & \makecell[c]{后期平均损失\\中位数} & \makecell[c]{后期损失标准差\\中位数} \\
+Dataset & \makecell[c]{10\% threshold epoch\\median [range]} & \makecell[c]{Late loss mean\\median} & \makecell[c]{Late loss SD\\median} \\
 \midrule
-Oxford & 26 & 18–35 & $8.14\times10^{-4}$ & $2.38\times10^{-4}$ \\
-MIT & 7 & 6–8 & $5.84\times10^{-5}$ & $4.84\times10^{-6}$ \\
+Oxford & 26 [18--35] & $8.14\times10^{-4}$ & $2.38\times10^{-4}$ \\
+MIT & 7 [6--8] & $5.84\times10^{-5}$ & $4.84\times10^{-6}$ \\
 \bottomrule
 \end{tabularx}
-\TableNote{Note: Statistics are calculated from runs using five different random seeds. The threshold-epoch range is reported as the minimum--maximum.}
 \end{table}

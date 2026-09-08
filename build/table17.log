@@ -1,0 +1,224 @@
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex)
+ restricted \write18 enabled.
+entering extended mode
+(./main.tex
+LaTeX2e <2024-11-01> patch level 2
+L3 programming layer <2025-01-18>
+(d:/latex/texlive/2025/texmf-dist/tex/latex/ctex/ctexart.cls
+(d:/latex/texlive/2025/texmf-dist/tex/latex/ctex/config/ctexbackend.cfg)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/l3kernel/expl3.sty
+(d:/latex/texlive/2025/texmf-dist/tex/latex/l3backend/l3backend-xetex.def))
+Document Class: ctexart 2022/07/14 v2.5.10 Chinese adapter for class article (C
+TEX)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/ctex/ctexhook.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/ctex/ctexpatch.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/base/fix-cm.sty
+(d:/latex/texlive/2025/texmf-dist/tex/latex/base/ts1enc.def))
+(d:/latex/texlive/2025/texmf-dist/tex/latex/ctex/config/ctexopts.cfg)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2024/06/29 v1.4n Standard LaTeX document class
+(d:/latex/texlive/2025/texmf-dist/tex/latex/base/size11.clo))
+(d:/latex/texlive/2025/texmf-dist/tex/latex/ctex/engine/ctex-engine-xetex.def
+(d:/latex/texlive/2025/texmf-dist/tex/xelatex/xecjk/xeCJK.sty
+(d:/latex/texlive/2025/texmf-dist/tex/latex/l3packages/xtemplate/xtemplate.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/fontspec/fontspec.sty
+(d:/latex/texlive/2025/texmf-dist/tex/latex/l3packages/xparse/xparse.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/fontspec/fontspec-xetex.sty
+(d:/latex/texlive/2025/texmf-dist/tex/latex/base/fontenc.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/fontspec/fontspec.cfg)))
+(d:/latex/texlive/2025/texmf-dist/tex/xelatex/xecjk/xeCJK.cfg)))
+(d:/latex/texlive/2025/texmf-dist/tex/latex/zhnumber/zhnumber.sty
+(d:/latex/texlive/2025/texmf-dist/tex/latex/zhnumber/zhnumber-utf8.cfg))
+(d:/latex/texlive/2025/texmf-dist/tex/latex/ctex/scheme/ctex-scheme-chinese-art
+icle.def
+(d:/latex/texlive/2025/texmf-dist/tex/latex/ctex/config/ctex-name-utf8.cfg))
+(d:/latex/texlive/2025/texmf-dist/tex/latex/ctex/fontset/ctex-fontset-windows.d
+ef)) (d:/latex/texlive/2025/texmf-dist/tex/latex/ctex/config/ctex.cfg)
+(./preamble.tex
+(d:/latex/texlive/2025/texmf-dist/tex/latex/geometry/geometry.sty
+(d:/latex/texlive/2025/texmf-dist/tex/latex/graphics/keyval.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/generic/iftex/ifvtex.sty
+(d:/latex/texlive/2025/texmf-dist/tex/generic/iftex/iftex.sty)))
+(d:/latex/texlive/2025/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(d:/latex/texlive/2025/texmf-dist/tex/latex/amsmath/amstext.sty
+(d:/latex/texlive/2025/texmf-dist/tex/latex/amsmath/amsgen.sty))
+(d:/latex/texlive/2025/texmf-dist/tex/latex/amsmath/amsbsy.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/amsmath/amsopn.sty))
+(d:/latex/texlive/2025/texmf-dist/tex/latex/amsfonts/amssymb.sty
+(d:/latex/texlive/2025/texmf-dist/tex/latex/amsfonts/amsfonts.sty))
+(d:/latex/texlive/2025/texmf-dist/tex/latex/tools/bm.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/mathtools/mathtools.sty
+(d:/latex/texlive/2025/texmf-dist/tex/latex/tools/calc.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/mathtools/mhsetup.sty))
+(d:/latex/texlive/2025/texmf-dist/tex/latex/graphics/graphicx.sty
+(d:/latex/texlive/2025/texmf-dist/tex/latex/graphics/graphics.sty
+(d:/latex/texlive/2025/texmf-dist/tex/latex/graphics/trig.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/graphics-cfg/graphics.cfg)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/graphics-def/xetex.def)))
+(d:/latex/texlive/2025/texmf-dist/tex/latex/booktabs/booktabs.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/makecell/makecell.sty
+(d:/latex/texlive/2025/texmf-dist/tex/latex/tools/array.sty))
+(d:/latex/texlive/2025/texmf-dist/tex/latex/tools/tabularx.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/tools/longtable.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/newfloat/newfloat.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/threeparttablex/threeparttablex.sty
+(d:/latex/texlive/2025/texmf-dist/tex/latex/threeparttable/threeparttable.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/environ/environ.sty
+(d:/latex/texlive/2025/texmf-dist/tex/latex/trimspaces/trimspaces.sty)))
+(d:/latex/texlive/2025/texmf-dist/tex/latex/adjustbox/adjustbox.sty
+(d:/latex/texlive/2025/texmf-dist/tex/latex/xkeyval/xkeyval.sty
+(d:/latex/texlive/2025/texmf-dist/tex/generic/xkeyval/xkeyval.tex
+(d:/latex/texlive/2025/texmf-dist/tex/generic/xkeyval/xkvutils.tex)))
+(d:/latex/texlive/2025/texmf-dist/tex/latex/adjustbox/adjcalc.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/adjustbox/trimclip.sty
+(d:/latex/texlive/2025/texmf-dist/tex/latex/collectbox/collectbox.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/adjustbox/tc-xetex.def))
+(d:/latex/texlive/2025/texmf-dist/tex/latex/ifoddpage/ifoddpage.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/varwidth/varwidth.sty))
+(d:/latex/texlive/2025/texmf-dist/tex/latex/caption/caption.sty
+(d:/latex/texlive/2025/texmf-dist/tex/latex/caption/caption3.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/caption/ltcaption.sty))
+(d:/latex/texlive/2025/texmf-dist/tex/latex/float/float.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/xcolor/xcolor.sty
+(d:/latex/texlive/2025/texmf-dist/tex/latex/graphics-cfg/color.cfg)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/graphics/mathcolor.ltx))
+(d:/latex/texlive/2025/texmf-dist/tex/latex/url/url.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/psnfss/pifont.sty
+(d:/latex/texlive/2025/texmf-dist/tex/latex/psnfss/upzd.fd)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/psnfss/upsy.fd))
+(d:/latex/texlive/2025/texmf-dist/tex/latex/chngcntr/chngcntr.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/cite/cite.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/hyperref/hyperref.sty
+(d:/latex/texlive/2025/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/generic/pdfescape/pdfescape.sty
+(d:/latex/texlive/2025/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty
+(d:/latex/texlive/2025/texmf-dist/tex/generic/infwarerr/infwarerr.sty)))
+(d:/latex/texlive/2025/texmf-dist/tex/latex/hycolor/hycolor.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/hyperref/nameref.sty
+(d:/latex/texlive/2025/texmf-dist/tex/latex/refcount/refcount.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
+(d:/latex/texlive/2025/texmf-dist/tex/latex/kvoptions/kvoptions.sty)))
+(d:/latex/texlive/2025/texmf-dist/tex/latex/etoolbox/etoolbox.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/generic/stringenc/stringenc.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/hyperref/pd1enc.def)
+(d:/latex/texlive/2025/texmf-dist/tex/generic/intcalc/intcalc.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/hyperref/puenc.def)
+(d:/latex/texlive/2025/texmf-dist/tex/generic/bitset/bitset.sty
+(d:/latex/texlive/2025/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty))
+(d:/latex/texlive/2025/texmf-dist/tex/latex/base/atbegshi-ltx.sty))
+(d:/latex/texlive/2025/texmf-dist/tex/latex/hyperref/hxetex.def
+(d:/latex/texlive/2025/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
+(d:/latex/texlive/2025/texmf-dist/tex/latex/base/atveryend-ltx.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty))
+) (d:/latex/texlive/2025/texmf-dist/tex/latex/cleveref/cleveref.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/setspace/setspace.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/titlesec/titlesec.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/enumitem/enumitem.sty)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/tools/indentfirst.sty)
+
+Package xeCJK Warning: Redefining CJKfamily `\CJKrmdefault' (SimSun(0)).
+
+) (build/main.aux)
+*geometry* driver: auto-detecting
+*geometry* detected driver: xetex
+(build/main.out) (build/main.out) (./chapters/abstract.tex)
+(./chapters/chapter01.tex
+[1] (d:/latex/texlive/2025/texmf-dist/tex/latex/amsfonts/umsa.fd)
+(d:/latex/texlive/2025/texmf-dist/tex/latex/amsfonts/umsb.fd)
+[2] (./tables/table_1_comparison.tex)) (./chapters/chapter02.tex
+[3] (./figures/figure_2_1.tex)
+[4] (./tables/table_2_1.tex
+Underfull \hbox (badness 10000) in alignment at lines 26--26
+[][][][][] 
+) (./figures/figure_2_2.tex)
+[5]
+[6]
+[7]
+[8] (./tables/table_2_2.tex) (./figures/figure_2_3.tex) (./tables/table_2_3.tex
+
+Underfull \hbox (badness 10000) in alignment at lines 19--19
+[][][][][] 
+) (./figures/figure_2_4.tex) (./algorithms/algorithm_2_1.tex)
+(./tables/table_2_4.tex
+Underfull \hbox (badness 10000) in alignment at lines 30--30
+[][][][][] 
+) (./tables/table_2_5.tex
+Underfull \hbox (badness 10000) in alignment at lines 26--26
+[][][][] 
+) (./tables/table_2_6.tex
+Underfull \hbox (badness 10000) in alignment at lines 20--20
+[][][][][][][] 
+)) (./chapters/chapter03.tex
+[9]
+[10]
+[11] (./figures/figure_3_1.tex) (./figures/figure_3_2.tex
+[12])
+[13] (./figures/figure_3_3.tex)
+[14]
+[15]
+[16]) (./chapters/chapter04.tex
+[17] (./tables/table_4_3_initialization.tex) (./tables/table_4_3.tex
+Underfull \hbox (badness 10000) in alignment at lines 17--17
+[][][][][] 
+) (./tables/table_4_1.tex
+Underfull \hbox (badness 10000) in alignment at lines 19--19
+[][] 
+)
+[18] (./figures/figure_4_1.tex) (./tables/table_4_4.tex)
+(./figures/figure_4_2.tex) (./tables/table_4_5.tex
+Underfull \hbox (badness 10000) in alignment at lines 55--55
+[][][][][][] 
+
+Underfull \hbox (badness 10000) in paragraph at lines 55--56
+[][]
+)
+[19]
+[20] (./figures/figure_4_3.tex) (./tables/table_4_6.tex
+Underfull \hbox (badness 10000) in alignment at lines 37--37
+[][][][][][] 
+
+Underfull \hbox (badness 10000) in paragraph at lines 37--38
+[][]
+)
+[21]
+[22] (./tables/table_4_7.tex
+Underfull \hbox (badness 10000) in alignment at lines 28--28
+[][][][][] 
+
+Underfull \hbox (badness 10000) in paragraph at lines 28--29
+[][]
+) (./tables/table_4_8.tex
+Underfull \hbox (badness 10000) in alignment at lines 28--28
+[][][][][] 
+
+Underfull \hbox (badness 10000) in paragraph at lines 28--29
+[][]
+)
+[23] (./tables/table_4_9.tex
+Underfull \hbox (badness 10000) in alignment at lines 23--23
+[][][][][][] 
+
+Underfull \hbox (badness 10000) in paragraph at lines 23--24
+[][]
+)
+[24] (./tables/table_4_10.tex
+Underfull \hbox (badness 10000) in alignment at lines 33--33
+[][][][][][][][][][] 
+) (./tables/table_4_11.tex
+Underfull \hbox (badness 10000) in alignment at lines 32--32
+[][][][][][][][][] 
+)
+[25] (./tables/table_4_12.tex)
+[26] (./figures/figure_4_4.tex)) (./chapters/chapter05.tex
+[27]) (./backmatter/references.tex
+[28]
+[29]
+[30]
+[31])
+[32] (build/main.aux) )
+(see the transcript file for additional information)
+Output written on build/main.xdv (32 pages, 872024 bytes).
+Transcript written on build/main.log.

@@ -45,7 +45,8 @@
 \DeclareCaptionLabelFormat{figlabel}{Fig.\ #2}
 \DeclareCaptionLabelFormat{tablelabel}{Table\ #2}
 \DeclareCaptionFormat{tabletwoline}{#1#2\\#3}
-\captionsetup[figure]{skip=4.5pt,justification=centering,singlelinecheck=false,font={small},labelfont=normalfont,textfont=normalfont,labelformat=figlabel,labelsep=period}
+\DeclareCaptionFont{figurefont}{\fontsize{9pt}{11.5pt}\selectfont}
+\captionsetup[figure]{skip=4.5pt,justification=centering,singlelinecheck=false,font=figurefont,labelfont=normalfont,textfont=normalfont,labelformat=figlabel,labelsep=period}
 \captionsetup[table]{skip=3.5pt,justification=raggedright,singlelinecheck=false,font={small},labelfont=bf,textfont=normalfont,labelformat=tablelabel,labelsep=none,format=tabletwoline}
 \captionsetup[algorithm]{skip=4pt,justification=raggedright,singlelinecheck=false,font={small},labelfont=bf,textfont=normalfont}
 \crefname{figure}{Fig.}{Figs.}
