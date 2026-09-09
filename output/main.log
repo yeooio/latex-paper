@@ -1,7 +1,6 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.8.5)  9 SEP 2026 00:56
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.8.5)  9 SEP 2026 21:19
 entering extended mode
  restricted \write18 enabled.
- file:line:error style messages enabled.
  %&-line parsing enabled.
 **main.tex
 (./main.tex
@@ -1144,14 +1143,14 @@ Package fontspec Info:
 (fontspec)             - 'normal' (m/n) with NFSS spec.:
 (fontspec)             <->"FangSong/OT:script=hani;language=dflt;"
 
- (./tables/table_4_12.tex
+ (./tables/table_4_12.tex)
 
-[27]) (./figures/figure_4_4.tex
+[27] (./figures/figure_4_4.tex
 File: figures/fig4_storage_scaling.pdf Graphic file (type pdf)
 <use figures/fig4_storage_scaling.pdf>
-)
+))
 
-[28]) (./chapters/chapter05.tex) (./backmatter/references.tex
+[28] (./chapters/chapter05.tex) (./backmatter/references.tex
 LaTeX Font Info:    Calculating math sizes for size <9.4> on input line 13.
 
 
@@ -1169,7 +1168,7 @@ LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2022/07/14>
  ***********
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 417F8D73BF031461A305F3DB3902978B;4976.
+(rerunfilecheck)             Checksum: 01815DACCB0CA40A507A38AB16B3C47F;4954.
  ) 
 Here is how much of TeX's memory you used:
  24165 strings out of 473832
@@ -1180,4 +1179,4 @@ Here is how much of TeX's memory you used:
  1348 hyphenation exceptions out of 8191
  93i,20n,120p,3275b,640s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on output/main.xdv (33 pages, 899176 bytes).
+Output written on output/main.xdv (33 pages, 896408 bytes).
