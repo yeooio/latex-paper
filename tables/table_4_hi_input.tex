@@ -1,15 +1,15 @@
 \begin{table}[H]
 \TableStyle
-\fontsize{7.5pt}{9.5pt}\selectfont
-\setlength{\tabcolsep}{1.5pt}
+\fontsize{7pt}{9pt}\selectfont
+\setlength{\tabcolsep}{0.8pt}
 \renewcommand{\arraystretch}{1.18}
 \caption{SOH estimation errors of different health-indicator inputs on the Oxford dataset.}
 \label{tab:4-hi-input}
 \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}l*{15}{c}@{}}
 \toprule
-& \multicolumn{5}{c}{MAE (\%)}
-& \multicolumn{5}{c}{RMSE (\%)}
-& \multicolumn{5}{c}{MAPE (\%)} \\
+& \multicolumn{5}{c}{MAE}
+& \multicolumn{5}{c}{RMSE}
+& \multicolumn{5}{c}{MAPE} \\
 \cmidrule(lr){2-6}\cmidrule(lr){7-11}\cmidrule(lr){12-16}
 Cell
 & IC & CCCT & DTV & DTC & Fusion
@@ -17,38 +17,38 @@ Cell
 & IC & CCCT & DTV & DTC & Fusion \\
 \midrule
 Cell2
-& 0.70 & \textbf{\underline{0.43}} & 1.71 & 4.84 & 1.61
-& 0.98 & \textbf{\underline{0.69}} & 2.08 & 5.62 & 1.97
-& 0.87 & \textbf{\underline{0.52}} & 2.01 & 5.85 & 1.91 \\
+& 0.00702 & \textbf{\underline{0.00429}} & 0.01705 & 0.04836 & 0.01607
+& 0.00984 & \textbf{\underline{0.00694}} & 0.02076 & 0.05624 & 0.01971
+& 0.00874 & \textbf{\underline{0.00524}} & 0.02014 & 0.05847 & 0.01910 \\
 Cell3
-& 0.45 & \textbf{\underline{0.28}} & 9.85 & 11.40 & 2.28
-& 0.52 & \textbf{\underline{0.35}} & 10.42 & 12.86 & 2.64
-& 0.53 & \textbf{\underline{0.33}} & 11.32 & 13.89 & 2.66 \\
+& 0.00452 & \textbf{\underline{0.00280}} & 0.09846 & 0.11398 & 0.02282
+& 0.00523 & \textbf{\underline{0.00351}} & 0.10422 & 0.12860 & 0.02636
+& 0.00530 & \textbf{\underline{0.00333}} & 0.11324 & 0.13890 & 0.02657 \\
 Cell4
-& \textbf{\underline{0.58}} & 0.81 & 1.26 & 2.77 & 1.28
-& \textbf{\underline{0.74}} & 0.87 & 1.46 & 3.73 & 1.62
-& \textbf{\underline{0.69}} & 0.96 & 1.44 & 3.12 & 1.44 \\
+& \textbf{\underline{0.00578}} & 0.00814 & 0.01257 & 0.02765 & 0.01281
+& \textbf{\underline{0.00738}} & 0.00873 & 0.01458 & 0.03731 & 0.01620
+& \textbf{\underline{0.00685}} & 0.00960 & 0.01443 & 0.03118 & 0.01440 \\
 Cell5
-& 0.73 & \textbf{\underline{0.30}} & 2.61 & 9.39 & 1.82
-& 0.79 & \textbf{\underline{0.35}} & 3.63 & 10.07 & 2.16
-& 0.82 & \textbf{\underline{0.34}} & 2.86 & 10.58 & 2.04 \\
+& 0.00725 & \textbf{\underline{0.00302}} & 0.02608 & 0.09392 & 0.01820
+& 0.00787 & \textbf{\underline{0.00353}} & 0.03627 & 0.10072 & 0.02159
+& 0.00816 & \textbf{\underline{0.00343}} & 0.02864 & 0.10575 & 0.02044 \\
 Cell6
-& 0.87 & \textbf{\underline{0.59}} & 1.27 & 7.23 & 2.22
-& 1.16 & \textbf{\underline{0.84}} & 1.61 & 8.64 & 2.55
-& 1.00 & \textbf{\underline{0.71}} & 1.43 & 7.99 & 2.52 \\
+& 0.00866 & \textbf{\underline{0.00593}} & 0.01272 & 0.07225 & 0.02217
+& 0.01158 & \textbf{\underline{0.00842}} & 0.01608 & 0.08643 & 0.02551
+& 0.00998 & \textbf{\underline{0.00705}} & 0.01430 & 0.07985 & 0.02519 \\
 Cell7
-& 1.67 & \textbf{\underline{0.80}} & 1.25 & 6.10 & 1.91
-& 1.71 & \textbf{\underline{0.83}} & 1.54 & 7.42 & 2.07
-& 1.91 & \textbf{\underline{0.92}} & 1.41 & 6.83 & 2.18 \\
+& 0.01668 & \textbf{\underline{0.00802}} & 0.01250 & 0.06098 & 0.01906
+& 0.01713 & \textbf{\underline{0.00829}} & 0.01542 & 0.07415 & 0.02074
+& 0.01913 & \textbf{\underline{0.00923}} & 0.01413 & 0.06830 & 0.02176 \\
 Cell8
-& 1.22 & \textbf{\underline{0.39}} & 2.05 & 7.92 & 3.38
-& 1.32 & \textbf{\underline{0.47}} & 2.35 & 9.08 & 3.86
-& 1.41 & \textbf{\underline{0.44}} & 2.41 & 8.97 & 3.87 \\
+& 0.01224 & \textbf{\underline{0.00389}} & 0.02046 & 0.07918 & 0.03383
+& 0.01321 & \textbf{\underline{0.00472}} & 0.02351 & 0.09076 & 0.03861
+& 0.01411 & \textbf{\underline{0.00444}} & 0.02413 & 0.08970 & 0.03868 \\
 \addlinespace[2pt]
 Average
-& 0.89 & \textbf{\underline{0.52}} & 2.86 & 7.09 & 2.07
-& 1.03 & \textbf{\underline{0.63}} & 3.30 & 8.20 & 2.41
-& 1.03 & \textbf{\underline{0.61}} & 3.27 & 8.17 & 2.37 \\
+& 0.00888 & \textbf{\underline{0.00516}} & 0.02855 & 0.07090 & 0.02071
+& 0.01032 & \textbf{\underline{0.00631}} & 0.03298 & 0.08203 & 0.02410
+& 0.01032 & \textbf{\underline{0.00605}} & 0.03271 & 0.08174 & 0.02373 \\
 \bottomrule
 \end{tabular*}
 \end{table}
