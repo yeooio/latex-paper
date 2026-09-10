@@ -1,0 +1,20 @@
+\begin{table}[!htb]
+\TableStyle
+\caption{Group-level health indicator screening steps.}
+\label{tab:2-hi-screening-steps}
+\begin{tabularx}{\linewidth}{@{}X@{}}
+\toprule
+\textbf{Procedure: Group-level health indicator screening} \\
+\midrule
+1. Calculate the PCC and SCC of each candidate HI on the cells in the feature-development set $\mathcal{B}$. \\
+2. Obtain $mPCC_i=\min_{j\in\mathcal{B}}|\gamma_{i,j}|$ and $mSCC_i=\min_{j\in\mathcal{B}}|\rho_{i,j}|$ for each candidate HI $f_i$. \\
+3. Retain the HIs satisfying $mPCC_i\geq\theta_{\mathrm{lin}}$ and $mSCC_i\geq\theta_{\mathrm{mono}}$, where $\theta_{\mathrm{lin}}=0.92$ and $\theta_{\mathrm{mono}}=0.96$, and sort them in descending order according to $R_i=\max(mPCC_i,mSCC_i)$. \\
+4. Initialize the selected HI set $\mathcal{S}=\varnothing$. \\
+5. For each retained candidate HI $f_i$: \\
+\hspace*{1em}compare $f_i$ with each HI already contained in $\mathcal{S}$; \\
+\hspace*{1em}if their group-average absolute PCC and SCC both reach $\theta_{\mathrm{co}}=0.95$, remove $f_i$; \\
+\hspace*{1em}otherwise, add $f_i$ to $\mathcal{S}$. \\
+6. Output the final selected HI set $\mathcal{S}$. \\
+\bottomrule
+\end{tabularx}
+\end{table}

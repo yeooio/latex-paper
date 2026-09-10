@@ -1,7 +1,6 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.8.5)  9 SEP 2026 01:10
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.8.5)  10 SEP 2026 21:56
 entering extended mode
  restricted \write18 enabled.
- file:line:error style messages enabled.
  %&-line parsing enabled.
 **main.tex
 (./main.tex
@@ -846,10 +845,6 @@ Package fontspec Info:
 (fontspec)             - 'bold' (b/n) with NFSS spec.:
 (fontspec)             <->"SimHei/OT:script=hani;language=dflt;"
 
-Package newfloat Info: New float `algorithm' with options `fileext=loa,listname
-={Algorithms},name=Algorithm' on input line 44.
-\c@algorithm=\count349
-Package newfloat Info: float type `algorithm'=4 on input line 44.
 (./table-style.tex
 (d:/latex/texlive/2025/texmf-dist/tex/latex/placeins/placeins.sty
 Package: placeins 2005/04/18  v 2.2
@@ -1011,67 +1006,64 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 File: figures/fig1.png Graphic file (type bmp)
 <figures/fig1.png>
 )
-(./tables/table_2_1.tex) (./figures/figure_2_2.tex
+
+[4]
+
+[5] (./tables/table_2_1.tex) (./figures/figure_2_2.tex
 File: figures/fig2.png Graphic file (type bmp)
 <figures/fig2.png>
 )
 
-[4]
+[6]
 
-[5]
-
-[6] (./tables/table_2_2.tex) (./figures/figure_2_3.tex
+[7] (./tables/table_2_2.tex) (./figures/figure_2_3.tex
 File: figures/fig3.png Graphic file (type bmp)
 <figures/fig3.png>
 )
 
-[7]
+[8]
 
-[8] (./tables/table_2_3.tex)
-
-[9] (./algorithms/algorithm_2_1.tex
-Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
-put line 3.
-) (./figures/figure_2_4.tex
+[9] (./figures/figure_2_4.tex
 File: figures/fig4_pccscc_print.png Graphic file (type bmp)
 <figures/fig4_pccscc_print.png>
 )
-(./tables/table_2_4.tex) (./tables/table_2_5.tex) (./tables/table_2_6.tex))
 
 [10]
 
-LaTeX Warning: Text page 11 contains only floats.
+[11] (./tables/table_2_hi_screening_steps.tex) (./tables/table_2_6.tex))
+(./chapters/chapter03.tex
 
+[12
 
-Overfull \vbox (5.14859pt too high) has occurred while \output is active []
-
-
-
-[11] (./chapters/chapter03.tex
-
-[12] (./figures/figure_3_1.tex
+] (./figures/figure_3_1.tex
 File: figures/01.png Graphic file (type bmp)
 <figures/01.png>
-) (./figures/figure_3_2.tex
+)
+
+[13] (./figures/figure_3_2.tex
 File: figures/02.png Graphic file (type bmp)
 <figures/02.png>
 )
 
-[13]
-
-[14] (./figures/figure_3_3.tex
-File: figures/fig3_3_attention_comparison.png Graphic file (type bmp)
-<figures/fig3_3_attention_comparison.png>
-)
+[14]
 
 [15]
 
-[16]) (./chapters/chapter04.tex
+[16] (./figures/figure_3_3.tex
+File: figures/fig3_3_attention_comparison.png Graphic file (type bmp)
+<figures/fig3_3_attention_comparison.png>
+)) (./chapters/chapter04.tex
 
-[17] (./tables/table_4_3_initialization.tex) (./tables/table_4_3.tex)
+[17]
 
-[18] (./tables/table_4_1.tex) (./tables/table_4_4.tex)
-(./figures/figure_4_2.tex
+[18] (./tables/table_2_5.tex) (./tables/table_4_hi_input.tex
+LaTeX Font Info:    Calculating math sizes for size <7.5> on input line 8.
+)
+
+[19] (./tables/table_4_3_initialization.tex) (./tables/table_4_3.tex)
+(./tables/table_4_1.tex)
+
+[20] (./tables/table_4_4.tex) (./figures/figure_4_2.tex
 File: figures/Oxford/cell2.png Graphic file (type bmp)
 <figures/Oxford/cell2.png>
 File: figures/Oxford/cell3.png Graphic file (type bmp)
@@ -1086,13 +1078,16 @@ File: figures/Oxford/cell7.png Graphic file (type bmp)
 <figures/Oxford/cell7.png>
 File: figures/Oxford/cell8.png Graphic file (type bmp)
 <figures/Oxford/cell8.png>
-) (./tables/table_4_5.tex
+)
+(./tables/table_4_5.tex
 LaTeX Font Info:    Calculating math sizes for size <8.5> on input line 58.
 )
 
-[19]
+[21]
 
-[20] (./figures/figure_4_3.tex
+[22]
+
+[23] (./figures/figure_4_3.tex
 File: figures/CSCXMIT/CS-37.png Graphic file (type bmp)
 <figures/CSCXMIT/CS-37.png>
 File: figures/CSCXMIT/CX-37.png Graphic file (type bmp)
@@ -1107,17 +1102,16 @@ File: figures/CSCXMIT/b3c29.png Graphic file (type bmp)
 <figures/CSCXMIT/b3c29.png>
 ) (./tables/table_4_6.tex)
 
-[21]
+[24]
 
-[22]
+[25]
 
-[23] (./tables/table_4_7.tex)
+[26] (./tables/table_4_7.tex) (./tables/table_4_8.tex) (./tables/table_4_9.tex)
 
-[24] (./tables/table_4_8.tex) (./tables/table_4_9.tex)
 
-[25] (./tables/table_4_10.tex)
+[27] (./tables/table_4_10.tex) (./tables/table_4_11.tex)
 
-[26] (./tables/table_4_11.tex)
+[28]
 
 Package fontspec Info: 
 (fontspec)             Could not resolve font "FangSong/BI" (it probably
@@ -1144,40 +1138,40 @@ Package fontspec Info:
 (fontspec)             - 'normal' (m/n) with NFSS spec.:
 (fontspec)             <->"FangSong/OT:script=hani;language=dflt;"
 
- (./tables/table_4_12.tex
 
-[27]) (./figures/figure_4_4.tex
+
+[29] (./tables/table_4_12.tex) (./figures/figure_4_4.tex
 File: figures/fig4_storage_scaling.pdf Graphic file (type pdf)
 <use figures/fig4_storage_scaling.pdf>
 )
 
-[28]) (./chapters/chapter05.tex) (./backmatter/references.tex
+[30]) (./chapters/chapter05.tex) (./backmatter/references.tex
 LaTeX Font Info:    Calculating math sizes for size <9.4> on input line 13.
 
 
-[29]
-
-[30]
-
 [31]
 
-[32])
+[32]
 
-[33] (build/main.aux)
+[33]
+
+[34])
+
+[35] (build/main.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2022/07/14>
  ***********
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 417F8D73BF031461A305F3DB3902978B;4976.
+(rerunfilecheck)             Checksum: 6BEF0C44B45019772EACD47FE3FB338F;5124.
  ) 
 Here is how much of TeX's memory you used:
- 24165 strings out of 473832
- 522744 string characters out of 5730405
- 976529 words of memory out of 5000000
- 46668 multiletter control sequences out of 15000+600000
- 596020 words of font info for 231 fonts, out of 8000000 for 9000
+ 24115 strings out of 473832
+ 520379 string characters out of 5730405
+ 963529 words of memory out of 5000000
+ 46616 multiletter control sequences out of 15000+600000
+ 603446 words of font info for 264 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  93i,20n,120p,3275b,640s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on build/main.xdv (33 pages, 897980 bytes).
+Output written on build/main.xdv (35 pages, 914444 bytes).

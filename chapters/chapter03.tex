@@ -50,12 +50,12 @@ W_l
 并令该Block的输出为$\mathbf X_{l+1}=\mathbf Y_l$。其中，$\operatorname{SLFA}(\cdot)$、$\operatorname{DSConv\text{-}L}(\cdot)$和$\operatorname{FFN}(\cdot)$分别表示轻量级局部—全局融合注意力模块、大核深度可分离卷积模块和前馈神经网络；$W_l$为可学习缩放系数，$\operatorname{LN}(\cdot)$表示层归一化，$\operatorname{LN}_0(\cdot)$表示不含可学习仿射参数的层归一化。
 
 \input{figures/figure_3_1}
+\FloatBarrier
 
 \subsection{所设计的多尺度深度可分离卷积模块}
 
 本节首先介绍DSConv的基本结构，并将其与标准卷积进行计算量比较；随后说明DSConv-S和DSConv-L的结构配置及其多尺度特性。
 
-\input{figures/figure_3_2}
 
 \subsubsection{DSConv基本结构与计算量比较}
 
@@ -194,11 +194,13 @@ C_{\mathrm{in}}\times3C_{\mathrm{out}}\times D_F\times D_F
 
 其中，$3C_{\mathrm{out}}$和$D_F\times D_F$分别表示扩展后的通道数和特征图尺寸。
 
+\input{figures/figure_3_2}
+\FloatBarrier
+
 \subsection{所提出的轻量级局部—全局融合注意力模块}
 
 本节给出多头自注意力的一般形式，简要比较Softmax注意力与线性注意力，并在此基础上介绍所提出的SLFA模块。该模块兼顾局部—全局特征建模与计算效率。
 
-\input{figures/figure_3_3}
 
 \subsubsection{多头自注意力的一般形式}
 
@@ -391,3 +393,6 @@ W_a
 其中，$\mathbf X_F$表示SLFA的融合输出，$\operatorname{LN}(\mathbf X_S)$为局部分支的归一化表示，$\operatorname{RAA}(\mathbf X_S)$为RAA分支输出；$\operatorname{Dropout}(\cdot)$用于训练阶段的正则化\cite{ref75}，$W_a$为调节RAA分支贡献的可学习缩放系数。
 
 这种加性连接保留了DSConv-S提取的局部退化特征，并融合RAA建立的跨位置上下文，在形成局部—全局联合表示的同时，保持关于序列长度$N$的线性计算复杂度。
+
+\input{figures/figure_3_3}
+\FloatBarrier
