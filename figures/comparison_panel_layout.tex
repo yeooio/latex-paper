@@ -1,0 +1,12 @@
+% Shared physical geometry for Fig. 8 and Fig. 9.
+% Every cell: 62 x 70 mm; axes frame: 48 x 54 mm at (13.5, 9).
+% Titles are centered on the axes at x = 37.5 mm, not on label padding.
+% Per-image transforms preserve all source annotations and equalize frame size.
+\providecommand{\ComparisonPanel}[6]{%
+  \begingroup\setlength{\unitlength}{1mm}%
+  \begin{picture}(62,70)%
+    \put(#3,#4){\includegraphics[width=#5mm,height=#6mm]{#2}}%
+    \put(37.5,67){\makebox(0,0){\fontsize{10pt}{12pt}\selectfont\bfseries\strut #1}}%
+  \end{picture}%
+  \endgroup
+}

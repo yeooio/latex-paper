@@ -18,9 +18,6 @@
 
 （4）\textbf{性能评价。} 将训练后的模型直接用于相应数据集的其他电池，比较不同模型的 SOH 估计精度、跨电池泛化性能及计算与存储开销。进一步通过消融实验分析关键模块的作用，并通过跨数据集迁移实验考察模型的跨域适应能力。
 
-\input{figures/figure_2_1}
-\FloatBarrier
-
 \subsection{典型电池数据集}
 
 为考察所提方法在不同电池体系和运行条件下的泛化能力，选取 Oxford、CALCE CS2、CALCE CX2 和 MIT/Severson 四组公开电池老化数据开展实验。这些数据集涵盖软包、方形和圆柱形电池，在材料体系、标称容量及运行条件等方面存在明显差异，可为模型在不同电池退化场景下的评估提供具有多样性的实验数据。各数据集的主要特性汇总于\cref{tab:2-1}。\cref{fig:2-2}(a)--(d)展示了所选电池的容量衰减曲线，\cref{fig:2-2}(e)--(h)给出了各数据集中代表性电池在不同 SOH 水平下的充电电压曲线。各数据集的具体情况如下。
@@ -41,7 +38,6 @@ MIT/Severson 数据集由麻省理工学院、斯坦福大学和丰田研究院�
 
 \input{tables/table_2_1}
 \input{figures/figure_2_2}
-\FloatBarrier
 
 \subsection{特征工程}
 
@@ -103,7 +99,6 @@ Q_{\mathrm{dch}}(V_h,V_l)=\frac{1}{3600}\int_{\{t:\,V_l\leq V_{\mathrm{dch}}(t)\
 
 \input{tables/table_2_2}
 \input{figures/figure_2_3}
-\FloatBarrier
 
 \subsubsection{组级双相关 MS-CCCT}
 \label{sec:ms-ccct}
@@ -151,6 +146,7 @@ MS-CCCT 采用由粗到细的三阶段搜索。Oxford 数据集的初始搜索�
 
 Oxford Cell1 和 Cell2 的相关性结果如\cref{fig:2-4}所示。图中同时展示了候选指标与 SOH 以及候选指标相互之间的 PCC 和 SCC。矩阵下三角列出相关系数，上三角通过圆圈大小和颜色深浅表示相关强度。圆圈越大、颜色越深，表示相应变量之间的相关性越强。
 
+\input{figures/figure_2_4}
 
 同一候选指标在两节电池上的相关性表现并不完全相同。HI5（DTV 峰值）在 Cell1 上的绝对 PCC 和绝对 SCC 分别为 0.949 和 0.966，在 Cell2 上则降至 0.898 和 0.902；相比之下，HI1 在两节电池上均保持较高的相关性。若仅依据 Cell1 的相关性结果，HI5 会表现为强相关指标，但这一结果无法反映其在 Cell2 上的相关水平。单节电池上的相关性排序由此难以完整代表候选指标在其他电池上的表现。
 
@@ -165,8 +161,5 @@ Oxford Cell1 和 Cell2 的相关性结果如\cref{fig:2-4}所示。图中同时�
 
 固定后的 HI1 在 Cell3--Cell8 上的绝对 PCC 为 0.997874--0.999337。与已有健康指标的比较结果见\cref{tab:2-hi-literature}，其相关水平均高于所列样本熵、DTV/IC 特征及充电电压曲线斜率在相应电池上的已报道值，说明 HI1 在其余六节电池上仍保持较高的线性相关性。
 
-\input{figures/figure_2_4}
-\clearpage
 \input{tables/table_2_hi_screening_steps}
 \input{tables/table_2_6}
-\FloatBarrier

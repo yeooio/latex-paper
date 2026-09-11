@@ -1,16 +1,12 @@
-本章介绍MS-AgentNet的总体架构，并阐述所设计的包含DSConv-S和DSConv-L在内的多尺度深度可分离卷积模块；在此基础上，详细说明所提出的轻量级局部—全局融合注意力（Slim Local-Global Fusion Attention，SLFA）模块。
+为同时应对电池SOH估计中精度与计算效率两方面的挑战，本文提出一种轻量级多尺度智能体网络（Multi-Scale Agent Network，MS-AgentNet）。其命名中的“MS”源于由小核DSConv-S与大核DSConv-L构成的多尺度卷积设计，用于高效提取不同时间尺度的退化特征。下文介绍MS-AgentNet的总体架构与工作流程，阐述所设计的多尺度深度可分离卷积模块，并详细说明轻量级局部—全局融合注意力（Slim Local-Global Fusion Attention，SLFA）模块。
 
-\subsection{MS-AgentNet总体架构与数据流}
+\subsection{MS-AgentNet架构概述}
 
-针对现有SOH估计模型在估计精度与计算效率之间难以兼顾的问题，本文提出一种轻量级多尺度智能体网络（Multi-Scale Agent Network，MS-AgentNet）。该模型采用小核与大核深度可分离卷积提取不同时间尺度的退化特征，并结合ReLU²智能体注意力（ReLU² Agent Attention，RAA）进行跨位置全局信息交互。其中，“MS”表示由小核DSConv-S与大核DSConv-L构成的多尺度卷积设计。
+MS-AgentNet的总体架构如\cref{fig:3-1}所示：健康指标（Health Indicators，HIs）序列经滑动窗口划分为样本片段，通过线性嵌入层映射至$d$维特征空间后输入MS-AgentNet Block；Block输出经层归一化、展平和线性读出后得到SOH估计值，训练时以每个输入窗口后紧邻循环的真实SOH值作为监督标签。
 
-MS-AgentNet的整体架构如\cref{fig:3-1}所示。健康指标（Health Indicators，HIs）序列经滑动窗口分割后，首先通过线性嵌入层映射至$d$维特征空间；随后，嵌入特征进入MS-AgentNet Block，并在Block内依次完成局部—全局特征融合、长尺度特征细化与非线性映射。最后，模型对输出特征进行层归一化、展平和线性读出，得到SOH估计值。
+从数学角度看，设第$l$个MS-AgentNet Block的输入为$\mathbf X_l\in\mathbb R^{B\times N\times d}$，其中$B$为批量大小，$N$为输入序列长度，$d$为特征嵌入维度。Block通过以下三个步骤完成特征变换：
 
-训练过程中，每个输入窗口以窗口后紧邻循环的真实SOH值作为监督标签。
-
-从数学角度看，设第$l$个MS-AgentNet Block的输入为$\mathbf X_l\in\mathbb R^{B\times N\times d}$，其中$B$为批量大小，$N$为输入序列长度，$d$为嵌入维度。其内部特征变换可表示为以下过程：
-
-步骤1：局部—全局融合。输入特征先由SLFA模块完成小核局部增强和智能体全局交互：
+\textbf{步骤1：局部—全局特征融合。} 输入$\mathbf X_l$经SLFA模块处理。SLFA利用DSConv-S提取局部特征，并通过ReLU$^2$智能体注意力（ReLU$^2$ Agent Attention，RAA）建立跨位置全局信息交互：
 
 \begin{equation}
 \mathbf X_l'
@@ -19,7 +15,7 @@ MS-AgentNet的整体架构如\cref{fig:3-1}所示。健康指标（Health Indica
 \label{eq:block_slfa}
 \end{equation}
 
-步骤2：长尺度特征细化。为提取较长时间尺度的退化特征，中间特征$\mathbf X_l'$先经层归一化，再通过DSConv-L模块，所得特征经可学习系数$W_l$缩放后，以残差形式与$\mathbf X_l'$相加：
+\textbf{步骤2：长尺度特征细化。} SLFA的输出$\mathbf X_l'$经层归一化后输入DSConv-L，以提取较长时间尺度的退化特征。DSConv-L的输出经$W_l$缩放，并与$\mathbf X_l'$进行残差相加：
 
 \begin{equation}
 \mathbf X_l''
@@ -34,7 +30,7 @@ W_l
 \label{eq:block_dsconv_l}
 \end{equation}
 
-步骤3：非线性映射。细化后的特征$\mathbf X_l''$经层归一化后输入FFN，并通过残差连接得到输出$\mathbf Y_l$：
+\textbf{步骤3：非线性映射。} 特征$\mathbf X_l''$经$\operatorname{LN}_0$处理后输入前馈神经网络（FFN），并与$\mathbf X_l''$进行残差相加，得到Block输出$\mathbf Y_l$：
 
 \begin{equation}
 \mathbf Y_l
@@ -47,14 +43,13 @@ W_l
 \label{eq:block_ffn}
 \end{equation}
 
-并令该Block的输出为$\mathbf X_{l+1}=\mathbf Y_l$。其中，$\operatorname{SLFA}(\cdot)$、$\operatorname{DSConv\text{-}L}(\cdot)$和$\operatorname{FFN}(\cdot)$分别表示轻量级局部—全局融合注意力模块、大核深度可分离卷积模块和前馈神经网络；$W_l$为可学习缩放系数，$\operatorname{LN}(\cdot)$表示层归一化，$\operatorname{LN}_0(\cdot)$表示不含可学习仿射参数的层归一化。
+令$\mathbf Y_l$作为下一Block的输入，即$\mathbf X_{l+1}=\mathbf Y_l$。其中，$W_l$为可学习缩放系数；$\operatorname{LN}$和$\operatorname{LN}_0$均表示层归一化，$\operatorname{LN}_0$不使用额外的缩放和偏置参数。
 
 \input{figures/figure_3_1}
-\FloatBarrier
 
 \subsection{所设计的多尺度深度可分离卷积模块}
 
-本节首先介绍DSConv的基本结构，并将其与标准卷积进行计算量比较；随后说明DSConv-S和DSConv-L的结构配置及其多尺度特性。
+为兼顾多尺度局部特征提取与计算效率，本节首先介绍DSConv的基本结构，并将其与标准卷积进行计算量比较；随后说明DSConv-S和DSConv-L的结构配置及其功能分工。
 
 
 \subsubsection{DSConv基本结构与计算量比较}
@@ -112,90 +107,84 @@ k\times k\times C_{\mathrm{in}}\times C_{\mathrm{out}}\times D_F\times D_F
 
 2. \textbf{局部分支保留。} 在SLFA中，$\mathbf X_S$同时传递至RAA分支和局部分支。局部分支对$\mathbf X_S$进行层归一化后传递至融合端，并与RAA分支建立的跨位置上下文进行融合，形成局部特征与全局信息的互补表示。
 
-DSConv-S采用两倍通道扩展。输入首先经转置使特征维度对应卷积通道维度，再通过第一层$1\times1$逐点卷积完成通道扩展。随后，$1\times5$深度卷积在各通道内提取短邻域特征，并经ReLU激活；第二层$1\times1$逐点卷积进一步融合通道信息并恢复输出维度。最后，输出经逆转置后与输入通过残差连接融合。上述过程表示为：
+DSConv-S采用两倍通道扩展。给定输入特征$\mathbf X\in\mathbb R^{B\times N\times d}$，其中$B$、$N$和$d$分别表示批量大小、序列长度和嵌入维度，输入首先经转置使嵌入维度对应卷积通道维度，随后通过第一层$1\times1$逐点卷积将通道维度扩展至$2d$：
+
+\begin{equation}
+\mathbf Y_1
+=
+\operatorname{PW}_{\uparrow}
+\left(
+\mathcal T(\mathbf X)
+\right)
+\in\mathbb R^{B\times 2d\times N}.
+\end{equation}
+
+扩展后的特征通过$1\times5$深度卷积，该卷积在各通道内独立处理序列特征，以提取短邻域信息：
+
+\begin{equation}
+\mathbf Y_2
+=
+\operatorname{DW}_{5}(\mathbf Y_1)
+\in\mathbb R^{B\times 2d\times N}.
+\end{equation}
+
+随后，应用ReLU激活函数引入非线性：
+
+\begin{equation}
+\mathbf Y_3
+=
+\operatorname{ReLU}(\mathbf Y_2).
+\end{equation}
+
+之后，第二层$1\times1$逐点卷积融合不同通道的信息，并将通道维度恢复为$d$：
+
+\begin{equation}
+\mathbf Y_4
+=
+\operatorname{PW}_{\downarrow}(\mathbf Y_3)
+\in\mathbb R^{B\times d\times N}.
+\end{equation}
+
+最后，输出经逆转置恢复至原始排列，并与输入通过残差连接融合：
 
 \begin{equation}
 \mathbf X_S
 =
-\mathbf X
-+
-\mathcal T^{-1}
-[ 
-\operatorname{PW}_{\downarrow}
-(
-\operatorname{ReLU}
-(
-\operatorname{DW}_{5}
-(
-\operatorname{PW}_{\uparrow}
-(
-\mathcal T(\mathbf X)
-)
-)
-)
-)
-)].
+\operatorname{DSConv\text{-}S}(\mathbf X)
+=
+\mathbf X+\mathcal T^{-1}(\mathbf Y_4).
 \label{eq:dsconv_s}
 \end{equation}
 
-其中，$\operatorname{PW}_{\uparrow}$和$\operatorname{PW}_{\downarrow}$分别表示通道扩展和通道恢复的逐点卷积，$\operatorname{DW}_{5}$表示尺寸为$1\times5$的深度卷积，$\mathcal T(\cdot)$与$\mathcal T^{-1}(\cdot)$分别表示转置和逆转置操作。为便于后文表述，将上述过程简记为
-
-\begin{equation*}
-\mathbf X_S=\operatorname{DSConv\text{-}S}(\mathbf X).
-\end{equation*}
+其中，$\operatorname{PW}_{\uparrow}$和$\operatorname{PW}_{\downarrow}$分别表示通道扩展和通道恢复的逐点卷积，$\operatorname{DW}_{5}$表示尺寸为$1\times5$的深度卷积，$\mathcal T(\cdot)$与$\mathcal T^{-1}(\cdot)$分别表示转置和逆转置操作。
 
 \textbf{计算分析。} 在两倍通道扩展条件下，DSConv-S的计算成本主要来自两层$1\times1$逐点卷积和一层$1\times5$深度卷积，可表示为：
 
-\begin{equation*}
+\begin{equation}
 C_{\mathrm{in}}\times2C_{\mathrm{out}}\times D_F\times D_F
 +1\times5\times2C_{\mathrm{out}}\times D_F\times D_F
-+2C_{\mathrm{out}}\times C_{\mathrm{out}}\times D_F\times D_F,
-\end{equation*}
++2C_{\mathrm{out}}\times C_{\mathrm{out}}\times D_F\times D_F.
+\label{eq:dsconv_s_expanded_cost}
+\end{equation}
 
 其中，$2C_{\mathrm{out}}$和$D_F\times D_F$分别表示扩展后的通道数和特征图尺寸。
 
-\subsubsection{DSConv-L：后融合长尺度细化}
+\subsubsection{DSConv-L：长尺度特征细化}
 
-DSConv-L置于SLFA之后，利用大核卷积从融合后的特征中提取较长时间尺度的退化信息。
-
-DSConv-L同样按照“通道扩展—卷积特征提取—通道恢复”的顺序组织，并采用三倍通道扩展和$1\times31$深度卷积。其计算过程表示为：
-
-\begin{equation}
-\operatorname{DSConv\text{-}L}(\mathbf X)
-=
-\mathcal T^{-1}
-[ 
-\operatorname{PW}_{L,\mathrm{out}}
-(
-\operatorname{ReLU}
-(
-\operatorname{DW}_{31}
-(
-\operatorname{PW}_{L,\uparrow}
-(
-\mathcal T(\mathbf X)
-)
-)
-)
-)
-)].
-\label{eq:dsconv_l}
-\end{equation}
-
-其中，$\operatorname{PW}_{L,\uparrow}$和$\operatorname{PW}_{L,\mathrm{out}}$分别表示通道扩展和通道恢复的逐点卷积，$\operatorname{DW}_{31}$表示尺寸为$1\times31$的大核深度卷积。
+DSConv-L置于SLFA之后，采用三倍通道扩展和$1\times31$深度卷积，从融合表示中提取较长时间尺度的退化特征。两层$1\times1$逐点卷积分别完成通道扩展与恢复，整体变换顺序与DSConv-S一致；其残差连接在MS-AgentNet Block层完成，如式\eqref{eq:block_dsconv_l}所示。
 
 \textbf{计算分析。} 在三倍通道扩展条件下，DSConv-L的计算成本可表示为：
 
-\begin{equation*}
+\begin{equation}
 C_{\mathrm{in}}\times3C_{\mathrm{out}}\times D_F\times D_F
 +1\times31\times3C_{\mathrm{out}}\times D_F\times D_F
-+3C_{\mathrm{out}}\times C_{\mathrm{out}}\times D_F\times D_F,
-\end{equation*}
++3C_{\mathrm{out}}\times C_{\mathrm{out}}\times D_F\times D_F.
+\label{eq:dsconv_l_expanded_cost}
+\end{equation}
 
 其中，$3C_{\mathrm{out}}$和$D_F\times D_F$分别表示扩展后的通道数和特征图尺寸。
 
 \input{figures/figure_3_2}
-\FloatBarrier
 
 \subsection{所提出的轻量级局部—全局融合注意力模块}
 
@@ -395,4 +384,3 @@ W_a
 这种加性连接保留了DSConv-S提取的局部退化特征，并融合RAA建立的跨位置上下文，在形成局部—全局联合表示的同时，保持关于序列长度$N$的线性计算复杂度。
 
 \input{figures/figure_3_3}
-\FloatBarrier
