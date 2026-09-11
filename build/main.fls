@@ -256,6 +256,11 @@ INPUT ./table-style.tex
 INPUT table-style.tex
 INPUT d:/latex/texlive/2025/texmf-dist/tex/latex/placeins/placeins.sty
 INPUT d:/latex/texlive/2025/texmf-dist/tex/latex/placeins/placeins.sty
+INPUT ./unified-style-guide.tex
+INPUT ./unified-style-guide.tex
+INPUT ./unified-style-guide.tex
+INPUT ./unified-style-guide.tex
+INPUT unified-style-guide.tex
 INPUT build/main.aux
 INPUT build/main.aux
 INPUT build/main.aux

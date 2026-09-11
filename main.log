@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.8.5)  10 SEP 2026 14:11
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.8.5)  12 SEP 2026 00:49
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -845,15 +845,11 @@ Package fontspec Info:
 (fontspec)             - 'bold' (b/n) with NFSS spec.:
 (fontspec)             <->"SimHei/OT:script=hani;language=dflt;"
 
-Package newfloat Info: New float `algorithm' with options `fileext=loa,listname
-={Algorithms},name=Algorithm' on input line 44.
-\c@algorithm=\count349
-Package newfloat Info: float type `algorithm'=4 on input line 44.
 (./table-style.tex
 (d:/latex/texlive/2025/texmf-dist/tex/latex/placeins/placeins.sty
 Package: placeins 2005/04/18  v 2.2
-)))
-(./main.aux)
+))
+(./unified-style-guide.tex)) (./main.aux)
 \openout1 = `main.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 3.
@@ -1008,61 +1004,57 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 [3]) (./chapters/chapter02.tex (./figures/figure_2_1.tex
 File: figures/fig1.png Graphic file (type bmp)
 <figures/fig1.png>
-)
-(./tables/table_2_1.tex) (./figures/figure_2_2.tex
+
+
+[4])
+
+[5] (./tables/table_2_1.tex) (./figures/figure_2_2.tex
 File: figures/fig2.png Graphic file (type bmp)
 <figures/fig2.png>
 )
 
-[4]
+[6]
 
-[5]
-
-[6] (./tables/table_2_2.tex) (./figures/figure_2_3.tex
+[7] (./tables/table_2_2.tex) (./figures/figure_2_3.tex
 File: figures/fig3.png Graphic file (type bmp)
 <figures/fig3.png>
 )
 
-[7]
-
 [8]
 
-[9] (./algorithms/algorithm_2_1.tex
-Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
-put line 3.
-) (./figures/figure_2_4.tex
+[9] (./figures/figure_2_4.tex
 File: figures/fig4_pccscc_print.png Graphic file (type bmp)
 <figures/fig4_pccscc_print.png>
-))
+) (./tables/table_2_hi_screening_steps.tex)
+(./tables/table_2_6.tex
 
-[10] (./chapters/chapter03.tex
+[10])) (./chapters/chapter03.tex
 
 [11] (./figures/figure_3_1.tex
 File: figures/01.png Graphic file (type bmp)
 <figures/01.png>
-) (./figures/figure_3_2.tex
-File: figures/02.png Graphic file (type bmp)
-<figures/02.png>
 )
 
 [12]
 
-[13] (./figures/figure_3_3.tex
-File: figures/fig3_3_attention_comparison.png Graphic file (type bmp)
-<figures/fig3_3_attention_comparison.png>
+[13] (./figures/figure_3_2.tex
+File: figures/02.png Graphic file (type bmp)
+<figures/02.png>
 )
 
 [14]
 
-[15])
+[15]
 
-[16] (./chapters/chapter04.tex (./tables/table_2_5.tex)
-(./tables/table_4_hi_input.tex
+[16] (./figures/figure_3_3.tex
+File: figures/fig3_3_attention_comparison.png Graphic file (type bmp)
+<figures/fig3_3_attention_comparison.png>
+)) (./chapters/chapter04.tex
 
-[17]) (./tables/table_4_3_initialization.tex)
+[17] (./tables/table_4_hi_input.tex) (./tables/table_4_3_initialization.tex
 
-[18] (./tables/table_4_3.tex) (./tables/table_4_1.tex) (./tables/table_4_4.tex)
-(./figures/figure_4_2.tex
+[18]) (./tables/table_4_3.tex) (./tables/table_4_1.tex) (./tables/table_4_4.tex
+) (./figures/figure_4_2.tex (./figures/comparison_panel_layout.tex)
 File: figures/Oxford/cell2.png Graphic file (type bmp)
 <figures/Oxford/cell2.png>
 File: figures/Oxford/cell3.png Graphic file (type bmp)
@@ -1077,13 +1069,12 @@ File: figures/Oxford/cell7.png Graphic file (type bmp)
 <figures/Oxford/cell7.png>
 File: figures/Oxford/cell8.png Graphic file (type bmp)
 <figures/Oxford/cell8.png>
-) (./tables/table_4_5.tex
+)
+
+[19] (./tables/table_4_5.tex
 LaTeX Font Info:    Calculating math sizes for size <8.5> on input line 58.
-
-
-[19]
-
-[20]) (./figures/figure_4_3.tex
+) (./figures/figure_4_3.tex
+(./figures/comparison_panel_layout.tex)
 File: figures/CSCXMIT/CS-37.png Graphic file (type bmp)
 <figures/CSCXMIT/CS-37.png>
 File: figures/CSCXMIT/CX-37.png Graphic file (type bmp)
@@ -1098,17 +1089,22 @@ File: figures/CSCXMIT/b3c29.png Graphic file (type bmp)
 <figures/CSCXMIT/b3c29.png>
 ) (./tables/table_4_6.tex)
 
+[20]
+
 [21]
 
 [22]
 
-[23] (./tables/table_4_7.tex
+[23]
 
-[24]) (./tables/table_4_8.tex) (./tables/table_4_9.tex)
+[24] (./tables/table_4_7.tex) (./tables/table_4_8.tex)
 
-[25] (./tables/table_4_10.tex)
+[25
 
-[26] (./tables/table_4_11.tex)
+] (./tables/table_4_9.tex) (./tables/table_4_10.tex)
+(./tables/table_4_11.tex)
+
+[26]
 
 Package fontspec Info: 
 (fontspec)             Could not resolve font "FangSong/BI" (it probably
@@ -1140,9 +1136,10 @@ Package fontspec Info:
 [27] (./tables/table_4_12.tex) (./figures/figure_4_4.tex
 File: figures/fig4_storage_scaling.pdf Graphic file (type pdf)
 <use figures/fig4_storage_scaling.pdf>
-)
+))
+(./chapters/chapter05.tex
 
-[28]) (./chapters/chapter05.tex) (./backmatter/references.tex
+[28]) (./backmatter/references.tex
 LaTeX Font Info:    Calculating math sizes for size <9.4> on input line 13.
 
 
@@ -1159,16 +1156,26 @@ LaTeX Font Info:    Calculating math sizes for size <9.4> on input line 13.
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2022/07/14>
  ***********
-Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 86439592F47A5289E133732321FE8DBE;5124.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+
+Package rerunfilecheck Warning: File `main.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `main.out':
+(rerunfilecheck)             Before: 15145EA0F7D913A5F53499396C9216C6;5085
+(rerunfilecheck)             After:  F0AEEBFA10F69B9484D712C094554151;4989.
  ) 
 Here is how much of TeX's memory you used:
- 24126 strings out of 473832
- 521147 string characters out of 5730405
- 977529 words of memory out of 5000000
- 46636 multiletter control sequences out of 15000+600000
- 596020 words of font info for 231 fonts, out of 8000000 for 9000
+ 24079 strings out of 473832
+ 518473 string characters out of 5730405
+ 981529 words of memory out of 5000000
+ 46580 multiletter control sequences out of 15000+600000
+ 597602 words of font info for 239 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 93i,19n,120p,3275b,604s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 93i,20n,120p,3275b,652s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on main.xdv (33 pages, 901692 bytes).
+Output written on main.xdv (33 pages, 885660 bytes).
