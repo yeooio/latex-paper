@@ -1,0 +1,149 @@
+% ===================================================================
+% 统一排版样式指南 - Unified Style Guide
+% ===================================================================
+% 本文件定义论文中所有图表的统一样式规范
+% 用于确保排版的一致性和美观性
+
+% ===================================================================
+% 1. 表格统一样式 (Table Unified Style)
+% ===================================================================
+
+% 表格标题字体：9pt，粗体标签
+\DeclareCaptionFont{unifiedtablefont}{\fontsize{9pt}{11.5pt}\selectfont}
+\captionsetup[table]{%
+  font=unifiedtablefont,
+  labelfont=bf,
+  textfont=normalfont,
+  justification=raggedright,
+  singlelinecheck=false,
+  width=\linewidth,
+  skip=5pt,
+  labelformat=tablelabel,
+  labelsep=none,
+  format=tabletwoline
+}
+
+% 表格主体样式命令
+\renewcommand{\TableStyle}{%
+  \centering
+  \setstretch{1}%
+  \fontsize{9pt}{11.5pt}\selectfont
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{0pt}%
+  \setlength{\tabcolsep}{4pt}%
+  \renewcommand{\arraystretch}{1.12}%
+  \setlength{\heavyrulewidth}{0.75pt}%
+  \setlength{\lightrulewidth}{0.45pt}%
+  \setlength{\cmidrulewidth}{0.45pt}%
+  \setlength{\aboverulesep}{0.6ex}%
+  \setlength{\belowrulesep}{0.6ex}%
+}
+
+% ===================================================================
+% 2. 图片统一样式 (Figure Unified Style)
+% ===================================================================
+
+% 图片标题字体：9pt
+\DeclareCaptionFont{unifiedfigurefont}{\fontsize{9pt}{11.5pt}\selectfont}
+\captionsetup[figure]{%
+  skip=4.5pt,
+  justification=centering,
+  singlelinecheck=false,
+  font=unifiedfigurefont,
+  labelfont=normalfont,
+  textfont=normalfont,
+  labelformat=figlabel,
+  labelsep=period
+}
+
+% 单张图片样式命令
+\newcommand{\SingleFigure}[3]{%
+  % #1: 图片文件路径
+  % #2: 图片宽度（默认0.85\textwidth）
+  % #3: caption文本
+  \begin{figure}[htbp]
+  \centering
+  \includegraphics[width=#2]{#1}
+  \caption{#3}
+  \end{figure}
+}
+
+% 并排图片样式命令（2列）
+\newcommand{\DualFigure}[6]{%
+  % #1: 左图路径, #2: 左图标题
+  % #3: 右图路径, #4: 右图标题
+  % #5: 整体caption, #6: label
+  \begin{figure}[htbp]
+  \centering
+  \begin{minipage}[t]{0.48\textwidth}
+    \centering
+    {\fontsize{9.5}{11.5}\selectfont\bfseries #2}\\[0.2em]
+    \includegraphics[width=\linewidth]{#1}
+  \end{minipage}%
+  \hfill
+  \begin{minipage}[t]{0.48\textwidth}
+    \centering
+    {\fontsize{9.5}{11.5}\selectfont\bfseries #4}\\[0.2em]
+    \includegraphics[width=\linewidth]{#3}
+  \end{minipage}
+  \caption{#5}
+  \label{#6}
+  \end{figure}
+}
+
+% 对比实验图专用样式（3列×2行，紧凑无留白）
+\newcommand{\ComparisonFigureGrid}[2]{%
+  % #1: minipage内容（已定义的子图结构）
+  % #2: 总caption
+  \begin{figure}[htbp]
+  \centering
+  \makebox[\textwidth][c]{%
+    \begin{minipage}{18.5cm}
+    \centering
+    #1
+    \end{minipage}%
+  }
+  \caption{#2}
+  \end{figure}
+}
+
+% 子图标题统一格式
+\newcommand{\SubFigTitle}[1]{%
+  {\fontsize{10}{12}\selectfont\bfseries #1}\\[-0.1em]%
+}
+
+% ===================================================================
+% 3. 浮动体间距控制 (Float Spacing Control)
+% ===================================================================
+
+% 文本与浮动体之间的垂直间距
+\setlength{\textfloatsep}{9pt plus 2pt minus 1pt}
+
+% 连续浮动体之间的间距
+\setlength{\floatsep}{8pt plus 2pt minus 1pt}
+
+% 顶部/底部浮动体与文本的间距
+\setlength{\intextsep}{8pt plus 2pt minus 1pt}
+
+% ===================================================================
+% 4. 图表编号格式 (Numbering Format)
+% ===================================================================
+
+% 图片编号格式：Fig. X
+\DeclareCaptionLabelFormat{figlabel}{Fig.\ #2}
+\crefname{figure}{Fig.}{Figs.}
+\Crefname{figure}{Fig.}{Figs.}
+
+% 表格编号格式：Table X
+\DeclareCaptionLabelFormat{tablelabel}{Table\ #2}
+\crefname{table}{Table}{Tables}
+\Crefname{table}{Table}{Tables}
+
+% ===================================================================
+% 5. 特殊说明
+% ===================================================================
+% - 所有表格必须使用\TableStyle命令
+% - 所有对比实验图（多子图网格）使用\ComparisonFigureGrid
+% - 子图标题使用\SubFigTitle命令确保字号一致
+% - 禁止手动调整个别图表的字号，必须使用统一命令
+% ===================================================================
