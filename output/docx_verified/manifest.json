@@ -1,6 +1,6 @@
 {
   "source_pdf": "C:\\Users\\c1342\\latex-paper\\main.pdf",
-  "pdf_sha256": "3b2457629ec81dd1d5b019085e0a0576653d983c221c08079aa559c3e5aedd47",
+  "pdf_sha256": "adb9161cdb8073c0ea3f0105f72a6e11791b26152ae669c852071e72a50c947b",
   "tables": [
     {
       "number": 1,
@@ -81,9 +81,9 @@
       "page": 18,
       "bbox": [
         54,
-        59.3913424000001,
+        263.75834240000006,
         541,
-        216.55
+        420.91
       ]
     },
     {
@@ -92,12 +92,12 @@
       "caption": "Initialization strategy comparison on Oxford Cell2.",
       "source": "C:\\Users\\c1342\\latex-paper\\tables\\table_4_3_initialization.tex",
       "image": "C:\\Users\\c1342\\latex-paper\\output\\docx_verified\\assets\\table_07.png",
-      "page": 18,
+      "page": 19,
       "bbox": [
         54,
-        552.4983424,
+        59.26934240000003,
         541,
-        699.61
+        206.38
       ]
     },
     {
@@ -109,23 +109,9 @@
       "page": 19,
       "bbox": [
         54,
-        59.37034240000003,
+        207.73334240000008,
         541,
-        152.05
-      ]
-    },
-    {
-      "number": 9,
-      "label": "tab:4-1",
-      "caption": "Hyperparameter configuration range of MS-AgentNet.",
-      "source": "C:\\Users\\c1342\\latex-paper\\tables\\table_4_1.tex",
-      "image": "C:\\Users\\c1342\\latex-paper\\output\\docx_verified\\assets\\table_09.png",
-      "page": 19,
-      "bbox": [
-        54,
-        204.47134240000003,
-        541,
-        299.9
+        300.41
       ]
     },
     {
@@ -137,9 +123,23 @@
       "page": 19,
       "bbox": [
         54,
-        414.0343424,
+        645.7463424,
         541,
-        618.33
+        741.17
+      ]
+    },
+    {
+      "number": 9,
+      "label": "tab:4-1",
+      "caption": "Hyperparameter configuration range of MS-AgentNet.",
+      "source": "C:\\Users\\c1342\\latex-paper\\tables\\table_4_1.tex",
+      "image": "C:\\Users\\c1342\\latex-paper\\output\\docx_verified\\assets\\table_09.png",
+      "page": 19,
+      "bbox": [
+        54,
+        400.9813424,
+        541,
+        605.28
       ]
     },
     {
@@ -151,9 +151,9 @@
       "page": 21,
       "bbox": [
         54,
-        59.3913424000001,
+        202.24834240000007,
         541,
-        664.52
+        741.61
       ]
     },
     {
@@ -179,9 +179,9 @@
       "page": 24,
       "bbox": [
         54,
-        201.79734240000005,
+        265.30134240000007,
         541,
-        335.72
+        399.22
       ]
     },
     {
@@ -193,9 +193,9 @@
       "page": 24,
       "bbox": [
         54,
-        345.0623424,
+        408.5673424,
         541,
-        478.98
+        542.49
       ]
     },
     {
@@ -249,9 +249,9 @@
       "page": 27,
       "bbox": [
         54,
-        350.5583424,
+        275.2233424000001,
         541,
-        489.74
+        414.41
       ]
     }
   ],
@@ -593,24 +593,10 @@
       "latex": "A_{ij}\\sim\\mathcal N\\!\\left(0,0.02^2\\right)"
     }
   ],
-  "destination": "C:/Users/c1342/latex-paper/output/docx_verified/MS-AgentNet_editable_final.docx",
+  "destination": "C:\\Users\\c1342\\latex-paper\\output\\docx_verified\\MS-AgentNet_editable_final.docx",
   "references": 84,
   "numbered_equations": 38,
   "images": 28,
-  "status": "verified_with_word_render_after_figure_aspect_fix",
-  "figure_corrections": [
-    {
-      "figure": "Fig. 8 / paper Figure 4.2",
-      "source_pdf_page": 20,
-      "crop": "main.pdf page 20 figure area",
-      "aspect_ratio_fixed": true
-    },
-    {
-      "figure": "Fig. 9 / paper Figure 4.3",
-      "source_pdf_page": 22,
-      "crop": "main.pdf page 22 figure area",
-      "aspect_ratio_fixed": true
-    }
-  ],
-  "render_pdf": "output/docx_verified/MS-AgentNet_final_render3.pdf"
+  "status": "verified_with_word_render",
+  "render_pages": 38
 }

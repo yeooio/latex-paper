@@ -138,7 +138,7 @@ with pdfplumber.open(PDF) as pdf:
             if n in (11,12): bottom += 14 # test-cell explanatory footnote
             box=(54,top-2,541,bottom)
             im=page.crop(box).to_image(resolution=320).original
-            dest=ASSETS/f'table_{n:02d}.png'; im.save(dest)
+            dest=ASSETS/f'table_{n:02d}.png'; im.save(dest, format='PNG', optimize=False)
             tables[n]={'image':str(dest),'page':page_no,'bbox':box}
     assert len(tables)==len(manifest['tables'])==18,(len(tables),len(manifest['tables']))
     for t in manifest['tables']: t.update(tables[t['number']])
@@ -250,7 +250,7 @@ for math in doc._element.xpath('.//m:oMath'):
 settings=doc.settings.element
 upd=OxmlElement('w:updateFields');upd.set(qn('w:val'),'true');settings.append(upd)
 
-destination=OUT/'MS-AgentNet_可编辑论文.docx'
+destination=OUT/'MS-AgentNet_editable_final.docx'
 doc.save(destination)
 manifest.update({'destination':str(destination),'references':len(entries),'numbered_equations':eqn,'images':len(doc.inline_shapes),'status':'awaiting_render_verification'})
 (OUT/'manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding='utf-8')
