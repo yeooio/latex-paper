@@ -332,7 +332,7 @@
       "caption": "SOH estimation results of different models on the Oxford dataset.",
       "images": [],
       "source": "C:\\Users\\c1342\\latex-paper\\figures\\figure_4_2.tex",
-      "image": "C:\\Users\\c1342\\latex-paper\\DOCX转换完整包\\处理后的图片\\figure_4_2_oxford_panel.png"
+      "image": "C:\\Users\\c1342\\latex-paper\\output\\docx_verified\\assets\\figure_18.png"
     },
     {
       "number": 9,
@@ -340,7 +340,7 @@
       "caption": "SOH estimation results of different models on the CALCE and MIT/Severson datasets.",
       "images": [],
       "source": "C:\\Users\\c1342\\latex-paper\\figures\\figure_4_3.tex",
-      "image": "C:\\Users\\c1342\\latex-paper\\DOCX转换完整包\\处理后的图片\\figure_4_3_calce_mit_panel.png"
+      "image": "C:\\Users\\c1342\\latex-paper\\output\\docx_verified\\assets\\figure_20.png"
     },
     {
       "number": 10,

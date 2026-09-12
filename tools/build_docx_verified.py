@@ -195,15 +195,15 @@ for p in list(doc.paragraphs):
     elif s.startswith('DOCXFIG'):
         n=int(s[7:]);f=next(x for x in manifest['figures'] if x['number']==n)
         if n in (8,9):
-            path=ROOT/'DOCX转换完整包/处理后的图片'/('figure_4_2_oxford_panel.png' if n==8 else 'figure_4_3_calce_mit_panel.png')
+            path=ASSETS/('figure_18.png' if n==8 else 'figure_20.png')
         elif n==10:
             with pdfplumber.open(ROOT/f['images'][0]) as figpdf:
                 path=ASSETS/'figure_10.png';figpdf.pages[0].to_image(resolution=300).save(path)
         else:path=ROOT/f['images'][0]
         f['image']=str(path)
         caption=p.insert_paragraph_before();p._p.addnext(caption._p)
-        set_image(p,path,169 if n not in (5,10) else 155)
-        bookmark(p,bookmark_name(f['label']));p.paragraph_format.keep_with_next=True
+        set_image(p,path,150 if n==9 else (169 if n not in (5,10) else 155))
+        bookmark(p,bookmark_name(f['label']));p.paragraph_format.keep_with_next=False
         caption.text='Fig. %d. %s'%(n,plain_caption(f['caption']))
         caption.alignment=WD_ALIGN_PARAGRAPH.CENTER;caption.paragraph_format.first_line_indent=Pt(0)
         for r in caption.runs:r.font.size=Pt(9)
@@ -255,3 +255,10 @@ doc.save(destination)
 manifest.update({'destination':str(destination),'references':len(entries),'numbered_equations':eqn,'images':len(doc.inline_shapes),'status':'awaiting_render_verification'})
 (OUT/'manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding='utf-8')
 print(json.dumps({k:v for k,v in manifest.items() if k not in ('tables','figures','equations')},ensure_ascii=False,indent=2))
+
+
+
+
+
+
+
