@@ -38,7 +38,7 @@ R^2=1-\frac{\sum_{i=1}^{n}\left(y_i-\hat{y}_i\right)^2}{\sum_{i=1}^{n}\left(y_i-
 
 \subsection{健康指标筛选结果与有效性分析}
 
-为验证组级健康指标筛选方法在识别跨电池稳定输入方面的有效性，本节以 Oxford 数据集为例比较不同健康指标输入下的 SOH 估计性能。根据 Cell1 上候选指标的 PCC 和 SCC，从 IC、DTV 和 DTC 三类特征中各选取一项综合相关性最高的指标，分别为 HI4、HI9 和 HI11，三者的综合相关性得分均高于 0.94。将上述指标与组级筛选得到的 CCCT 指标 HI1 分别输入 MS-AgentNet，并将 HI4、HI1、HI9 和 HI11 共同输入的方案记为 Fusion。不同输入下 Cell2--Cell8 的 SOH 估计结果见\cref{tab:4-hi-input}。
+为验证组级健康指标筛选方法在识别跨电池稳定输入方面的有效性，本节以 Oxford 数据集为例比较不同健康指标输入下的 SOH 估计性能。根据 Cell1 上候选指标的 PCC 和 SCC，从 IC、DTV 和 DTC 三类特征中各选取一项综合相关性最高的指标，分别为 HI4、HI9 和 HI11，三者的综合相关性得分均高于 0.94。将上述指标与组级筛选得到的 CCCT 指标 HI1 分别输入 MS-AgentNet，并将 HI1、HI4、HI9 和 HI11 共同输入的方案记为 Fusion。不同输入下 Cell2--Cell8 的 SOH 估计结果见\cref{tab:4-hi-input}。
 
 结果表明，HI1 在 Cell2--Cell8 上始终保持较高的估计精度，其平均 MAE、RMSE 和 MAPE 均为五种输入方案中的最低值，平均 MAPE 为 0.00615，即 0.615\%。当四项健康指标共同作为输入时，Fusion 的三项平均误差均排名第四，说明多类健康指标的直接组合没有形成进一步的性能增益。
 
@@ -72,6 +72,10 @@ A_{ij}\sim\mathcal N\!\left(0,0.02^2\right)
 
 MS-AgentNet 的主要超参数包括学习率、网络深度 $L$ 和嵌入维度 $d$，各参数的配置范围见\cref{tab:4-1}。在上述范围内，各数据集利用特征开发集合中的两节电池完成模型训练和配置，其中一节用于模型参数学习，另一节用于超参数配置。Oxford、CALCE CS2、CALCE CX2 和 MIT/Severson 数据集对应的训练电池与配置电池分别为 Cell1 与 Cell2、CS2\_36 与 CS2\_37、CX2\_36 与 CX2\_37 以及 b3c8 与 b3c13。
 
+五种模型的层配置见\cref{tab:4-4}。
+
+\input{tables/table_4_4}
+
 确定后的模型配置保持不变。在后续 SOH 估计性能比较中，MS-AgentNet 采用学习率 0.001、网络深度 $L=1$ 和嵌入维度 $d=16$。
 
 \input{tables/table_4_1}
@@ -83,10 +87,6 @@ MS-AgentNet 的主要超参数包括学习率、网络深度 $L$ 和嵌入维度
 
 \subsubsection{Oxford数据集上的估计精度分析}
 
-五种模型的层配置见\cref{tab:4-4}。
-
-\input{tables/table_4_4}
-
 \Cref{fig:4-2}和\cref{tab:4-5}展示了 MS-AgentNet、CNN-Transformer、CNN-LSTM、Transformer 和 LSTM 在 Oxford Cell2--Cell8 上的 SOH 估计结果和误差。
 
 \input{figures/figure_4_2}
@@ -96,12 +96,11 @@ MS-AgentNet 的主要超参数包括学习率、网络深度 $L$ 和嵌入维度
 定量结果表明，MS-AgentNet 在 Cell2、Cell3、Cell5 和 Cell6 上的 $R^2$、MAE、MAPE 和 RMSE 均为最优，并在 Cell4 上取得最高的 $R^2$ 和最低的 RMSE。从 Cell2--Cell8 的平均结果来看，MS-AgentNet 的平均 $R^2$ 为 0.98379，平均 MAE、MAPE 和 RMSE 分别为 0.00524、0.00615 和 0.00638，均在五种模型中排名第一。与 CNN-Transformer、CNN-LSTM、Transformer 和 LSTM 相比，其平均 MAE 分别降低了 2.42\%、8.87\%、4.20\% 和 12.52\%，平均 MAPE 分别降低了 2.38\%、8.48\%、3.76\% 和 12.52\%，平均 RMSE 分别降低了 5.06\%、11.39\%、5.62\% 和 15.83\%。上述结果表明，MS-AgentNet 在 Oxford 数据集上具有较高的 SOH 估计精度和良好的预测鲁棒性。
 
 \input{tables/table_4_5}
+\FloatBarrier
 
 \subsubsection{CALCE和MIT数据集上的跨电池泛化分析}
 
 本节进一步比较了 MS-AgentNet 与四种基线模型在 CALCE CS2、CALCE CX2 和 MIT/Severson 数据集上的 SOH 估计性能。上述数据集在电池材料和充放电协议方面与 Oxford 数据集存在差异，并呈现出平滑衰减、阶段性转折和寿命后期加速衰减等多样化退化动态。各模型的 SOH 估计结果如\cref{fig:4-3}所示。
-
-\input{figures/figure_4_3}
 
 从整体结果来看，各模型均能够跟踪不同电池的容量衰减趋势，但在局部非线性转折和寿命后期加速衰减阶段的预测表现上存在差异。其中，CX2\_38 经历了多次阶段性转折，并呈现出明显的非线性衰减尾部。局部放大结果显示，进入加速衰减阶段后，各模型的预测偏差逐渐扩大，MS-AgentNet 仍能较好地跟踪其加速衰减轨迹。对于退化轨迹较为连续的 CS2\_38 和 b3c29，MS-AgentNet 也能够保持与真实 SOH 的较好贴合。
 
@@ -109,6 +108,7 @@ MS-AgentNet 的主要超参数包括学习率、网络深度 $L$ 和嵌入维度
 
 从六节电池的平均结果来看，MS-AgentNet 的平均 $R^2$ 为 0.9896，平均 MAE、MAPE 和 RMSE 分别为 0.00707、0.013335 和 0.01188，均在五种模型中排名第一。与 CNN-Transformer、CNN-LSTM、Transformer 和 LSTM 相比，其平均 MAE 分别降低了 13.50\%、26.02\%、9.11\% 和 22.94\%，平均 MAPE 分别降低了 42.19\%、60.08\%、34.49\% 和 58.17\%，平均 RMSE 分别降低了 12.04\%、26.52\%、7.97\% 和 23.09\%。综合不同退化场景，MS-AgentNet 在平滑衰减、阶段性转折和寿命后期加速衰减过程中均保持了较低的估计误差，体现出较好的预测鲁棒性和跨电池泛化能力。
 
+\input{figures/figure_4_3}
 \input{tables/table_4_6}
 \FloatBarrier
 
@@ -163,13 +163,13 @@ CALCE CS2、CALCE CX2 和 Oxford 分别视为三个数据域，其中 CS2\_36、
 
 \subsubsection{模型复杂度分析}
 
-预测精度用于衡量 SOH 估计结果的可靠性，计算与存储开销则反映模型运行所需的资源条件\cite{ref77}。本文选取 MS-AgentNet、CNN-Transformer、CNN-LSTM、Transformer 和 LSTM 五类模型，从 FLOPs、训练时间、可训练参数量和权重存储占用四个方面比较模型的资源开销。其中，FLOPs 通过 THOP 库的 \texttt{profile} 函数统计，用于量化单次前向传播的计算量；训练时间采用 Python 的 \texttt{time} 模块记录；参数量和权重文件大小分别通过 \texttt{torchsummary} 库的 \texttt{summary} 函数和 \texttt{os.path.getsize} 函数获得。所有指标均在相同实验环境下测量。
+在实际应用中，除估计精度外，模型的计算效率与存储需求也是重要的评价指标\cite{ref77}。本文选取 MS-AgentNet、CNN-Transformer、CNN-LSTM、Transformer 和 LSTM 五种模型，从 FLOPs、训练时间、可训练参数量和权重存储占用四个方面比较模型的资源开销。其中，FLOPs 通过 THOP 库的 \texttt{profile} 函数统计，用于量化单次前向传播所需的浮点运算次数；训练时间通过 Python 的 \texttt{time} 模块以秒为单位记录，反映模型完成规定训练轮次所需的时长；可训练参数总数通过 \texttt{torchsummary} 库的 \texttt{summary} 函数统计；权重存储占用通过 Python 的 \texttt{os.path.getsize} 函数测量，并换算为 KB，表示保存模型权重所需的存储空间。所有指标均在相同实验环境下测量。
 
-复杂度比较采用相同的输入数据和训练设置。训练轮次、学习率、批次大小和丢弃率分别设置为 1000、0.01、128 和 0.1；五类模型均使用 CS2\_36 中的 HI1（3.80–4.00 V CCCT）与 HI2（IC 峰值），输入序列长度为 5，单样本输入形状为 $(1,5,2)$。基于 Transformer 的模型采用 16 维嵌入、16 维前馈层、4 个注意力头和单层编码器，基于 LSTM 的模型采用 16 维隐藏状态和四层网络。CNN-Transformer 的卷积模块位于多头自注意力模块之后，由两个一维卷积层和一个最大池化层组成，其核大小依次为 3、2 和 3，步长依次为 1、2 和 1，并采用 ReLU 激活函数\cite{ref31}；MS-AgentNet 采用本文提出的多尺度深度可分离卷积。各模型的复杂度结果见\cref{tab:4-12}。
+为在相同输入数据和训练条件下比较不同模型结构的复杂度，五种模型统一采用 CS2\_36 的 HI1 和 HI2 作为输入，序列长度设为 5，训练轮次、学习率、批次大小和丢弃率分别设为 1000、0.01、128 和 0.1。相应配置及复杂度比较结果见\cref{tab:4-12}。
 
-如\cref{tab:4-12}所示，MS-AgentNet 的 FLOPs、参数量和存储占用均为五种模型中的最低值，分别为 0.045760 M、4,643 和 26.18 KB。训练时间方面，LSTM 用时最短，为 64.327 s；MS-AgentNet 用时 122.979 s，与 CNN-Transformer 的 123.487 s 接近。与 CNN-Transformer 相比，MS-AgentNet 的 FLOPs、参数量和存储占用分别降低 13.7\%、25.6\% 和 25.1\%。因此，MS-AgentNet 的轻量化优势主要体现在前向计算量、参数量和存储占用，而非训练速度。
+尽管 LSTM 在统一复杂度测试中以 64.327 s 取得最短训练时间，但其对复杂退化模式的刻画仍有局限，整体 SOH 估计精度相对较低。相比之下，MS-AgentNet 在保持较高估计精度的同时，FLOPs、参数量和存储占用分别为 0.045760 M、4,643 和 26.18 KB，均为五种模型中的最低值。与 LSTM 相比，MS-AgentNet 的前向计算量降低 50.5\%，参数量和存储需求也更低。与 CNN-Transformer 相比，MS-AgentNet 的训练时间接近（122.979 s 与 123.487 s），而参数量和存储占用分别降低 25.6\% 和 25.1\%。相较 CNN-LSTM，其参数量和存储占用分别降低 70.8\% 和 61.3\%，体现出更紧凑的模型结构。
 
-为考察模型宽度变化下的存储开销，将五种模型的表示维度或隐藏维度分别设置为 16、32、64 和 128，其余设置保持不变。如\cref{fig:4-4}所示，五种模型的存储占用均随模型宽度增加而上升，MS-AgentNet 在四种测试宽度下始终保持最低值。当维度增至 128 时，其存储占用为 713.12 KB，较该维度下最接近的 Transformer 降低 32.2\%，表明其存储优势在所测试的模型宽度范围内保持稳定。结合前述 SOH 估计结果，MS-AgentNet 在预测精度与资源开销之间取得了较好的平衡，体现出面向资源受限 BMS 的轻量化应用潜力。
+为考察模型宽度变化下的存储开销，将五种模型的表示维度或隐藏维度分别设置为 16、32、64 和 128，其余设置保持不变。如\cref{fig:4-4}所示，五种模型的存储占用均随模型宽度增加而上升，但 MS-AgentNet 在四种测试宽度下始终保持最低值。当维度增至 128 时，其存储占用为 713.12 KB，较同一维度下最接近的 Transformer 降低 32.2\%。综合来看，MS-AgentNet 在 SOH 估计精度与计算、存储开销之间取得了较好的平衡，体现出面向资源受限 BMS 的轻量化应用潜力。
 
 \input{tables/table_4_12}
 \input{figures/figure_4_4}

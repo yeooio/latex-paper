@@ -1,11 +1,24 @@
-\begin{table}
+\begingroup
 \TableStyle
-\caption{SOH estimation errors of different models on the Oxford dataset.}
-\label{tab:4-5}
-\begin{tabularx}{\linewidth}{@{\extracolsep{\fill}}L{0.85}L{1.55}C{0.90}C{0.90}C{0.90}C{0.90}@{}}
+\renewcommand{\arraystretch}{0.98}
+\setlength\LTleft{0pt plus 1fill}
+\setlength\LTright{0pt plus 1fill}
+\begin{longtable}{@{}p{16mm}p{41mm}>{\centering\arraybackslash}p{23mm}>{\centering\arraybackslash}p{23mm}>{\centering\arraybackslash}p{23mm}>{\centering\arraybackslash}p{23mm}@{}}
+\caption{SOH estimation errors of different models on the Oxford dataset.}\label{tab:4-5}\\
 \toprule
 Cell & Method & $R^2$ & MAE & MAPE & RMSE \\
 \midrule
+\endfirsthead
+\multicolumn{6}{@{}l}{\fontsize{8.5pt}{11pt}\selectfont Table~\thetable\ continued}\\
+\toprule
+Cell & Method & $R^2$ & MAE & MAPE & RMSE \\
+\midrule
+\endhead
+\midrule
+\multicolumn{6}{r}{\fontsize{8pt}{10pt}\selectfont Continued on next page}\\
+\endfoot
+\bottomrule
+\endlastfoot
 Cell2$^{*}$  & MS-AgentNet       & \textbf{0.98890} & \textbf{0.00437} & \textbf{0.00535} & \textbf{0.00706} \\
              & CNN-Transformer  & 0.98532          & 0.00497          & 0.00609          & 0.00812          \\
              & CNN-LSTM         & 0.98341          & 0.00521          & 0.00635          & 0.00863          \\
@@ -53,7 +66,6 @@ Average & MS-AgentNet       & \textbf{0.98379} & \textbf{0.00524} & \textbf{0.00
         & CNN-LSTM          & 0.97997          & 0.00575          & 0.00672          & 0.00720          \\
         & Transformer       & 0.98197          & 0.00547          & 0.00639          & 0.00676          \\
         & LSTM              & 0.97780          & 0.00599          & 0.00703          & 0.00758          \\
-\bottomrule
-\end{tabularx}
+\end{longtable}
 \TableNote{Note: Cell2$^{*}$ denotes the cell used for model configuration, and its values are averages of five independent runs. The best results are shown in bold.}
-\end{table}
+\endgroup
