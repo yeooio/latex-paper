@@ -1,0 +1,616 @@
+{
+  "source_pdf": "C:\\Users\\c1342\\latex-paper\\main.pdf",
+  "pdf_sha256": "3b2457629ec81dd1d5b019085e0a0576653d983c221c08079aa559c3e5aedd47",
+  "tables": [
+    {
+      "number": 1,
+      "label": "tab:soh-method-comparison",
+      "caption": "Comparison of existing SOH estimation methods.",
+      "source": "C:\\Users\\c1342\\latex-paper\\tables\\table_1_comparison.tex",
+      "image": "C:\\Users\\c1342\\latex-paper\\output\\docx_verified\\assets\\table_01.png",
+      "page": 3,
+      "bbox": [
+        54,
+        169.83434240000008,
+        541,
+        463.0
+      ]
+    },
+    {
+      "number": 2,
+      "label": "tab:2-1",
+      "caption": "Description of the four battery datasets.",
+      "source": "C:\\Users\\c1342\\latex-paper\\tables\\table_2_1.tex",
+      "image": "C:\\Users\\c1342\\latex-paper\\output\\docx_verified\\assets\\table_02.png",
+      "page": 6,
+      "bbox": [
+        54,
+        59.3913424000001,
+        541,
+        331.32
+      ]
+    },
+    {
+      "number": 3,
+      "label": "tab:2-2",
+      "caption": "Definitions of the candidate HIs.",
+      "source": "C:\\Users\\c1342\\latex-paper\\tables\\table_2_2.tex",
+      "image": "C:\\Users\\c1342\\latex-paper\\output\\docx_verified\\assets\\table_03.png",
+      "page": 8,
+      "bbox": [
+        54,
+        59.3913424000001,
+        541,
+        308.8
+      ]
+    },
+    {
+      "number": 4,
+      "label": "tab:2-hi-screening-steps",
+      "caption": "Group-level health indicator screening steps.",
+      "source": "C:\\Users\\c1342\\latex-paper\\tables\\table_2_hi_screening_steps.tex",
+      "image": "C:\\Users\\c1342\\latex-paper\\output\\docx_verified\\assets\\table_04.png",
+      "page": 11,
+      "bbox": [
+        54,
+        109.48634240000001,
+        541,
+        293.36
+      ]
+    },
+    {
+      "number": 5,
+      "label": "tab:2-hi-literature",
+      "caption": "Absolute PCC comparison of different HIs on the Oxford dataset.",
+      "source": "C:\\Users\\c1342\\latex-paper\\tables\\table_2_6.tex",
+      "image": "C:\\Users\\c1342\\latex-paper\\output\\docx_verified\\assets\\table_05.png",
+      "page": 11,
+      "bbox": [
+        54,
+        302.58134240000004,
+        541,
+        446.59
+      ]
+    },
+    {
+      "number": 6,
+      "label": "tab:4-hi-input",
+      "caption": "SOH estimation errors of different health-indicator inputs on the Oxford dataset.",
+      "source": "C:\\Users\\c1342\\latex-paper\\tables\\table_4_hi_input.tex",
+      "image": "C:\\Users\\c1342\\latex-paper\\output\\docx_verified\\assets\\table_06.png",
+      "page": 18,
+      "bbox": [
+        54,
+        59.3913424000001,
+        541,
+        216.55
+      ]
+    },
+    {
+      "number": 7,
+      "label": "tab:4-3-initialization",
+      "caption": "Initialization strategy comparison on Oxford Cell2.",
+      "source": "C:\\Users\\c1342\\latex-paper\\tables\\table_4_3_initialization.tex",
+      "image": "C:\\Users\\c1342\\latex-paper\\output\\docx_verified\\assets\\table_07.png",
+      "page": 18,
+      "bbox": [
+        54,
+        552.4983424,
+        541,
+        699.61
+      ]
+    },
+    {
+      "number": 8,
+      "label": "tab:4-3",
+      "caption": "Convergence characteristics of MS-AgentNet on the Oxford and MIT datasets.",
+      "source": "C:\\Users\\c1342\\latex-paper\\tables\\table_4_3.tex",
+      "image": "C:\\Users\\c1342\\latex-paper\\output\\docx_verified\\assets\\table_08.png",
+      "page": 19,
+      "bbox": [
+        54,
+        59.37034240000003,
+        541,
+        152.05
+      ]
+    },
+    {
+      "number": 9,
+      "label": "tab:4-1",
+      "caption": "Hyperparameter configuration range of MS-AgentNet.",
+      "source": "C:\\Users\\c1342\\latex-paper\\tables\\table_4_1.tex",
+      "image": "C:\\Users\\c1342\\latex-paper\\output\\docx_verified\\assets\\table_09.png",
+      "page": 19,
+      "bbox": [
+        54,
+        204.47134240000003,
+        541,
+        299.9
+      ]
+    },
+    {
+      "number": 10,
+      "label": "tab:4-4",
+      "caption": "Layer configurations of different deep learning models.",
+      "source": "C:\\Users\\c1342\\latex-paper\\tables\\table_4_4.tex",
+      "image": "C:\\Users\\c1342\\latex-paper\\output\\docx_verified\\assets\\table_10.png",
+      "page": 19,
+      "bbox": [
+        54,
+        414.0343424,
+        541,
+        618.33
+      ]
+    },
+    {
+      "number": 11,
+      "label": "tab:4-5",
+      "caption": "SOH estimation errors of different models on the Oxford dataset.",
+      "source": "C:\\Users\\c1342\\latex-paper\\tables\\table_4_5.tex",
+      "image": "C:\\Users\\c1342\\latex-paper\\output\\docx_verified\\assets\\table_11.png",
+      "page": 21,
+      "bbox": [
+        54,
+        59.3913424000001,
+        541,
+        664.52
+      ]
+    },
+    {
+      "number": 12,
+      "label": "tab:4-6",
+      "caption": "SOH estimation errors of different models on the CALCE and MIT/Severson datasets.",
+      "source": "C:\\Users\\c1342\\latex-paper\\tables\\table_4_6.tex",
+      "image": "C:\\Users\\c1342\\latex-paper\\output\\docx_verified\\assets\\table_12.png",
+      "page": 23,
+      "bbox": [
+        54,
+        59.3913424000001,
+        541,
+        657.86
+      ]
+    },
+    {
+      "number": 13,
+      "label": "tab:4-7",
+      "caption": "Direct cross-dataset transfer results.",
+      "source": "C:\\Users\\c1342\\latex-paper\\tables\\table_4_7.tex",
+      "image": "C:\\Users\\c1342\\latex-paper\\output\\docx_verified\\assets\\table_13.png",
+      "page": 24,
+      "bbox": [
+        54,
+        201.79734240000005,
+        541,
+        335.72
+      ]
+    },
+    {
+      "number": 14,
+      "label": "tab:4-8",
+      "caption": "Transfer results after 30\\% target-domain adaptation.",
+      "source": "C:\\Users\\c1342\\latex-paper\\tables\\table_4_8.tex",
+      "image": "C:\\Users\\c1342\\latex-paper\\output\\docx_verified\\assets\\table_14.png",
+      "page": 24,
+      "bbox": [
+        54,
+        345.0623424,
+        541,
+        478.98
+      ]
+    },
+    {
+      "number": 15,
+      "label": "tab:4-9",
+      "caption": "Transfer results with different amounts of target-domain data.",
+      "source": "C:\\Users\\c1342\\latex-paper\\tables\\table_4_9.tex",
+      "image": "C:\\Users\\c1342\\latex-paper\\output\\docx_verified\\assets\\table_15.png",
+      "page": 25,
+      "bbox": [
+        54,
+        59.3913424000001,
+        541,
+        221.97
+      ]
+    },
+    {
+      "number": 16,
+      "label": "tab:4-10",
+      "caption": "Ablation results on different datasets.",
+      "source": "C:\\Users\\c1342\\latex-paper\\tables\\table_4_10.tex",
+      "image": "C:\\Users\\c1342\\latex-paper\\output\\docx_verified\\assets\\table_16.png",
+      "page": 26,
+      "bbox": [
+        54,
+        59.3913424000001,
+        541,
+        381.01
+      ]
+    },
+    {
+      "number": 17,
+      "label": "tab:4-11",
+      "caption": "Effects of different convolution scales.",
+      "source": "C:\\Users\\c1342\\latex-paper\\tables\\table_4_11.tex",
+      "image": "C:\\Users\\c1342\\latex-paper\\output\\docx_verified\\assets\\table_17.png",
+      "page": 26,
+      "bbox": [
+        54,
+        382.38234239999997,
+        541,
+        653.59
+      ]
+    },
+    {
+      "number": 18,
+      "label": "tab:4-12",
+      "caption": "Comprehensive performance of models under the same configuration.",
+      "source": "C:\\Users\\c1342\\latex-paper\\tables\\table_4_12.tex",
+      "image": "C:\\Users\\c1342\\latex-paper\\output\\docx_verified\\assets\\table_18.png",
+      "page": 27,
+      "bbox": [
+        54,
+        350.5583424,
+        541,
+        489.74
+      ]
+    }
+  ],
+  "figures": [
+    {
+      "number": 1,
+      "label": "fig:2-1",
+      "caption": "Flowchart of the developed SOH estimation approach.",
+      "images": [
+        "figures/fig1.png"
+      ],
+      "source": "C:\\Users\\c1342\\latex-paper\\figures\\figure_2_1.tex",
+      "image": "C:\\Users\\c1342\\latex-paper\\figures\\fig1.png"
+    },
+    {
+      "number": 2,
+      "label": "fig:2-2",
+      "caption": "Four battery datasets: (a)--(d) capacity degradation curves of Oxford, CALCE CS2, CALCE CX2, and MIT/Severson cells, respectively; (e)--(h) charging voltage curves of the four datasets in the same order.",
+      "images": [
+        "figures/fig2.png"
+      ],
+      "source": "C:\\Users\\c1342\\latex-paper\\figures\\figure_2_2.tex",
+      "image": "C:\\Users\\c1342\\latex-paper\\figures\\fig2.png"
+    },
+    {
+      "number": 3,
+      "label": "fig:2-3",
+      "caption": "Charge-side characteristic curves used for HI construction.",
+      "images": [
+        "figures/fig3.png"
+      ],
+      "source": "C:\\Users\\c1342\\latex-paper\\figures\\figure_2_3.tex",
+      "image": "C:\\Users\\c1342\\latex-paper\\figures\\fig3.png"
+    },
+    {
+      "number": 4,
+      "label": "fig:2-4",
+      "caption": "Correlation matrices of candidate HIs and SOH on the Oxford dataset.",
+      "images": [
+        "figures/fig4_pccscc_print.png"
+      ],
+      "source": "C:\\Users\\c1342\\latex-paper\\figures\\figure_2_4.tex",
+      "image": "C:\\Users\\c1342\\latex-paper\\figures\\fig4_pccscc_print.png"
+    },
+    {
+      "number": 5,
+      "label": "fig:3-1",
+      "caption": "Framework of MS-AgentNet. (a) Overall architecture; (b) core structure; (c) DSConv-L module.",
+      "images": [
+        "figures/01.png"
+      ],
+      "source": "C:\\Users\\c1342\\latex-paper\\figures\\figure_3_1.tex",
+      "image": "C:\\Users\\c1342\\latex-paper\\figures\\01.png"
+    },
+    {
+      "number": 6,
+      "label": "fig:3-2",
+      "caption": "The fundamental structures of convolutional modules: (a) standard convolution; (b) standard depthwise separable convolution; (c) DSConv-S module; and (d) DSConv-L module.",
+      "images": [
+        "figures/02.png"
+      ],
+      "source": "C:\\Users\\c1342\\latex-paper\\figures\\figure_3_2.tex",
+      "image": "C:\\Users\\c1342\\latex-paper\\figures\\02.png"
+    },
+    {
+      "number": 7,
+      "label": "fig:3-3",
+      "caption": "Comparison of (a) Softmax attention, (b) linear attention, (c) Agent Attention, and (d) the proposed SLFA module.",
+      "images": [
+        "figures/fig3_3_attention_comparison.png"
+      ],
+      "source": "C:\\Users\\c1342\\latex-paper\\figures\\figure_3_3.tex",
+      "image": "C:\\Users\\c1342\\latex-paper\\figures\\fig3_3_attention_comparison.png"
+    },
+    {
+      "number": 8,
+      "label": "fig:4-2",
+      "caption": "SOH estimation results of different models on the Oxford dataset.",
+      "images": [],
+      "source": "C:\\Users\\c1342\\latex-paper\\figures\\figure_4_2.tex",
+      "image": "C:\\Users\\c1342\\latex-paper\\DOCX转换完整包\\处理后的图片\\figure_4_2_oxford_panel.png"
+    },
+    {
+      "number": 9,
+      "label": "fig:4-3",
+      "caption": "SOH estimation results of different models on the CALCE and MIT/Severson datasets.",
+      "images": [],
+      "source": "C:\\Users\\c1342\\latex-paper\\figures\\figure_4_3.tex",
+      "image": "C:\\Users\\c1342\\latex-paper\\DOCX转换完整包\\处理后的图片\\figure_4_3_calce_mit_panel.png"
+    },
+    {
+      "number": 10,
+      "label": "fig:4-4",
+      "caption": "Storage sizes of five models at different model widths: (a) storage size at each width; (b) overall distribution across the tested widths.",
+      "images": [
+        "figures/fig4_storage_scaling.pdf"
+      ],
+      "source": "C:\\Users\\c1342\\latex-paper\\figures\\figure_4_4.tex",
+      "image": "C:\\Users\\c1342\\latex-paper\\output\\docx_verified\\assets\\figure_10.png"
+    }
+  ],
+  "equations": [
+    {
+      "number": 1,
+      "labels": [],
+      "latex": "\\mathrm{SOH}=\\frac{C_{\\mathrm{current}}}{C_{\\mathrm{rated}}}\\times100\\%,"
+    },
+    {
+      "number": 2,
+      "labels": [],
+      "latex": "CCCT(V_1,V_2)=t(V_2)-t(V_1),"
+    },
+    {
+      "number": 3,
+      "labels": [],
+      "latex": "IC=\\frac{dQ}{dV}\\approx\\frac{Q_{k+N}-Q_k}{V_{k+N}-V_k},"
+    },
+    {
+      "number": 4,
+      "labels": [],
+      "latex": "DTV=\\frac{dT}{dV}\\approx\\frac{T_{k+N}-T_k}{V_{k+N}-V_k},"
+    },
+    {
+      "number": 5,
+      "labels": [],
+      "latex": "DTC=\\frac{dT}{dQ}\\approx\\frac{T_{k+N}-T_k}{Q_{k+N}-Q_k},"
+    },
+    {
+      "number": 6,
+      "labels": [],
+      "latex": "Q_{\\mathrm{dch}}(V_h,V_l)=\\frac{1}{3600}\\int_{\\{t:\\,V_l\\leq V_{\\mathrm{dch}}(t)\\leq V_h\\}}\\left|I_{\\mathrm{dch}}(t)\\right|\\,dt,"
+    },
+    {
+      "number": 7,
+      "labels": [],
+      "latex": "\\eta=\\frac{E_{\\mathrm{dch}}}{E_{\\mathrm{ch}}}=\\frac{\\int_0^{t_{\\mathrm{dch}}}V_{\\mathrm{dch}}(t)\\left|I_{\\mathrm{dch}}(t)\\right|\\,dt}{\\int_0^{t_{\\mathrm{ch}}}V_{\\mathrm{ch}}(t)\\left|I_{\\mathrm{ch}}(t)\\right|\\,dt},"
+    },
+    {
+      "number": 8,
+      "labels": [],
+      "latex": "\\gamma_{i,j}=\n\\frac{\\displaystyle\\sum_{k=1}^{n_j}(f_{i,j,k}-\\bar{f}_{i,j})(y_{j,k}-\\bar{y}_j)}\n     {\\displaystyle\\sqrt{\\sum_{k=1}^{n_j}(f_{i,j,k}-\\bar{f}_{i,j})^2\\sum_{k=1}^{n_j}(y_{j,k}-\\bar{y}_j)^2}},"
+    },
+    {
+      "number": 9,
+      "labels": [],
+      "latex": "\\rho_{i,j}=\n\\frac{\\displaystyle\\sum_{k=1}^{n_j}\\bigl(R(f_{i,j,k})-\\bar{R}(f_{i,j})\\bigr)\\bigl(R(y_{j,k})-\\bar{R}(y_j)\\bigr)}\n{\\displaystyle\\sqrt{\\sum_{k=1}^{n_j}\\bigl(R(f_{i,j,k})-\\bar{R}(f_{i,j})\\bigr)^2\\sum_{k=1}^{n_j}\\bigl(R(y_{j,k})-\\bar{R}(y_j)\\bigr)^2}},"
+    },
+    {
+      "number": 10,
+      "labels": [],
+      "latex": "S_i=\\min(mPCC_i,mSCC_i)."
+    },
+    {
+      "number": 11,
+      "labels": [
+        "eq:block_slfa"
+      ],
+      "latex": "\\mathbf X_l'\n=\n\\operatorname{SLFA}(\\mathbf X_l)."
+    },
+    {
+      "number": 12,
+      "labels": [
+        "eq:block_dsconv_l"
+      ],
+      "latex": "\\mathbf X_l''\n=\n\\mathbf X_l'\n+\nW_l\n\\operatorname{DSConv\\text{-}L}\n\\left(\n\\operatorname{LN}(\\mathbf X_l')\n\\right)."
+    },
+    {
+      "number": 13,
+      "labels": [
+        "eq:block_ffn"
+      ],
+      "latex": "\\mathbf Y_l\n=\n\\mathbf X_l''+\n\\operatorname{FFN}\n\\left(\n\\operatorname{LN}_0(\\mathbf X_l'')\n\\right)."
+    },
+    {
+      "number": 14,
+      "labels": [
+        "eq:conv_cost"
+      ],
+      "latex": "C_{\\mathrm{Conv}}\n=\nk\\times k\\times C_{\\mathrm{in}}\\times C_{\\mathrm{out}}\\times D_F\\times D_F."
+    },
+    {
+      "number": 15,
+      "labels": [
+        "eq:dsconv_cost"
+      ],
+      "latex": "C_{\\mathrm{DSConv}}\n=\nk\\times k\\times C_{\\mathrm{in}}\\times D_F\\times D_F\n+\nC_{\\mathrm{in}}\\times C_{\\mathrm{out}}\\times D_F\\times D_F."
+    },
+    {
+      "number": 16,
+      "labels": [
+        "eq:dsconv_cost_ratio"
+      ],
+      "latex": "\\begin{aligned}\n\\frac{C_{\\mathrm{DSConv}}}{C_{\\mathrm{Conv}}}\n&=\n\\frac{\nk\\times k\\times C_{\\mathrm{in}}\\times D_F\\times D_F\n+\nC_{\\mathrm{in}}\\times C_{\\mathrm{out}}\\times D_F\\times D_F\n}{\nk\\times k\\times C_{\\mathrm{in}}\\times C_{\\mathrm{out}}\\times D_F\\times D_F\n} \\\\\n&=\n\\frac{1}{C_{\\mathrm{out}}}\n+\n\\frac{1}{k^2}.\n\\end{aligned}"
+    },
+    {
+      "number": 17,
+      "labels": [],
+      "latex": "\\mathbf Y_1\n=\n\\operatorname{PW}_{\\uparrow}\n\\left(\n\\mathcal T(\\mathbf X)\n\\right)\n\\in\\mathbb R^{B\\times 2d\\times N}."
+    },
+    {
+      "number": 18,
+      "labels": [],
+      "latex": "\\mathbf Y_2\n=\n\\operatorname{DW}_{5}(\\mathbf Y_1)\n\\in\\mathbb R^{B\\times 2d\\times N}."
+    },
+    {
+      "number": 19,
+      "labels": [],
+      "latex": "\\mathbf Y_3\n=\n\\operatorname{ReLU}(\\mathbf Y_2)."
+    },
+    {
+      "number": 20,
+      "labels": [],
+      "latex": "\\mathbf Y_4\n=\n\\operatorname{PW}_{\\downarrow}(\\mathbf Y_3)\n\\in\\mathbb R^{B\\times d\\times N}."
+    },
+    {
+      "number": 21,
+      "labels": [
+        "eq:dsconv_s"
+      ],
+      "latex": "\\mathbf X_S\n=\n\\operatorname{DSConv\\text{-}S}(\\mathbf X)\n=\n\\mathbf X+\\mathcal T^{-1}(\\mathbf Y_4)."
+    },
+    {
+      "number": 22,
+      "labels": [
+        "eq:dsconv_s_expanded_cost"
+      ],
+      "latex": "C_{\\mathrm{in}}\\times2C_{\\mathrm{out}}\\times D_F\\times D_F\n+1\\times5\\times2C_{\\mathrm{out}}\\times D_F\\times D_F\n+2C_{\\mathrm{out}}\\times C_{\\mathrm{out}}\\times D_F\\times D_F."
+    },
+    {
+      "number": 23,
+      "labels": [
+        "eq:dsconv_l_expanded_cost"
+      ],
+      "latex": "C_{\\mathrm{in}}\\times3C_{\\mathrm{out}}\\times D_F\\times D_F\n+1\\times31\\times3C_{\\mathrm{out}}\\times D_F\\times D_F\n+3C_{\\mathrm{out}}\\times C_{\\mathrm{out}}\\times D_F\\times D_F."
+    },
+    {
+      "number": 24,
+      "labels": [
+        "eq:qkv_projection"
+      ],
+      "latex": "\\mathbf Q_i=\\mathbf X\\mathbf W_i^Q,\\qquad\n\\mathbf K_i=\\mathbf X\\mathbf W_i^K,\\qquad\n\\mathbf V_i=\\mathbf X\\mathbf W_i^V."
+    },
+    {
+      "number": 25,
+      "labels": [
+        "eq:general_attention"
+      ],
+      "latex": "\\mathbf O_{i,p}\n=\n\\frac{\n\\displaystyle\\sum_{j=1}^{N}\n\\operatorname{Sim}\\left(\\mathbf Q_{i,p},\\mathbf K_{i,j}\\right)\\mathbf V_{i,j}\n}{\n\\displaystyle\\sum_{j=1}^{N}\n\\operatorname{Sim}\\left(\\mathbf Q_{i,p},\\mathbf K_{i,j}\\right)\n},\n\\qquad p=1,2,\\ldots,N."
+    },
+    {
+      "number": 26,
+      "labels": [
+        "eq:softmax_attention"
+      ],
+      "latex": "\\mathbf O_i\n=\n\\operatorname{Softmax}\n\\left(\n\\frac{\\mathbf Q_i\\mathbf K_i^{\\mathrm T}}{\\sqrt{d_h}}\n\\right)\n\\mathbf V_i."
+    },
+    {
+      "number": 27,
+      "labels": [
+        "eq:linear_attention"
+      ],
+      "latex": "\\mathbf O_i\n=\n\\frac{\n\\phi(\\mathbf Q_i)\n\\left[\n\\phi(\\mathbf K_i)^{\\mathrm T}\\mathbf V_i\n\\right]\n}{\n\\phi(\\mathbf Q_i)\n\\left[\n\\phi(\\mathbf K_i)^{\\mathrm T}\\mathbf 1\n\\right]\n}."
+    },
+    {
+      "number": 28,
+      "labels": [
+        "eq:raa_qkv_scaling"
+      ],
+      "latex": "\\mathbf Q_i=\\operatorname{Split}_i(\\mathbf X\\odot\\mathbf s_q),\\quad\n\\mathbf K_i=\\operatorname{Split}_i(\\mathbf X\\odot\\mathbf s_k),\\quad\n\\mathbf V_i=\\operatorname{Split}_i(\\mathbf X\\odot\\mathbf s_v)."
+    },
+    {
+      "number": 29,
+      "labels": [
+        "eq:relu2_normalization"
+      ],
+      "latex": "\\left[\\mathcal R_2(\\mathbf Z)\\right]_{r,c}\n=\n\\begin{cases}\n\\dfrac{\\operatorname{ReLU}(\\mathbf Z_{r,c})^2}\n{\\sum_{j=1}^{M}\\operatorname{ReLU}(\\mathbf Z_{r,j})^2},\n&\n\\sum_{j=1}^{M}\\operatorname{ReLU}(\\mathbf Z_{r,j})^2>0,\\\\[10pt]\n\\dfrac{1}{M},\n&\n\\sum_{j=1}^{M}\\operatorname{ReLU}(\\mathbf Z_{r,j})^2=0.\n\\end{cases}"
+    },
+    {
+      "number": 30,
+      "labels": [
+        "eq:agent_aggregation"
+      ],
+      "latex": "\\boldsymbol{\\Phi}_{k,i}\n=\n\\mathcal R_2\n\\left(\n\\frac{\\mathbf A_i\\mathbf K_i^{\\mathrm T}}{\\sqrt{d_h}}\n\\right),\n\\qquad\n\\mathbf V_{A,i}\n=\n\\boldsymbol{\\Phi}_{k,i}\\mathbf V_i."
+    },
+    {
+      "number": 31,
+      "labels": [
+        "eq:agent_broadcast"
+      ],
+      "latex": "\\boldsymbol{\\Phi}_{q,i}\n=\n\\mathcal R_2\n\\left(\n\\frac{\\mathbf Q_i\\mathbf A_i^{\\mathrm T}}{\\sqrt{d_h}}\n\\right),\n\\qquad\n\\mathbf O_i\n=\n\\boldsymbol{\\Phi}_{q,i}\\mathbf V_{A,i}."
+    },
+    {
+      "number": 32,
+      "labels": [
+        "eq:raa_output"
+      ],
+      "latex": "\\operatorname{RAA}(\\mathbf X)\n=\n\\mathbf X+\n\\operatorname{Concat}(\\mathbf O_1,\\ldots,\\mathbf O_h)\\odot\\mathbf s_o."
+    },
+    {
+      "number": 33,
+      "labels": [
+        "eq:slfa_fusion"
+      ],
+      "latex": "\\mathbf X_F\n=\n\\operatorname{LN}(\\mathbf X_S)\n+\nW_a\n\\operatorname{Dropout}\n\\left(\n\\operatorname{RAA}(\\mathbf X_S)\n\\right)."
+    },
+    {
+      "number": 34,
+      "labels": [
+        "eq:metric_mae"
+      ],
+      "latex": "\\mathrm{MAE}=\\frac{1}{n}\\sum_{i=1}^{n}\\left|y_i-\\hat{y}_i\\right|"
+    },
+    {
+      "number": 35,
+      "labels": [
+        "eq:metric_mape"
+      ],
+      "latex": "\\mathrm{MAPE}=\\frac{1}{n}\\sum_{i=1}^{n}\\left|\\frac{y_i-\\hat{y}_i}{y_i}\\right|"
+    },
+    {
+      "number": 36,
+      "labels": [
+        "eq:metric_rmse"
+      ],
+      "latex": "\\mathrm{RMSE}=\\sqrt{\\frac{1}{n}\\sum_{i=1}^{n}\\left(y_i-\\hat{y}_i\\right)^2}"
+    },
+    {
+      "number": 37,
+      "labels": [
+        "eq:metric_r2"
+      ],
+      "latex": "R^2=1-\\frac{\\sum_{i=1}^{n}\\left(y_i-\\hat{y}_i\\right)^2}{\\sum_{i=1}^{n}\\left(y_i-\\bar{y}\\right)^2}"
+    },
+    {
+      "number": 38,
+      "labels": [
+        "eq:agent_initialization"
+      ],
+      "latex": "A_{ij}\\sim\\mathcal N\\!\\left(0,0.02^2\\right)"
+    }
+  ],
+  "destination": "C:/Users/c1342/latex-paper/output/docx_verified/MS-AgentNet_editable_final.docx",
+  "references": 84,
+  "numbered_equations": 38,
+  "images": 28,
+  "status": "verified_with_word_render_after_figure_aspect_fix",
+  "figure_corrections": [
+    {
+      "figure": "Fig. 8 / paper Figure 4.2",
+      "source_pdf_page": 20,
+      "crop": "main.pdf page 20 figure area",
+      "aspect_ratio_fixed": true
+    },
+    {
+      "figure": "Fig. 9 / paper Figure 4.3",
+      "source_pdf_page": 22,
+      "crop": "main.pdf page 22 figure area",
+      "aspect_ratio_fixed": true
+    }
+  ],
+  "render_pdf": "output/docx_verified/MS-AgentNet_final_render3.pdf"
+}
